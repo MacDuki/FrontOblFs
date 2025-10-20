@@ -3,6 +3,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import logoW from "../assets/v4wNoBg.png";
 import "./auth.css";
 import BlurText from "./effects/BlurText.effect.jsx";
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
@@ -13,14 +14,14 @@ export default function Auth() {
       <section
         className={` ${
           isLogin || isRegister ? "hidden" : "flex flex-col"
-        } max-w-sm  w-full rounded-xl p-7 space-y-8 border border-black`}
+        } max-w-sm  w-full rounded-xl p-4 space-y-6`}
       >
         {/* Header part */}
         <div>
           <div className="flex justify-center">
-            <img src={logoW} className="w-22 h-auto" />
+            <img src={logoW} className="w-38 h-auto" />
           </div>
-          <h2 className="mt-6 text-center text-3xl  ">WeRead</h2>
+          <h2 className="mt-6 text-center text-[70px] font-Relieve">weRead</h2>
           <div className="mt-4 h-36">
             <BlurText
               text={[
@@ -38,26 +39,57 @@ export default function Auth() {
 
         <div
           className="flex flex-col
-           justify-between w-full xl:flex-row "
+           justify-between items-center w-full space-y-4 "
         >
           <button
             onClick={() => {
               setIsLogin(!isLogin);
               setIsRegister(false);
             }}
+            class="cursor-pointer group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-[#6B2F4A] hover:before:[box-shadow:_20px_20px_20px_30px_#2B444D] duration-500 before:duration-500 hover:duration-500 underline underline-offset-2 hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4 origin-left hover:decoration-2 hover:text-[#6B2F4A] relative bg-[#000000] h-16 w-64 border text-left p-3 text-gray-50 text-base font-bold rounded-lg overflow-hidden before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-[#6B2F4A] before:rounded-full before:blur-lg after:absolute after:z-10 after:w-20 after:h-20 after:content[''] after:bg-[#2B444D] after:right-8 after:top-3 after:rounded-full after:blur-lg hover:scale-105"
+          >
+            Sign In
+          </button>
+
+          <div class="relative group">
+            <button
+              onClick={() => {
+                setIsLogin(false);
+                setIsRegister(!isRegister);
+              }}
+              class="relative inline-block p-px font-semibold leading-6 text-white bg-[#000000] shadow-2xl cursor-pointer rounded-2xl shadow-[#2B444D] transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 hover:shadow-[#6B2F4A]"
+            >
+              <span class="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#6B2F4A] via-[#2B444D] to-[#000000] p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
+              <span class="relative z-10 block px-6 py-3 rounded-2xl bg-[#000000]">
+                <div class="relative z-10 flex items-center space-x-3">
+                  <span class="transition-all duration-500 group-hover:translate-x-1.5 group-hover:text-[#6B2F4A]">
+                    Begin Journey
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-7 h-7 transition-all duration-500 group-hover:translate-x-1.5 group-hover:text-[#6B2F4A]"
+                  >
+                    <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path>
+                  </svg>
+                </div>
+              </span>
+            </button>
+          </div>
+
+          {/* <button
+         
             className="cursor-pointer w-full h-12 py-2 px-4 border rounded-xl xl:w-32 xl:h-32"
           >
             Login
           </button>
           <button
-            onClick={() => {
-              setIsLogin(false);
-              setIsRegister(!isRegister);
-            }}
+          
             className="cursor-pointer py-2 px-4 border rounded-xl  xl: w-32 h-32   "
           >
             Register
-          </button>
+          </button> */}
         </div>
       </section>
       {/* Login part */}

@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@font-face {
+  font-family: "Relieve";
+  src: url("./assets/fonts/Relieve.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   background: -webkit-linear-gradient(
     90deg,
@@ -15,6 +21,7 @@
 }
 @theme {
   --color-primary: #6b2f4a;
-  --font-sans: "Roboto", sans-serif;
+  --font-Roboto: "Roboto", sans-serif;
   --font-general: "poppins", sans-serif;
+  --font-Relieve: "Relieve", sans-serif;
 }
