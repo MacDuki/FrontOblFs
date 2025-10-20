@@ -3,7 +3,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import logoW from "../assets/v4wNoBg.png";
 import "./auth.css";
 import BlurText from "./effects/BlurText.effect.jsx";
-
+import MechanicalText from "./effects/MechanicalText.effect.jsx";
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
@@ -18,10 +18,19 @@ export default function Auth() {
       >
         {/* Header part */}
         <div>
-          <div className="flex justify-center">
+          <div className="flex w-full justify-center">
+            <MechanicalText
+              className="mt-6 text-center text-[70px] font-Relieve"
+              text={"weRead"}
+              typingSpeed={75}
+              pauseDuration={1500}
+              showCursor={true}
+              cursorCharacter="|"
+              initialDelay={1300}
+            />
             <img src={logoW} className="w-38 h-auto" />
           </div>
-          <h2 className="mt-6 text-center text-[70px] font-Relieve">weRead</h2>
+
           <div className="mt-4 h-36">
             <BlurText
               text={[
