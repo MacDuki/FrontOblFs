@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import logoW from "../assets/v4wNoBg.png";
-
 import "./auth.css";
+import BlurText from "./effects/BlurText.effect.jsx";
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
 
   return (
-    <main className="min-h-full flex items-center justify-center py-12 px-4 text-gray-300 select-none ">
+    <main className="font-general min-h-full flex items-center justify-center py-12 px-4 text-gray-100 select-none ">
       {/* //definicion de card */}
       <section
         className={` ${
@@ -20,18 +20,25 @@ export default function Auth() {
           <div className="flex justify-center">
             <img src={logoW} className="w-22 h-auto" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold ">WeRead</h2>
-          <p className="py-2">
-            "La información es libertadora. La educación es la premisa del
-            progreso, en toda sociedad, en toda familia." –{" "}
-            <strong>Kofi Annan</strong>
-          </p>
+          <h2 className="mt-6 text-center text-3xl  ">WeRead</h2>
+          <div className="mt-4 h-36">
+            <BlurText
+              text={[
+                "La información es libertadora. La educación es la premisa del progreso, en toda sociedad, en toda familia.",
+              ]}
+              className="h-24"
+              delay={50}
+            />
+            <p className="py-2">
+              <strong>Kofi Annan</strong>
+            </p>
+          </div>
         </div>
         {/* Buttons part */}
 
         <div
           className="flex flex-col
-           justify-around w-full xl:flex-row "
+           justify-between w-full xl:flex-row "
         >
           <button
             onClick={() => {
