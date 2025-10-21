@@ -7,7 +7,7 @@ function RegisterScreen({ onBack }) {
       <IoIosArrowBack className="cursor-pointer text-3xl" onClick={onBack} />
       <hr className="border-gray-700 mb-4" />
       <div className="text-center text-lg font-semibold mb-3">
-        Create account
+        Create an account
       </div>
 
       <form

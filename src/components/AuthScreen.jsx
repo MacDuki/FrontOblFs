@@ -1,4 +1,5 @@
 import { CiLogin } from "react-icons/ci";
+import { IoPersonAddOutline } from "react-icons/io5";
 import BlurText from "./effects/BlurText.effect.jsx";
 
 function AuthScreen({ onLogin, onRegister, logoW, catIdle }) {
@@ -38,7 +39,7 @@ function AuthScreen({ onLogin, onRegister, logoW, catIdle }) {
           onClick={onLogin}
           className="
           cursor-pointer
-           w-full flex justify-center 
+           w-2/3 flex justify-center 
            py-3 px-4 border border-gray-200 
            text-sm font-medium 
            rounded-xl text-white 
@@ -74,9 +75,11 @@ function AuthScreen({ onLogin, onRegister, logoW, catIdle }) {
             duration-100
             ease-in-out
            hover:scale-105
+           items-center
           "
         >
-          Register
+          Sign up
+          <IoPersonAddOutline className="ml-2" size={18} />
         </button>
       </div>
     </section>
