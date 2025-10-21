@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function RevealBannerButton({
   banner,
-  label = "Continue journey",
+  label = "Start journey",
   className = "",
 }) {
   return (

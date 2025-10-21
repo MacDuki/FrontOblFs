@@ -22,7 +22,7 @@ function LoginScreen({ onBack }) {
 
       <form className="mt-8 space-y-6" method="POST">
         {/* INPUTS */}
-        <div className="rounded-xl shadow-sm space-y-4">
+        <div className="rounded-xl  space-y-4">
           <div className="form-control">
             <input type="text" required />
             <label>
