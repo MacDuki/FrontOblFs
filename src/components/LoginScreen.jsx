@@ -1,34 +1,38 @@
+import { CiLogin } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
+import readingImg from "../assets/imgs/undraw_reading-time.svg";
+import MechanicalText from "./effects/MechanicalText.effect.jsx";
+import "./styles/login.css";
 function LoginScreen({ onBack }) {
   return (
-    <section className="h-[450px]">
-      <div className="flex items-center justify-center ">
-        <div className="w-1/4">
+    <section className="h-[520px]">
+      <div className="flex flex-col items-start space-y-3 justify-center ">
+        <div className="">
           <IoIosArrowBack
-            className="cursor-pointer text-3xl"
+            className="cursor-pointer text-3xl  transition hover:scale-110"
             onClick={onBack}
           />
         </div>
-        <div className="w-3/4">
-          <h2>We are glad to see you again!</h2>
+        <div className=" min-w-[236px] w-full flex flex-col items-center justify-center text-nowrap">
+          <img src={readingImg} alt="Reading" className="w-auto h-30" />
+
+          <MechanicalText text="We are glad to see you again!" />
         </div>
       </div>
 
       <form className="mt-8 space-y-6" method="POST">
+        {/* INPUTS */}
         <div className="rounded-xl shadow-sm space-y-4">
-          <div>
-            <div className="form-control">
-              <input type="text" required />
-              <label>
-                <span style={{ transitionDelay: "0ms" }}>E</span>
-                <span style={{ transitionDelay: "50ms" }}>m</span>
-                <span style={{ transitionDelay: "100ms" }}>a</span>
-                <span style={{ transitionDelay: "150ms" }}>i</span>
-                <span style={{ transitionDelay: "200ms" }}>l</span>
-              </label>
-            </div>
+          <div className="form-control">
+            <input type="text" required />
+            <label>
+              <span style={{ transitionDelay: "0ms" }}>E</span>
+              <span style={{ transitionDelay: "50ms" }}>m</span>
+              <span style={{ transitionDelay: "100ms" }}>a</span>
+              <span style={{ transitionDelay: "150ms" }}>i</span>
+              <span style={{ transitionDelay: "200ms" }}>l</span>
+            </label>
           </div>
-
           <div>
             <div className="form-control">
               <input type="text" required />
@@ -45,65 +49,57 @@ function LoginScreen({ onBack }) {
             </div>
           </div>
         </div>
+        {/* OPTIONS */}
+        <div className="flex flex-col items-start space-y-2 justify-between">
+          <div className="flex items-center">
+            <div className="container">
+              <input type="checkbox" id="cbx" style={{ display: "none" }} />
+              <label for="cbx" className="check">
+                <svg width="18px" height="18px" viewBox="0 0 18 18">
+                  <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                  <polyline points="1 9 7 14 15 4"></polyline>
+                </svg>
+              </label>
+            </div>
 
-        <div className="flex items-center justify-between">
-          <label className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 text-apple-600 focus:ring-apple-500 border-gray-100 rounded-xl"
-            />
-            <span className="ml-2 block text-sm text-gray-100">
+            <label
+              htmlFor="cbx"
+              className="text-nowrap cursor-pointer ml-2 text-sm text-gray-100 transition hover:scale-105"
+            >
               Remember me
-            </span>
-          </label>
+            </label>
+          </div>
 
-          <a
-            href="#"
-            className="text-sm font-medium text-apple-600 hover:text-apple-500"
-          >
+          <a href="#" className="text-sm mt-2  transition  hover:scale-105">
             Forgot your password?
           </a>
         </div>
-
+        {/* BUTTON */}
         <div>
-          <div className="relative group">
-            <button className="relative inline-block p-px font-semibold leading-6 text-white bg-[#040400] shadow-2xl cursor-pointer rounded-xl shadow-[#2f485c] transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
-              <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#b5412a] via-[#2f485c] to-[#040400] p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
-              <span className="relative z-10 block px-6 py-3 rounded-xl bg-[#040400]">
-                <div className="relative z-10 flex items-center space-x-2">
-                  <span className="transition-all duration-500 group-hover:translate-x-1">
-                    Sign In
-                  </span>
-                  <svg
-                    className="w-6 h-6 transition-transform duration-500 group-hover:translate-x-1"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      clipRule="evenodd"
-                      fillRule="evenodd"
-                      d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    ></path>
-                  </svg>
-                </div>
-              </span>
-            </button>
-          </div>
+          <button
+            className="
+                cursor-pointer
+                 w-full flex justify-center 
+                 py-3 px-4 border border-pink-200 
+                 text-sm font-medium 
+                 rounded-xl text-white 
+                 bg-transparent 
+                 transition
+                  duration-100
+                  ease-in-out
+                 hover:scale-105
+                 mb-1
+                 
+                 items-center 
+                 
+                 
+                "
+          >
+            Log in
+            <CiLogin className="ml-2" size={20} />
+          </button>
         </div>
       </form>
-
-      <div className="text-center mt-10 text-sm text-gray-200">
-        Don&apos;t have an account?
-        <a
-          href="#"
-          className="font-medium text-apple-600 pl-2 hover:text-apple-500"
-        >
-          Create one now
-        </a>
-      </div>
     </section>
   );
 }
