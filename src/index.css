@@ -25,3 +25,11 @@
   --font-general: "poppins", sans-serif;
   --font-Relieve: "Relieve", sans-serif;
 }
+/* Ocultar scrollbar sin desactivar scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE y Edge */
+  scrollbar-width: none; /* Firefox */
+}

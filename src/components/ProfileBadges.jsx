@@ -3,8 +3,12 @@ import { Badge } from "./ui";
 export const ProfileBadges = () => (
   <div className="px-6 pt-6">
     <div className="flex items-center justify-between">
-      <p className="text-sm">Badges</p>
-      <button className="text-[11px] text-white/60">See All</button>
+      <p className="text-sm cursor-pointer transition hover:scale-105">
+        Badges
+      </p>
+      <button className="text-[11px] text-white/60 cursor-pointer transition hover:scale-105">
+        See All
+      </button>
     </div>
     <div className="mt-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
       <Badge />

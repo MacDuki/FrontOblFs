@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { CiUser } from "react-icons/ci";
 import { ProfileAchievements } from "./ProfileAchievements";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { ProfileBadges } from "./ProfileBadges";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileStats } from "./ProfileStats";
+
 /* ---- main card ---- */
 export default function UserProfile({
   name = "Mr. Explore",
@@ -19,27 +21,21 @@ export default function UserProfile({
 
   const toggleCollapse = () => {
     if (isCollapsed) {
-      // Expandiendo: secuencia suave de apertura
       setIsCollapsed(false);
       setIsLoading(true);
       setShowContent(false);
 
-      // Mostrar loading después de que inicie la expansión
       setTimeout(() => {
         setIsLoading(true);
       }, 100);
 
-      // Después de que termine la animación de expansión, mostrar contenido
       setTimeout(() => {
         setIsLoading(false);
         setShowContent(true);
-      }, 900); // Un poco más de tiempo para la transición suave
+      }, 900);
     } else {
-      // Colapsando: secuencia suave de cierre
       setIsLoading(false);
       setShowContent(false);
-
-      // Delay más largo para permitir que el contenido se desvanezca
 
       setIsCollapsed(true);
     }
@@ -64,15 +60,12 @@ export default function UserProfile({
     >
       {isCollapsed ? (
         <div
-          className="h-full w-full flex items-center justify-center cursor-pointer 
-                       group transition-all hover:scale-105"
+          className="h-full w-full flex items-center justify-center cursor-pointer "
           onClick={toggleCollapse}
         >
-          <div
-            className="text-white/70 group-hover:text-white group-hover:scale-105 
-                         transition-all duration-300 ease-out text-sm font-medium "
-          >
-            Profile
+          <div className="text-white  text-sm font-medium flex flex-row items-center justify-center space-x-2 ">
+            <p>{name}</p>
+            <CiUser size={18} />
           </div>
         </div>
       ) : (
