@@ -4,7 +4,7 @@ function App() {
   return (
     <>
       <Auth />
-      <main className="min-h-screen space-y-2  flex flex-col items-center justify-center p-4 xl:flex-row xl:space-x-8">
+      <main className="min-h-screen space-y-2  flex flex-col items-start justify-center p-4 xl:flex-row xl:space-x-8">
         <UserProfile />
 
         <UserProfile />

@@ -1,10 +1,10 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { ProfileAchievements } from "./ProfileAchievements";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { ProfileBadges } from "./ProfileBadges";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileStats } from "./ProfileStats";
-
 /* ---- main card ---- */
 export default function UserProfile({
   name = "Mr. Explore",
@@ -19,53 +19,96 @@ export default function UserProfile({
 
   const toggleCollapse = () => {
     if (isCollapsed) {
-      // Expandiendo: mostrar loading primero
+      // Expandiendo: secuencia suave de apertura
       setIsCollapsed(false);
       setIsLoading(true);
       setShowContent(false);
+
+      // Mostrar loading después de que inicie la expansión
+      setTimeout(() => {
+        setIsLoading(true);
+      }, 100);
 
       // Después de que termine la animación de expansión, mostrar contenido
       setTimeout(() => {
         setIsLoading(false);
         setShowContent(true);
-      }, 500); // Coincide con la duración de la animación
+      }, 900); // Un poco más de tiempo para la transición suave
     } else {
-      // Colapsando: ocultar contenido inmediatamente
-      setShowContent(false);
+      // Colapsando: secuencia suave de cierre
       setIsLoading(false);
-      setTimeout(() => {
-        setIsCollapsed(true);
-      }, 50); // Pequeño delay para que la transición sea suave
+      setShowContent(false);
+
+      // Delay más largo para permitir que el contenido se desvanezca
+
+      setIsCollapsed(true);
     }
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, height: isCollapsed ? 0 : "550px" }}
+      animate={{ opacity: 1, height: isCollapsed ? 75 : "550px" }}
+      transition={{
+        duration: 0.9,
+        type: "spring",
+      }}
       className={`
         w-[360px] 
-        ${isCollapsed ? "h-[50px]" : "h-auto"} 
+        max-h-[550px]
         rounded-3xl border border-white/10 bg-slate-900/90 text-white 
         shadow-[0_20px_80px_rgba(0,0,0,.6)] backdrop-blur-xl 
-        transition-all duration-500 ease-in-out overflow-hidden relative
+        transition-all duration-900 ease-out overflow-hidden relative
+     
       `}
     >
       {isCollapsed ? (
         <div
-          className="h-full w-full flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors duration-300"
+          className="h-full w-full flex items-center justify-center cursor-pointer 
+                       group transition-all hover:scale-105"
           onClick={toggleCollapse}
         >
-          <div className="text-white/80 hover:text-white transition-colors duration-300 text-sm font-medium tracking-wider">
+          <div
+            className="text-white/70 group-hover:text-white group-hover:scale-105 
+                         transition-all duration-300 ease-out text-sm font-medium "
+          >
             Profile
           </div>
         </div>
       ) : (
-        <>
+        <div className="relative">
           {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/80"></div>
+            <div className="flex items-center justify-center py-20 animate-fade-in min-h-screen">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-10 w-10 border-2 border-white/20"></div>
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-white/80 absolute top-0 left-0"></div>
+                <div className="absolute inset-0 rounded-full bg-white/5 animate-pulse"></div>
+              </div>
             </div>
           ) : showContent ? (
-            <>
+            <div className="animate-slide-up-fade-in">
+              <div className="animate-delay-75">
+                <ProfileHeader onHide={toggleCollapse} />
+              </div>
+              <div className="animate-delay-150">
+                <ProfileAvatar name={name} level={level} />
+              </div>
+              <div className="animate-delay-225">
+                <ProfileStats
+                  streakDays={streakDays}
+                  currentBadge={currentBadge}
+                  totalCoins={totalCoins}
+                />
+              </div>
+              <div className="animate-delay-300">
+                <ProfileBadges />
+              </div>
+              <div className="animate-delay-375">
+                <ProfileAchievements />
+              </div>
+            </div>
+          ) : (
+            <div className="animate-fade-out">
               <ProfileHeader onHide={toggleCollapse} />
               <ProfileAvatar name={name} level={level} />
               <ProfileStats
@@ -75,10 +118,73 @@ export default function UserProfile({
               />
               <ProfileBadges />
               <ProfileAchievements />
-            </>
-          ) : null}
-        </>
+            </div>
+          )}
+        </div>
       )}
-    </div>
+
+      <style jsx>{`
+        @keyframes slide-up-fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes fade-out {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+
+        .animate-slide-up-fade-in {
+          animation: slide-up-fade-in 0.6s ease-out;
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.4s ease-in;
+        }
+
+        .animate-fade-out {
+          animation: fade-out 0.2s ease-out;
+        }
+
+        .animate-delay-75 {
+          animation-delay: 75ms;
+        }
+
+        .animate-delay-150 {
+          animation-delay: 150ms;
+        }
+
+        .animate-delay-225 {
+          animation-delay: 225ms;
+        }
+
+        .animate-delay-300 {
+          animation-delay: 300ms;
+        }
+
+        .animate-delay-375 {
+          animation-delay: 375ms;
+        }
+      `}</style>
+    </motion.div>
   );
 }
