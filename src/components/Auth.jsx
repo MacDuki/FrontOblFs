@@ -12,7 +12,7 @@ export default function Auth() {
 
   return (
     <main className="font-general min-h-screen flex items-center justify-center py-12 px-4 text-gray-100 select-none">
-      <Card contentKey={view}>
+      <Card className="max-w-sm p-10" contentKey={view}>
         {view === "auth" && (
           <AuthScreen
             onLogin={() => setView("login")}

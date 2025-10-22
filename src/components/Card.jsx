@@ -16,7 +16,7 @@ export default function Card({
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: -600, scale: 0.7 }}
           transition={{ duration: 0.928, ease: [0.22, 1, 0.36, 1] }}
-          className={`pt-4 rounded-3xl max-w-sm p-14
+          className={`pt-4 rounded-3xl p-3
             bg-gradient-to-br from-white/10 via-white/5 to-transparent 
             backdrop-blur-xl border border-white/20 
             shadow-2xl shadow-black/50 
