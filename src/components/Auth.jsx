@@ -5,7 +5,7 @@ import { AuthScreen } from "./AuthScreen.jsx";
 import Card from "./Card.jsx";
 import { LoginScreen } from "./LoginScreen.jsx";
 import { RegisterScreen } from "./RegisterScreen.jsx";
-import "./styles/Auth.css";
+import "./styles/auth.css";
 
 export default function Auth() {
   const [view, setView] = useState("auth"); // 'auth' | 'login' | 'register'
