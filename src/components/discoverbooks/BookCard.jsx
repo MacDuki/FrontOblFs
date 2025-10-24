@@ -1,4 +1,4 @@
-export default function BookCard({ book }) {
+export default function BookCard({ book, onClick }) {
   const info = book.volumeInfo;
 
   const getCoverImage = (info) => {
@@ -14,7 +14,7 @@ export default function BookCard({ book }) {
   };
 
   return (
-    <div className="book-card bg-gray-800 rounded-2xl shadow-xl p-3 flex flex-col cursor-pointer hover:scale-105 transition-all duration-300">
+    <div className="book-card bg-gray-800 rounded-2xl shadow-xl p-3 flex flex-col cursor-pointer hover:scale-105 transition-all duration-300" onClick={onClick}>
       <div className="cover-wrap mb-4 w-full h-72">
         <img
           src={getCoverImage(info)}
