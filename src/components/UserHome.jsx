@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CiUser } from "react-icons/ci";
-import { ProfileAchievements } from "./ProfileAchievements";
+import { PetHome } from "./PetHome";
 import { ProfileAvatar } from "./ProfileAvatar";
-import { ProfileBadges } from "./ProfileBadges";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileStats } from "./ProfileStats";
 
 /* ---- main card ---- */
-export default function UserProfile({
+export default function UserHome({
   name = "Mr. Explore",
   level = 12,
   streakDays = 15,
@@ -43,19 +42,17 @@ export default function UserProfile({
 
   return (
     <motion.div
-      initial={{ opacity: 0, height: isCollapsed ? 0 : "550px" }}
-      animate={{ opacity: 1, height: isCollapsed ? 75 : "550px" }}
+      initial={{ opacity: 0, height: isCollapsed ? 0 : "650px" }}
+      animate={{ opacity: 1, height: isCollapsed ? 75 : "650px" }}
       transition={{
         duration: 0.9,
         type: "spring",
       }}
       className={`
-        w-[360px] 
-        max-h-[550px]
-        rounded-3xl border border-white/10 bg-slate-900/90 text-white 
-        shadow-[0_20px_80px_rgba(0,0,0,.6)] backdrop-blur-xl 
-        transition-all duration-900 ease-out overflow-hidden relative
-     
+        w-[360px] h-[650px] max-h-[650px] rounded-3xl border border-white/10 
+        bg-slate-900/90 text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] 
+        backdrop-blur-xl transition-all duration-900 ease-out overflow-hidden 
+        relative justify-self-center
       `}
     >
       {isCollapsed ? (
@@ -69,7 +66,7 @@ export default function UserProfile({
           </div>
         </div>
       ) : (
-        <div className="relative">
+        <div className="relative ">
           {isLoading ? (
             <div className="flex items-center justify-center py-20 animate-fade-in min-h-screen">
               <div className="relative">
@@ -93,15 +90,12 @@ export default function UserProfile({
                   totalCoins={totalCoins}
                 />
               </div>
-              <div className="animate-delay-300">
-                <ProfileBadges />
-              </div>
-              <div className="animate-delay-375">
-                <ProfileAchievements />
+              <div className="animate-delay-300 m-6 ">
+                <PetHome />
               </div>
             </div>
           ) : (
-            <div className="animate-fade-out">
+            <div className="animate-fade-out ">
               <ProfileHeader onHide={toggleCollapse} />
               <ProfileAvatar name={name} level={level} />
               <ProfileStats
@@ -109,8 +103,9 @@ export default function UserProfile({
                 currentBadge={currentBadge}
                 totalCoins={totalCoins}
               />
-              <ProfileBadges />
-              <ProfileAchievements />
+              {/* Area de mascota */}
+
+              <PetHome />
             </div>
           )}
         </div>

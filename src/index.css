@@ -33,3 +33,34 @@
   -ms-overflow-style: none; /* IE y Edge */
   scrollbar-width: none; /* Firefox */
 }
+@keyframes heartbeat {
+  0%,
+  35%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  20%,
+  55% {
+    transform: scale(1.25);
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2.8s infinite ease-in-out;
+}
+/* Opcional: pulso leve de glow en CSS si quieres más vida al Cat (sin tocar motion)
+   Añade esta clase a la imagen del gato si lo deseas: className+=" glow-idle" */
+@keyframes glowIdle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.12)) saturate(1.2);
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.22)) saturate(1.25);
+  }
+}
+.glow-idle {
+  animation: glowIdle 4.2s ease-in-out infinite;
+  animation-delay: 0.4s;
+}

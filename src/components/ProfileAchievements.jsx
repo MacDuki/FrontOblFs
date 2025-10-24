@@ -1,7 +1,7 @@
 import { Achievement } from "./ui";
 
 export const ProfileAchievements = () => (
-  <div className="px-6 pt-6 pb-6 space-y-3">
+  <div className="px-6 py-6 space-y-3">
     <p className="text-sm cursor-pointer transition hover:scale-105">
       Achievements <span className="pl-2">0/3</span>
     </p>
