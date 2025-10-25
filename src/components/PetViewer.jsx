@@ -125,12 +125,11 @@ function PetViewer({
       <img
         src={animationSrc}
         alt={`Pet - ${getCurrentTitle()}`}
-        className={`object-contain transition-all duration-300 ${className}`}
+        className={`object-contain transition-all duration-300  ${className}`}
       />
 
-      {/* Indicador de estado (opcional, solo visible en hover) */}
       <div
-        className="absolute -top-8 left-1/2 transform -translate-x-1/2 
+        className="absolute -top-0 left-1/2 transform -translate-x-1/2 
                       bg-black/70 text-white text-xs px-2 py-1 rounded 
                       opacity-0 group-hover:opacity-100 transition-opacity duration-200
                       pointer-events-none whitespace-nowrap"

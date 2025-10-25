@@ -90,7 +90,7 @@ export default function UserHome({
                   totalCoins={totalCoins}
                 />
               </div>
-              <div className="animate-delay-300 m-6 ">
+              <div className="animate-delay-300 m-4 ">
                 <PetHome />
               </div>
             </div>
