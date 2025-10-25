@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CiUser } from "react-icons/ci";
-import { PetHome } from "./PetHome";
+import { Loader } from "./Loader";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileStats } from "./ProfileStats";
@@ -42,17 +42,17 @@ export default function UserHome({
 
   return (
     <motion.div
-      initial={{ opacity: 0, height: isCollapsed ? 0 : "650px" }}
-      animate={{ opacity: 1, height: isCollapsed ? 75 : "650px" }}
+      initial={{ opacity: 0, height: isCollapsed ? 0 : "300px" }}
+      animate={{ opacity: 1, height: isCollapsed ? 75 : "300px" }}
       transition={{
         duration: 0.9,
         type: "spring",
       }}
       className={`
-        w-[360px] h-[650px] max-h-[650px] rounded-3xl border border-white/10 
-        bg-slate-900/90 text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] 
-        backdrop-blur-xl transition-all duration-900 ease-out overflow-hidden 
-        relative justify-self-center
+        w-[360px] h-[300px] rounded-3xl border border-white/10 
+        text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] 
+        backdrop-blur-sm transition-all duration-900 ease-out overflow-hidden 
+      relative justify-self-center 
       `}
     >
       {isCollapsed ? (
@@ -68,13 +68,12 @@ export default function UserHome({
       ) : (
         <div className="relative ">
           {isLoading ? (
-            <div className="flex items-center justify-center py-20 animate-fade-in min-h-screen">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-10 w-10 border-2 border-white/20"></div>
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-white/80 absolute top-0 left-0"></div>
-                <div className="absolute inset-0 rounded-full bg-white/5 animate-pulse"></div>
-              </div>
-            </div>
+            <Loader
+              icon={<CiUser size={20} />}
+              className="h-[300px]"
+              size={48}
+              iconSize={20}
+            />
           ) : showContent ? (
             <div className="animate-slide-up-fade-in">
               <div className="animate-delay-75">
@@ -90,9 +89,6 @@ export default function UserHome({
                   totalCoins={totalCoins}
                 />
               </div>
-              <div className="animate-delay-300 m-4 ">
-                <PetHome />
-              </div>
             </div>
           ) : (
             <div className="animate-fade-out ">
@@ -103,9 +99,6 @@ export default function UserHome({
                 currentBadge={currentBadge}
                 totalCoins={totalCoins}
               />
-              {/* Area de mascota */}
-
-              <PetHome />
             </div>
           )}
         </div>
@@ -143,10 +136,6 @@ export default function UserHome({
 
         .animate-slide-up-fade-in {
           animation: slide-up-fade-in 0.6s ease-out;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.4s ease-in;
         }
 
         .animate-fade-out {

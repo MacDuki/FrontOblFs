@@ -1,19 +1,16 @@
-import Auth from "./components/Auth";
-import { SectionsHome } from "./components/effects/SectionsHome";
-import UserHome from "./components/UserHome";
+import { useState } from "react";
+import DarkVeil from "./components/effects/DarkVeil.effect.jsx";
+import DesktopLayout from "./components/layout/DesktopLayout";
+import MobileNavigation from "./components/navigation/MobileNavigation";
+
 function App() {
+  const [tab, setTab] = useState("home"); // 'home' | 'sections'
+
   return (
     <>
-      <Auth />
-      <main className="min-h-screen space-y-2  flex flex-col items-start justify-center p-4 xl:flex-row xl:space-x-8">
-        <section className="flex-1 items-center justify-self-center w-full min-h-[650px] border border-red-500">
-          <UserHome />
-        </section>
-        <section className="flex-1 items-center justify-center w-full min-h-[650px] border border-blue-500">
-          <SectionsHome />
-        </section>
-        <section className="flex-1 items-center justify-center w-full min-h-[650px] border border-yellow-500"></section>
-      </main>
+      <DarkVeil />
+      <MobileNavigation tab={tab} setTab={setTab} />
+      <DesktopLayout />
     </>
   );
 }

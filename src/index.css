@@ -5,20 +5,7 @@
   font-weight: normal;
   font-style: normal;
 }
-:root {
-  background: -webkit-linear-gradient(
-    180deg,
-    #040400,
-    #2f485c,
-    #b5412a
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    180deg,
-    #040400,
-    #2f485c,
-    #b5412a
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
+
 @theme {
   --color-primary: #6b2f4a;
   --font-Roboto: "Roboto", sans-serif;
@@ -33,22 +20,7 @@
   -ms-overflow-style: none; /* IE y Edge */
   scrollbar-width: none; /* Firefox */
 }
-@keyframes heartbeat {
-  0%,
-  35%,
-  70%,
-  100% {
-    transform: scale(1);
-  }
-  20%,
-  55% {
-    transform: scale(1.25);
-  }
-}
 
-.animate-heartbeat {
-  animation: heartbeat 2.8s infinite ease-in-out;
-}
 /* Opcional: pulso leve de glow en CSS si quieres más vida al Cat (sin tocar motion)
    Añade esta clase a la imagen del gato si lo deseas: className+=" glow-idle" */
 @keyframes glowIdle {
@@ -63,4 +35,10 @@
 .glow-idle {
   animation: glowIdle 4.2s ease-in-out infinite;
   animation-delay: 0.4s;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
