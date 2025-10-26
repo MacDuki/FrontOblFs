@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { Bookmark, ChevronLeft, Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { useBookGradient } from "../../Utils/colorExtractor.js";
 import { rankDescription } from "../../Utils/textRanking.js";
 
 import {
@@ -15,28 +16,48 @@ import {
 export default function BookDetail({ book }) {
   const dispatch = useDispatch();
   const { favoriteBooks, savedBooks } = useSelector((s) => s.books);
-  if (!book) return null;
-
-  const info = book.volumeInfo || {};
-  const isFavorite = favoriteBooks.some((b) => b.id === book.id);
-  const isSaved = savedBooks.some((b) => b.id === book.id);
 
   const getCoverImage = (info) => {
     const img = info?.imageLinks;
     if (!img) return "https://via.placeholder.com/300x450?text=No+Cover";
     return (
-      console.log("img", img),
-      console.log("img.extraLarge", img.extraLarge),
-      console.log("img.large", img.large),
-      console.log("img.medium", img.medium),
-      console.log("img.thumbnail", img.thumbnail),
-      console.log("img.smallThumbnail", img.smallThumbnail),
       img.extraLarge ||
-        img.large ||
-        img.medium ||
-        img.thumbnail ||
-        img.smallThumbnail
+      img.large ||
+      img.medium ||
+      img.thumbnail ||
+      img.smallThumbnail ||
+      "https://via.placeholder.com/300x450?text=No+Cover"
     );
+  };
+
+  // Seleccionar gradiente predeterminado basado en el libro
+  const bookInfo = book?.volumeInfo || {};
+  const { gradient, loading: gradientLoading } = useBookGradient(
+    book?.id,
+    bookInfo.title
+  );
+
+  if (!book) return null;
+
+  const info = book.volumeInfo || {};
+  const isFavorite = favoriteBooks.some((b) => b.id === book.id);
+  const isSaved = savedBooks.some((b) => b.id === book.id);
+  const coverImage = getCoverImage(info);
+
+  // Generar el estilo de fondo dinámico
+  const getBackgroundStyle = () => {
+    if (!gradient) {
+      return {
+        background:
+          "linear-gradient(135deg, #ff6b6b 0%, #ff8e53 35%, #ff6b9d 70%, #c44569 100%)",
+        transition: "background 0.8s ease-in-out",
+      };
+    }
+
+    return {
+      background: gradient.gradient,
+      transition: "background 0.8s ease-in-out",
+    };
   };
   function DescriptionRanked({ description }) {
     if (!description)
@@ -75,8 +96,13 @@ export default function BookDetail({ book }) {
         transition={{ duration: 0.35 }}
         className="relative overflow-hidden rounded-3xl shadow-2xl"
       >
-        {/* Fondo tipo ejemplo */}
-        <div className="bg-gradient-to-r from-amber-300 via-orange-300 to-rose-300">
+        {/* Fondo dinámico basado en colores de la portada */}
+        <div
+          className={`relative transition-all duration-700 ease-out ${
+            gradientLoading ? "animate-pulse" : ""
+          }`}
+          style={getBackgroundStyle()}
+        >
           <div className="relative flex flex-col items-center md:flex-row  gap-6 p-6 md:p-8">
             {/* Flecha volver */}
             <button
@@ -93,7 +119,7 @@ export default function BookDetail({ book }) {
               {/* “Tarjeta” blanca detrás de la portada para simular relieve */}
 
               <motion.img
-                src={getCoverImage(info)}
+                src={coverImage}
                 alt={info.title}
                 initial={{ rotate: -2, y: 8 }}
                 whileHover={{ y: -2, rotate: 0 }}
