@@ -18,7 +18,7 @@ function App() {
 
   return (
     <Provider store={store}>
-      <div className="app-container">
+      <div className="">
         {/* Botón de navegación */}
         <button
           onClick={toggleSection}
@@ -46,9 +46,7 @@ function App() {
         </button>
 
         {/* Renderizar solo la sección actual */}
-        <div className="section-content">
-          {sections[currentSection].component}
-        </div>
+        <div className="">{sections[currentSection].component}</div>
       </div>
     </Provider>
   );

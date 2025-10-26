@@ -12,13 +12,33 @@
   --font-general: "poppins", sans-serif;
   --font-Relieve: "Relieve", sans-serif;
 }
-/* Ocultar scrollbar sin desactivar scroll */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+/* Todo el scrollbar */
+::-webkit-scrollbar {
+  width: 12px; /* ancho vertical */
+  height: 12px; /* alto horizontal */
 }
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE y Edge */
-  scrollbar-width: none; /* Firefox */
+
+/* Fondo de la pista */
+::-webkit-scrollbar-track {
+  background: #111; /* color del track */
+  border-radius: 10px; /* bordes redondeados */
+}
+
+/* “Pulgar” o thumb */
+::-webkit-scrollbar-thumb {
+  background: #555; /* color del thumb */
+  border-radius: 10px; /* bordes redondeados */
+  border: 2px solid #111; /* borde interno */
+}
+
+/* Hover del thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: #888; /* color al pasar el mouse */
+}
+
+/* Esquina inferior donde se cruzan las barras */
+::-webkit-scrollbar-corner {
+  background: transparent; /* color o transparente */
 }
 
 /* Opcional: pulso leve de glow en CSS si quieres más vida al Cat (sin tocar motion)

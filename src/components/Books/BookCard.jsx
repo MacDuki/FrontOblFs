@@ -14,24 +14,37 @@ export default function BookCard({ book, onClick }) {
   };
 
   return (
-    <div className="bg-white/5 rounded-2xl p-4 flex flex-col items-center transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-[0_10px_25px_rgba(0,0,0,0.5)] animate-[slideIn_0.5s_ease_forwards] cursor-pointer">
-      <img
-        src={getCoverImage(info)}
-        alt={info.title || "Book cover"}
-        className="w-full h-64 object-cover rounded-2xl mb-4"
+    <div className="flex flex-col items-start">
+      <div
+        className="book-card bg-gray-800 rounded-2xl 
+  shadow-xl overflow-hidden cursor-pointer 
+  hover:scale-105 transition-all duration-300 h-52 w-34 relative bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${getCoverImage(info)})`,
+        }}
         onClick={onClick}
-      />
-      <div className="w-full">
-        <h3 className="font-semibold text-center mb-2 text-base text-white">
+      ></div>
+
+      <div className="space-y-2 flex flex-col items-start ">
+        <label
+          className="px-2 py-1 
+       text-xs font-semibold inline-block line-clamp-2 text-center"
+        >
           {info.title}
-        </h3>
-        <p className="text-sm text-white/70 text-center">
+        </label>
+        <label
+          className="px-2 py-1 
+      text-xs font-medium inline-block text-center"
+        >
           {info.authors?.join(", ") || "Unknown Author"}
-        </p>
+        </label>
         {info.publishedDate && (
-          <p className="text-xs text-white/70 text-center mt-1">
+          <label
+            className=" px-2 py-1 
+        text-xs font-medium inline-block text-center"
+          >
             {new Date(info.publishedDate).getFullYear()}
-          </p>
+          </label>
         )}
       </div>
     </div>
