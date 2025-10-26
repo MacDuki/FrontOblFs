@@ -1,10 +1,13 @@
 import BookCard from "./BookCard";
-//hehe
-export default function BooksGrid({ books , onSelectBook}) {
+export default function BooksGrid({ books, onSelectBook }) {
   return (
-    <div className="books-grid">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6">
       {books.map((book) => (
-        <BookCard key={book.id} book={book} onClick={() => onSelectBook(book)} />
+        <BookCard
+          key={book.id}
+          book={book}
+          onClick={() => onSelectBook(book)}
+        />
       ))}
     </div>
   );

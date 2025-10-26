@@ -14,21 +14,26 @@ export default function BookCard({ book, onClick }) {
   };
 
   return (
-    <div className="book-card bg-gray-800 rounded-2xl shadow-xl p-3 flex flex-col cursor-pointer hover:scale-105 transition-all duration-300" onClick={onClick}>
-      <div className="cover-wrap mb-4 w-full h-72">
-        <img
-          src={getCoverImage(info)}
-          alt={info.title}
-          loading="lazy"
-          className="book-cover w-full h-full object-cover rounded-xl shadow-md"
-        />
+    <div className="bg-white/5 rounded-2xl p-4 flex flex-col items-center transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-[0_10px_25px_rgba(0,0,0,0.5)] animate-[slideIn_0.5s_ease_forwards] cursor-pointer">
+      <img
+        src={getCoverImage(info)}
+        alt={info.title || "Book cover"}
+        className="w-full h-64 object-cover rounded-2xl mb-4"
+        onClick={onClick}
+      />
+      <div className="w-full">
+        <h3 className="font-semibold text-center mb-2 text-base text-white">
+          {info.title}
+        </h3>
+        <p className="text-sm text-white/70 text-center">
+          {info.authors?.join(", ") || "Unknown Author"}
+        </p>
+        {info.publishedDate && (
+          <p className="text-xs text-white/70 text-center mt-1">
+            {new Date(info.publishedDate).getFullYear()}
+          </p>
+        )}
       </div>
-      <h3 className="book-title font-semibold text-lg line-clamp-2 mb-1 text-white">
-        {info.title}
-      </h3>
-      <p className="book-authors text-sm text-gray-300">
-        {info.authors?.join(", ") || "Unknown Author"}
-      </p>
     </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   loadAllCategories,
   searchBooks,
 } from "../../features/books.slice";
-import "../styles/DiscoverBooks.css";
 import BookDetail from "./BookDetail";
 import BooksGrid from "./BooksGrid";
 import SearchBar from "./SearchBar";
@@ -35,16 +34,18 @@ export default function DiscoverBooks() {
   }, [dispatch, search]);
 
   return (
-    <section className="discover-root h-screen p-6 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 text-white">
-      <div className="discover-inner max-w-6xl mx-auto">
-        <h1 className="discover-title text-4xl font-Relieve mb-6 text-center">
+    <section className="min-h-screen p-8 bg-gradient-to-b from-[#040400] via-[#2f485c] to-[#b5412a] text-white font-['Poppins'] overflow-auto">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="font-['Relieve'] text-center text-5xl mb-8">
           Discover Books
         </h1>
 
         <SearchBar search={search} setSearch={setSearch} />
 
         {loading && (
-          <p className="loading text-center mt-4">Loading books...</p>
+          <p className="text-center text-xl mt-8 text-white/80">
+            Loading books...
+          </p>
         )}
 
         {!loading &&
@@ -56,7 +57,9 @@ export default function DiscoverBooks() {
           ))}
 
         {!loading && Object.keys(categoryBooks).length === 0 && (
-          <p className="no-results text-center mt-10">No books found.</p>
+          <p className="text-center text-xl mt-8 text-white/80">
+            No books found.
+          </p>
         )}
 
         {selectedBook && (
