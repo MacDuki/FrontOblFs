@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Star, Heart } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Bookmark, Heart, Star } from "lucide-react";
 
 export default function BookDetail({ book, onClose }) {
   if (!book) return null;
@@ -9,7 +9,13 @@ export default function BookDetail({ book, onClose }) {
   const getCoverImage = (info) => {
     const img = info.imageLinks;
     if (!img) return "https://via.placeholder.com/300x450?text=No+Cover";
-    return img.extraLarge || img.large || img.medium || img.thumbnail || img.smallThumbnail;
+    return (
+      img.extraLarge ||
+      img.large ||
+      img.medium ||
+      img.thumbnail ||
+      img.smallThumbnail
+    );
   };
 
   const handleFavorite = () => {
@@ -22,7 +28,6 @@ export default function BookDetail({ book, onClose }) {
 
   const handleReview = () => {
     console.log("Reseñar:", info.title);
-    
   };
 
   return (
@@ -49,15 +54,34 @@ export default function BookDetail({ book, onClose }) {
           />
 
           <div className="absolute -right-16 top-8 flex flex-col gap-4">
-            <FloatingIcon icon={<Heart size={20} />} color="rose" tooltip="Favorito" onClick={handleFavorite}/>
-            <FloatingIcon icon={<Bookmark size={20} />} color="blue" tooltip="Guardar" onClick={handleSave}/>
-            <FloatingIcon icon={<Star size={20} />} color="yellow" tooltip="Reseñar" onClick={handleReview}/>
+            <FloatingIcon
+              icon={<Heart size={20} />}
+              color="rose"
+              tooltip="Favorito"
+              onClick={handleFavorite}
+            />
+            <FloatingIcon
+              icon={<Bookmark size={20} />}
+              color="blue"
+              tooltip="Guardar"
+              onClick={handleSave}
+            />
+            <FloatingIcon
+              icon={<Star size={20} />}
+              color="yellow"
+              tooltip="Reseñar"
+              onClick={handleReview}
+            />
           </div>
         </div>
 
         <h2 className="mt-6 text-2xl font-bold text-center">{info.title}</h2>
-        <p className="text-gray-400 text-sm mb-4">{info.authors?.join(", ") || "Unknown Author"}</p>
-        <p className="text-gray-300 text-center max-w-md">{info.description || "No description available."}</p>
+        <p className="text-gray-400 text-sm mb-4">
+          {info.authors?.join(", ") || "Unknown Author"}
+        </p>
+        <p className="text-gray-300 text-center max-w-md">
+          {info.description || "No description available."}
+        </p>
       </motion.div>
     </AnimatePresence>
   );

@@ -43,3 +43,31 @@ body {
   box-sizing: border-box;
   overflow: hidden;
 }
+
+/* Estilos para el contenedor de la aplicación */
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.section-content {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Estilos para el botón de navegación */
+.section-toggle-btn {
+  font-family: var(--font-general);
+  transition: all 0.3s ease;
+}
+
+.section-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.section-toggle-btn:active {
+  transform: translateY(0);
+}
