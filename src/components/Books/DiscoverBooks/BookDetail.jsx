@@ -87,7 +87,7 @@ export default function BookDetail({ book }) {
   const handleReview = () => console.log("Reseñar:", info.title);
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto overflow-hidden">
       {/* CARD */}
       <motion.div
         layout

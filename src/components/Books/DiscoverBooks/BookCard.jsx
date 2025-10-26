@@ -83,9 +83,8 @@ export default function BookCard({ book, onClick }) {
         onOptionClick={(option) => handleOptionClick(option, book)}
       >
         <div
-          className="rounded-4xl 
-  shadow-2xl shad overflow-hidden cursor-pointer 
-   h-52 
+          className="rounded-3xl 
+  shadow-2xl overflow-hidden cursor-pointer h-52 
   w-34 relative bg-cover bg-center"
           style={{
             backgroundImage: `url(${getCoverImage(info)})`,
