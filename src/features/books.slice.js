@@ -14,14 +14,25 @@ export const fetchBooks = createAsyncThunk(
   "books/fetchBooks",
   async (query) => {
     try {
+      const params = {
+        q: query,
+        orderBy: "relevance",
+        maxResults: 12,
+      };
+
+      // Agregar API key si está disponible
+      if (import.meta.env.VITE_GOOGLE_BOOKS_API_KEY) {
+        params.key = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
+      }
+
       const res = await axios.get(
         "https://www.googleapis.com/books/v1/volumes",
-        {
-          params: { q: query, orderBy: "relevance", maxResults: 12 },
-        }
+        { params }
       );
+
       return res.data.items || [];
-    } catch {
+    } catch (error) {
+      console.error("API Error:", error);
       return [];
     }
   }
@@ -65,8 +76,10 @@ const booksSlice = createSlice({
   },
   reducers: {
     clearSearch: (state) => {
-      state.categoryBooks = state.originalCategoryBooks;
+      state.categoryBooks = { ...state.originalCategoryBooks };
       state.searchQuery = "";
+      // Remover resultados de búsqueda previos
+      delete state.categoryBooks["Search Results"];
     },
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;

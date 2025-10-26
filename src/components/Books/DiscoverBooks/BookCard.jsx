@@ -1,8 +1,11 @@
 import { CgDetailsMore } from "react-icons/cg";
 import { CiFolderOn, CiHeart, CiShare2 } from "react-icons/ci";
+import { useDispatch } from "react-redux";
+import { setSelectedBook } from "../../../features/books.slice";
 
 import OptionsMinimizedBook from "./OptionsMinimizedBook";
 export default function BookCard({ book, onClick }) {
+  const dispatch = useDispatch();
   const info = book.volumeInfo;
 
   const getCoverImage = (info) => {
@@ -66,23 +69,24 @@ export default function BookCard({ book, onClick }) {
         break;
       case "info":
         // Mostrar información adicional o ir a detalles
-
+        dispatch(setSelectedBook(book));
         break;
       default:
         break;
     }
   };
   return (
-    <div className="flex flex-col items-start">
+    <div className="flex flex-col items-start hover:scale-105 transition-all duration-300">
       <OptionsMinimizedBook
         key={book.id}
         options={bookOptions}
         onOptionClick={(option) => handleOptionClick(option, book)}
       >
         <div
-          className="book-card bg-gray-800 rounded-xl 
-  shadow-xl overflow-hidden cursor-pointer 
-  hover:scale-105 transition-all duration-300 h-52 w-34 relative bg-cover bg-center"
+          className="rounded-4xl 
+  shadow-2xl shad overflow-hidden cursor-pointer 
+   h-52 
+  w-34 relative bg-cover bg-center"
           style={{
             backgroundImage: `url(${getCoverImage(info)})`,
           }}

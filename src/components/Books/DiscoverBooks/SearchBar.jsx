@@ -28,7 +28,7 @@ export default function SearchBar() {
           value={searchQuery}
           onChange={handleSearchChange}
           placeholder="Search for a book or an author..."
-          className="w-3/5 px-5 py-4 rounded-4xl border-2 border-white bg-white/5 text-white text-xl transition-all duration-300 ease-in-out placeholder:text-white/60 focus:outline-none focus:border-blue-500 focus:shadow-[0_0_10px_rgba(66,133,244,0.5)]"
+          className="w-3/5 px-5 py-4 rounded-4xl border-2 border-black/70 bg-white/5 text-black/60 text-xl transition-all duration-300 ease-in-out placeholder:text-black/60"
         />
       </div>
 
@@ -45,8 +45,8 @@ export default function SearchBar() {
                 border transform hover:scale-105 active:scale-95 backdrop-blur-sm
                 ${
                   isVisible
-                    ? "border-white/40 text-white shadow-lg shadow-black/20 backdrop-blur-md"
-                    : "border-white/20 text-white/70 hover:border-white/30 hover:text-white hover:shadow-md hover:shadow-black/10 hover:backdrop-blur-md"
+                    ? "border-black/40 text-black shadow-lg shadow-black/20 backdrop-blur-md"
+                    : "border-black/20 text-black/70 hover:border-black/30 hover:text-black hover:shadow-md hover:shadow-black/10 hover:backdrop-blur-md"
                 }
               `}
             >
