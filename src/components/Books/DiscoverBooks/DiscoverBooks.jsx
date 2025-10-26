@@ -1,17 +1,17 @@
 import { useEffect } from "react";
 import { IoBookSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { Loader } from "../ui/Loader.jsx";
+import { Loader } from "../../ui/Loader.jsx";
 
 import {
   clearSearch,
   loadAllCategories,
   searchBooks,
-} from "../../features/books.slice";
-import Aurora from "../effects/Aurora.effect";
+} from "../../../features/books.slice.js";
+import Aurora from "../../effects/Aurora.effect.jsx";
 import BookDetail from "./BookDetail";
 import BooksGrid from "./BooksGrid";
-import SearchBar from "./SearchBar";
+import SearchBar from "./SearchBar.jsx";
 
 export default function DiscoverBooks() {
   const dispatch = useDispatch();

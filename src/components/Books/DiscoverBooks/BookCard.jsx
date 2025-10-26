@@ -23,25 +23,25 @@ export default function BookCard({ book, onClick }) {
     {
       id: "favorite",
       icon: <CiHeart size={22} />,
-      label: "Agregar a favoritos",
+      label: "Add to favorites",
       position: "top",
     },
     {
       id: "add-to-section",
       icon: <CiFolderOn size={22} />,
-      label: "add to section",
+      label: "Add to section",
       position: "right",
     },
     {
       id: "share",
       icon: <CiShare2 size={22} />,
-      label: "Compartir",
+      label: "Share",
       position: "bottom",
     },
     {
       id: "info",
       icon: <CgDetailsMore size={22} />,
-      label: "Ver detalles",
+      label: "View details",
       position: "left",
     },
   ];

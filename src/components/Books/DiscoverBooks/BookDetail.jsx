@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { Bookmark, Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +8,7 @@ import {
   removeFromFavorites,
   removeFromSaved,
   setSelectedBook,
-} from "../../features/books.slice";
+} from "../../../features/books.slice";
 
 export default function BookDetail({ book }) {
   const dispatch = useDispatch();

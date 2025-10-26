@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { setSelectedBook } from "../../features/books.slice";
+import { setSelectedBook } from "../../../features/books.slice";
 import BookCard from "./BookCard";
 
 export default function BooksGrid({ books }) {

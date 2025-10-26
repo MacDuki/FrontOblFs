@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchQuery } from "../../features/books.slice";
+import { setSearchQuery } from "../../../features/books.slice";
 
 export default function SearchBar() {
   const dispatch = useDispatch();
