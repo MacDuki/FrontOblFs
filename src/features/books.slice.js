@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const categories = [
+export const categories = [
   { name: "Thriller", query: "subject:thriller" },
   { name: "Fiction", query: "subject:fiction" },
   { name: "Fantasy", query: "subject:fantasy" },
@@ -58,6 +58,7 @@ const booksSlice = createSlice({
     savedBooks: [],
     selectedBook: null,
     searchQuery: "",
+    visibleCategories: categories.map((cat) => cat.name),
     loading: false,
     initialized: false,
     error: null,
@@ -94,6 +95,17 @@ const booksSlice = createSlice({
     removeFromSaved: (state, action) => {
       const bookId = action.payload;
       state.savedBooks = state.savedBooks.filter((b) => b.id !== bookId);
+    },
+    toggleCategoryVisibility: (state, action) => {
+      const categoryName = action.payload;
+
+      if (state.visibleCategories.includes(categoryName)) {
+        state.visibleCategories = state.visibleCategories.filter(
+          (cat) => cat !== categoryName
+        );
+      } else {
+        state.visibleCategories.push(categoryName);
+      }
     },
   },
   extraReducers: (builder) => {
@@ -137,5 +149,6 @@ export const {
   removeFromFavorites,
   addToSaved,
   removeFromSaved,
+  toggleCategoryVisibility,
 } = booksSlice.actions;
 export default booksSlice.reducer;

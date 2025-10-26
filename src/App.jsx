@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Provider } from "react-redux";
-import DiscoverBooks from "./components/Books/DiscoverBooks.jsx";
+import DiscoverBooks from "./components/Books/DiscoverBooks/DiscoverBooks.jsx";
 import Home from "./components/Home/Home.jsx";
 import { store } from "./store/store.js";
 
