@@ -54,6 +54,10 @@ const booksSlice = createSlice({
   initialState: {
     categoryBooks: {},
     originalCategoryBooks: {},
+    favoriteBooks: [],
+    savedBooks: [],
+    selectedBook: null,
+    searchQuery: "",
     loading: false,
     initialized: false,
     error: null,
@@ -61,6 +65,35 @@ const booksSlice = createSlice({
   reducers: {
     clearSearch: (state) => {
       state.categoryBooks = state.originalCategoryBooks;
+      state.searchQuery = "";
+    },
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
+    setSelectedBook: (state, action) => {
+      state.selectedBook = action.payload;
+    },
+    addToFavorites: (state, action) => {
+      const book = action.payload;
+      const exists = state.favoriteBooks.find((b) => b.id === book.id);
+      if (!exists) {
+        state.favoriteBooks.push(book);
+      }
+    },
+    removeFromFavorites: (state, action) => {
+      const bookId = action.payload;
+      state.favoriteBooks = state.favoriteBooks.filter((b) => b.id !== bookId);
+    },
+    addToSaved: (state, action) => {
+      const book = action.payload;
+      const exists = state.savedBooks.find((b) => b.id === book.id);
+      if (!exists) {
+        state.savedBooks.push(book);
+      }
+    },
+    removeFromSaved: (state, action) => {
+      const bookId = action.payload;
+      state.savedBooks = state.savedBooks.filter((b) => b.id !== bookId);
     },
   },
   extraReducers: (builder) => {
@@ -96,5 +129,13 @@ const booksSlice = createSlice({
   },
 });
 
-export const { clearSearch } = booksSlice.actions;
+export const {
+  clearSearch,
+  setSearchQuery,
+  setSelectedBook,
+  addToFavorites,
+  removeFromFavorites,
+  addToSaved,
+  removeFromSaved,
+} = booksSlice.actions;
 export default booksSlice.reducer;
