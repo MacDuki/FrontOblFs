@@ -1,5 +1,5 @@
-import lifeBar from "../assets/pets/general/Health Bar.png";
-import heart from "../assets/pets/general/Heart.png";
+import lifeBar from "../../../assets/pets/general/Health Bar.png";
+import heart from "../../../assets/pets/general/Heart.png";
 
 function HealthBar({
   health = 3,

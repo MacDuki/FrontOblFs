@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DarkVeil from "./components/effects/DarkVeil.effect.jsx";
-import DesktopLayout from "./components/layout/DesktopLayout";
+import DesktopLayout from "./components/Home/layout/DesktopLayout.jsx";
 import MobileNavigation from "./components/navigation/MobileNavigation";
 
 function App() {

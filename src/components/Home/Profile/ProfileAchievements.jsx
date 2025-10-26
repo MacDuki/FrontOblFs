@@ -1,4 +1,4 @@
-import { Achievement } from "./ui";
+import { Achievement } from "../../ui";
 
 export const ProfileAchievements = () => (
   <div className="px-6 py-6 space-y-3">

@@ -1,4 +1,4 @@
-import { Badge } from "./ui";
+import { Badge } from "../../ui";
 
 export const ProfileBadges = () => (
   <div className="px-6 pt-6">

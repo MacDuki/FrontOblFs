@@ -1,8 +1,8 @@
 import { CiLogin } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
-import readingImg from "../assets/imgs/undraw_reading-time.svg";
-import MechanicalText from "./effects/MechanicalText.effect.jsx";
-import "./styles/login.css";
+import readingImg from "../../assets/imgs/undraw_reading-time.svg";
+import MechanicalText from "../effects/MechanicalText.effect.jsx";
+import "../styles/login.css";
 function LoginScreen({ onBack }) {
   return (
     <section className="h-[520px]">

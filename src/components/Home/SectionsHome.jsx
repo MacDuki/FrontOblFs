@@ -1,4 +1,4 @@
-import MagicBentoLite from "../effects/MagicBentoLite.effect.jsx";
+import BentoSectionsHome from "./BentoSectionsHome.jsx";
 function SectionsHome() {
   return (
     <div
@@ -9,7 +9,7 @@ function SectionsHome() {
         relative justify-self-center
       `}
     >
-      <MagicBentoLite />
+      <BentoSectionsHome />
     </div>
   );
 }

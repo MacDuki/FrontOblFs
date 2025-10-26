@@ -1,6 +1,6 @@
-import { SectionsHome } from "../effects/SectionsHome";
-import { PetHome } from "../PetHome";
-import UserHome from "../UserHome";
+import { PetHome } from "../Home/Pet/PetHome";
+import { SectionsHome } from "../Home/SectionsHome";
+import UserHome from "../Home/UserHome";
 import TabButton from "./TabButton";
 
 function MobileNavigation({ tab, setTab }) {

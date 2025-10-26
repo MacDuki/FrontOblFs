@@ -1,6 +1,6 @@
 import { IoIosArrowBack } from "react-icons/io";
-import banner from "../assets/imgs/banner03.png";
-import RevealBannerButton from "./effects/RevealBannerButton.effect.jsx";
+import banner from "../../assets/imgs/banner03.png";
+import RevealBannerButton from "../effects/RevealBannerButton.effect.jsx";
 function RegisterScreen({ onBack }) {
   return (
     <section className="flex flex-col items-center justify-center space-y-4">

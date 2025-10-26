@@ -1,6 +1,6 @@
 import { CiLogin } from "react-icons/ci";
 import { IoPersonAddOutline } from "react-icons/io5";
-import BlurText from "./effects/BlurText.effect.jsx";
+import BlurText from "../effects/BlurText.effect.jsx";
 
 function AuthScreen({ onLogin, onRegister, logoW, catIdle }) {
   return (

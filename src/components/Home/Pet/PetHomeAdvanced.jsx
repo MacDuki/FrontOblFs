@@ -1,8 +1,8 @@
-import backGround from "../assets/imgs/bg1.png";
+import backGround from "../../../assets/imgs/bg1.png";
+import { usePet } from "../../usePet";
 import { HealthBar } from "./HealthBar";
 import { PetBackground } from "./PetBackground";
 import { PetViewer } from "./PetViewer";
-import { usePet } from "./usePet";
 
 // Componente PetHome con hook personalizado (versión avanzada)
 function PetHomeWithHook({

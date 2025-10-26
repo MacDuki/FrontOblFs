@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { MdPets } from "react-icons/md";
-import backGround from "../assets/imgs/bg1.png";
-import { Loader } from "./Loader";
+import backGround from "../../../assets/imgs/bg1.png";
+import { Loader } from "../../ui/Loader.jsx";
 import { PetBackground } from "./PetBackground";
 import { PetHeaderHome } from "./PetHeaderHome";
 import PetStatusPanel from "./PetStatusPanel";

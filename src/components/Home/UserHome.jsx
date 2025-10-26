@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CiUser } from "react-icons/ci";
-import { Loader } from "./Loader";
-import { ProfileAvatar } from "./ProfileAvatar";
-import { ProfileHeader } from "./ProfileHeader";
-import { ProfileStats } from "./ProfileStats";
+import { Loader } from "../ui/Loader";
+import { ProfileAvatar } from "./Profile/ProfileAvatar";
+import { ProfileHeader } from "./Profile/ProfileHeader";
+import { ProfileStats } from "./Profile/ProfileStats";
 
 /* ---- main card ---- */
 export default function UserHome({
