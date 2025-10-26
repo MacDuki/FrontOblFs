@@ -1,3 +1,6 @@
+import { CgDetailsMore } from "react-icons/cg";
+import { CiFolderOn, CiHeart, CiShare2 } from "react-icons/ci";
+
 import OptionsMinimizedBook from "./OptionsMinimizedBook";
 export default function BookCard({ book, onClick }) {
   const info = book.volumeInfo;
@@ -19,18 +22,28 @@ export default function BookCard({ book, onClick }) {
   const bookOptions = [
     {
       id: "favorite",
-      icon: "❤️",
+      icon: <CiHeart size={22} />,
       label: "Agregar a favoritos",
       position: "top",
     },
     {
       id: "add-to-section",
-      icon: "📚",
+      icon: <CiFolderOn size={22} />,
       label: "add to section",
       position: "right",
     },
-    { id: "share", icon: "🔗", label: "Compartir", position: "bottom" },
-    { id: "info", icon: "ℹ️", label: "Ver detalles", position: "left" },
+    {
+      id: "share",
+      icon: <CiShare2 size={22} />,
+      label: "Compartir",
+      position: "bottom",
+    },
+    {
+      id: "info",
+      icon: <CgDetailsMore size={22} />,
+      label: "Ver detalles",
+      position: "left",
+    },
   ];
 
   const handleOptionClick = (option, book) => {

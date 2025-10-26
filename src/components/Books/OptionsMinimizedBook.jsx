@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import { CiFolderOn } from "react-icons/ci";
 
 export default function OptionsMinimizedBook({
   children,
@@ -7,9 +9,10 @@ export default function OptionsMinimizedBook({
   disabled = false,
 }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+  const [animationsComplete, setAnimationsComplete] = useState(false);
   const containerRef = useRef(null);
 
-  // Cerrar opciones al hacer click fuera
+  // cerrar con click fuera + Esc
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -19,27 +22,33 @@ export default function OptionsMinimizedBook({
         setIsOptionsVisible(false);
       }
     };
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setIsOptionsVisible(false);
+    };
 
     if (isOptionsVisible) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEsc);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEsc);
     };
   }, [isOptionsVisible]);
 
   const handleCardClick = (originalOnClick) => {
     if (disabled) return;
-
     if (!isOptionsVisible) {
       setIsOptionsVisible(true);
+      setAnimationsComplete(false);
+      // Habilitar hover después de que termine la animación
+      setTimeout(() => {
+        setAnimationsComplete(true);
+      }, 200); // Duración ligeramente mayor que la animación
     } else {
-      // Si las opciones están visibles y se hace click en el card, ejecutar la acción original
-      if (originalOnClick) {
-        originalOnClick();
-      }
+      originalOnClick?.();
       setIsOptionsVisible(false);
+      setAnimationsComplete(false);
     }
   };
 
@@ -49,79 +58,255 @@ export default function OptionsMinimizedBook({
     setIsOptionsVisible(false);
   };
 
-  // Opciones por defecto si no se proporcionan
   const defaultOptions = [
-    { id: "favorite", icon: "❤️", label: "Favorito", position: "top" },
-    { id: "read-later", icon: "📚", label: "Leer después", position: "right" },
-    { id: "share", icon: "🔗", label: "Compartir", position: "bottom" },
-    { id: "info", icon: "ℹ️", label: "Información", position: "left" },
+    {
+      id: "favorite",
+      icon: "❤️",
+      label: "Favorito",
+      position: "top",
+      color: "rose",
+    },
+    {
+      id: "read-later",
+      icon: <CiFolderOn />,
+      label: "Leer después",
+      position: "right",
+      color: "blue",
+    },
+    {
+      id: "share",
+      icon: "🔗",
+      label: "Compartir",
+      position: "bottom",
+      color: "green",
+    },
+    {
+      id: "info",
+      icon: "ℹ️",
+      label: "Información",
+      position: "left",
+      color: "purple",
+    },
   ];
-
   const optionsToShow = options.length > 0 ? options : defaultOptions;
 
-  // Posiciones para las opciones alrededor del card
-  const getOptionPosition = (position) => {
-    const positions = {
-      top: "top-[-40px] left-1/2 transform -translate-x-1/2",
-      right: "right-[-40px] top-1/2 transform -translate-y-1/2",
-      bottom: "bottom-[-40px] left-1/2 transform -translate-x-1/2",
-      left: "left-[-40px] top-1/2 transform -translate-y-1/2",
+  // Función para obtener colores pastel según el tipo de opción
+  const getOptionColors = (option) => {
+    const colorMap = {
+      favorite: {
+        bg: "bg-rose-200",
+        hover: "hover:bg-rose-300",
+        text: "text-rose-800",
+        shadow: "rgba(244, 63, 94, 0.4)",
+      },
+      "read-later": {
+        bg: "bg-blue-200",
+        hover: "hover:bg-blue-300",
+        text: "text-blue-800",
+        shadow: "rgba(59, 130, 246, 0.4)",
+      },
+      share: {
+        bg: "bg-green-200",
+        hover: "hover:bg-green-300",
+        text: "text-green-800",
+        shadow: "rgba(34, 197, 94, 0.4)",
+      },
+      info: {
+        bg: "bg-purple-200",
+        hover: "hover:bg-purple-300",
+        text: "text-purple-800",
+        shadow: "rgba(147, 51, 234, 0.4)",
+      },
+      // Colores adicionales para opciones personalizadas
+      yellow: {
+        bg: "bg-yellow-200",
+        hover: "hover:bg-yellow-300",
+        text: "text-yellow-800",
+        shadow: "rgba(245, 158, 11, 0.4)",
+      },
+      orange: {
+        bg: "bg-orange-200",
+        hover: "hover:bg-orange-300",
+        text: "text-orange-800",
+        shadow: "rgba(249, 115, 22, 0.4)",
+      },
+      pink: {
+        bg: "bg-pink-200",
+        hover: "hover:bg-pink-300",
+        text: "text-pink-800",
+        shadow: "rgba(236, 72, 153, 0.4)",
+      },
+      indigo: {
+        bg: "bg-indigo-200",
+        hover: "hover:bg-indigo-300",
+        text: "text-indigo-800",
+        shadow: "rgba(99, 102, 241, 0.4)",
+      },
+      teal: {
+        bg: "bg-teal-200",
+        hover: "hover:bg-teal-300",
+        text: "text-teal-800",
+        shadow: "rgba(20, 184, 166, 0.4)",
+      },
     };
 
-    return positions[position] || positions.top;
+    // Usar el color específico de la opción o el ID como fallback, o gris por defecto
+    const colorKey = option.color || option.id || "gray";
+    return (
+      colorMap[colorKey] || {
+        bg: "bg-gray-200",
+        hover: "hover:bg-gray-300",
+        text: "text-gray-800",
+        shadow: "rgba(107, 114, 128, 0.4)",
+      }
+    );
   };
 
+  // offsets radiales en px
+  const posToXY = (p) => {
+    switch (p) {
+      case "top":
+        return { x: 0, y: -130 };
+      case "right":
+        return { x: 90, y: 0 };
+      case "bottom":
+        return { x: 0, y: 80 };
+      case "left":
+        return { x: -90, y: 0 };
+      default:
+        return { x: 0, y: -48 };
+    }
+  };
+
+  // variants
+  const overlayVar = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 0.12, transition: { duration: 0.12 } },
+    exit: { opacity: 0, transition: { duration: 0.12 } },
+  };
+
+  const ringVar = {
+    hidden: { scale: 0.85, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+      },
+    },
+    exit: {
+      scale: 0.9,
+      opacity: 0,
+      transition: { duration: 0.12 },
+    },
+  };
+
+  const itemVar = (x, y) => ({
+    hidden: { x: 0, y: 0, scale: 0.3, opacity: 0, filter: "blur(4px)" },
+    visible: {
+      x,
+      y,
+      scale: 1,
+      opacity: 1,
+      filter: "blur(0px)",
+      transition: { type: "linear", duration: 0.1 },
+    },
+    exit: {
+      x: 0,
+      y: 0,
+      scale: 0.2,
+      opacity: 0,
+      transition: { duration: 0.12 },
+    },
+  });
+
   return (
-    <div
-      ref={containerRef}
-      className="relative inline-block transition-all duration-300"
-    >
-      {/* Wrapper del BookCard */}
-      <div
-        className={`relative transition-all duration-300 ${
-          isOptionsVisible ? "z-20" : "z-10"
-        }`}
+    <div ref={containerRef} className="relative inline-block">
+      {/* Card con leve lift al abrir */}
+      <motion.div
+        animate={isOptionsVisible ? { scale: 1.015 } : { scale: 1 }}
+        transition={{ type: "spring" }}
+        className={isOptionsVisible ? "relative z-20" : "relative z-10"}
       >
         {React.cloneElement(children, {
           onClick: () => handleCardClick(children.props.onClick),
         })}
-      </div>
+      </motion.div>
 
-      {/* Opciones miniaturizadas */}
-      {isOptionsVisible && (
-        <>
-          {/* Overlay sutil para destacar el elemento activo */}
-          <div className="absolute inset-0 bg-blue-500/10 rounded-xl pointer-events-none z-10" />
+      {/* Capa + opciones */}
+      <AnimatePresence>
+        {isOptionsVisible && (
+          <>
+            {/* overlay sutil */}
+            <motion.div
+              className="absolute inset-0 rounded-xl bg-blue-500"
+              variants={overlayVar}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              style={{ pointerEvents: "none" }}
+            />
 
-          {/* Opciones alrededor del card */}
-          {optionsToShow.map((option, index) => (
-            <button
-              key={option.id}
-              className={`absolute ${getOptionPosition(option.position)} 
-                bg-gray-800 hover:bg-gray-700 text-white rounded-full 
-                w-8 h-8 flex items-center justify-center text-sm
-                shadow-lg border border-gray-600 hover:border-gray-500
-                transition-all hover:scale-110 z-30
-                animate-in slide-in-from-top-2`}
-              onClick={(e) => handleOptionClick(option, e)}
-              title={option.label}
-              style={{
-                animationDelay: `${index * 50}ms`,
-                animationDuration: "200ms",
-              }}
+            {/* ring centrado que expande items */}
+            <motion.div
+              className="absolute inset-0 z-30"
+              variants={ringVar}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              {option.icon}
-            </button>
-          ))}
+              {/* punto central */}
+              <motion.span
+                className="absolute left-1/2 top-1/2 -ml-1 -mt-1 w-2 h-2 rounded-full bg-blue-500"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.16 }}
+                style={{ pointerEvents: "none" }}
+              />
 
-          {/* Indicador central opcional */}
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                         w-2 h-2 bg-blue-500 rounded-full z-25 pointer-events-none
-                         animate-pulse"
-          />
-        </>
-      )}
+              {/* contenedor relativo al centro */}
+              <div className="absolute left-1/2 top-1/2">
+                {optionsToShow.map((option) => {
+                  const { x, y } = posToXY(option.position);
+                  const colors = getOptionColors(option);
+                  return (
+                    <motion.button
+                      key={option.id}
+                      variants={itemVar(x, y)}
+                      onClick={(e) => handleOptionClick(option, e)}
+                      title={option.label}
+                      className={`cursor-pointer
+                        absolute -left-4 -top-4 w-8 h-8
+                        flex items-center justify-center
+                        rounded-full text-sm
+                        ${colors.bg} ${
+                        animationsComplete ? colors.hover : ""
+                      } ${colors.text}
+                        border border-white/20
+                        shadow-lg backdrop-blur-sm
+                        transition-[box-shadow,transform,background-color] will-change-transform
+                        focus:outline-none focus:ring-2 focus:ring-white/40
+                        `}
+                      whileHover={
+                        animationsComplete
+                          ? {
+                              scale: 1.1,
+                              boxShadow: `0 0 12px ${colors.shadow}`,
+                            }
+                          : {}
+                      }
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {option.icon}
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
