@@ -22,6 +22,7 @@ export default function BookDetail({ book, onClose }) {
 
   const handleReview = () => {
     console.log("Reseñar:", info.title);
+    
   };
 
   return (
