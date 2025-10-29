@@ -4,6 +4,8 @@ import { Bookmark, ChevronLeft, Heart, Star } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useBookGradient } from "../../Utils/colorExtractor.js";
 import { rankDescription } from "../../Utils/textRanking.js";
+import { useState } from "react";
+import ReviewModal from "./ReviewModal.jsx";
 
 import {
   addToFavorites,
@@ -16,6 +18,7 @@ import {
 export default function BookDetail({ book }) {
   const dispatch = useDispatch();
   const { favoriteBooks, savedBooks } = useSelector((s) => s.books);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const getCoverImage = (info) => {
     const img = info?.imageLinks;
@@ -84,7 +87,13 @@ export default function BookDetail({ book }) {
       : dispatch(addToFavorites(book));
   const handleSave = () =>
     isSaved ? dispatch(removeFromSaved(book.id)) : dispatch(addToSaved(book));
-  const handleReview = () => console.log("Reseñar:", info.title);
+  const handleReview = () => setIsReviewModalOpen(true);
+  
+  const handleReviewSubmit = (review) => {
+    console.log("Reseña guardada:", review);
+    // Aquí puedes agregar la lógica para guardar la reseña en Redux o enviarla al backend
+    // Por ejemplo: dispatch(addReview(review));
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto overflow-hidden">
@@ -213,6 +222,14 @@ export default function BookDetail({ book }) {
           </div>
         </div>
       </motion.div>
+
+      {/* Modal de Reseña */}
+      <ReviewModal
+        book={book}
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSubmit={handleReviewSubmit}
+      />
     </div>
   );
 }
