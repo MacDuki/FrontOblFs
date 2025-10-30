@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
+import { IoIosArrowBack } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Loader } from "../../ui/Loader.jsx";
 
 import {
@@ -17,6 +19,7 @@ import EmptyState from "./EmptyState";
 
 export default function DiscoverBooks() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     categoryBooks,
     searchQuery,
@@ -68,6 +71,12 @@ export default function DiscoverBooks() {
 
   return (
     <section className=" select-none h-screen bg-gray-100 text-black font-poppins overflow-auto">
+      <button
+        className="cursor-pointer absolute top-5 left-5 text-center rounded-full bg-gray-200 transition-all hover:scale-110"
+        onClick={() => navigate("/")}
+      >
+        <IoIosArrowBack size={24} className="transition-all hover:scale-110" />
+      </button>
       <div className=" mx-auto p-4 md:p-8 w-2/3">
         <DiscoverBooksHeader />
 

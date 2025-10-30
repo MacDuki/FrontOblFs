@@ -9,7 +9,6 @@ export const categories = [
   { name: "Romance", query: "subject:romance" },
 ];
 
-// Async thunk para obtener libros
 export const fetchBooks = createAsyncThunk(
   "books/fetchBooks",
   async (query) => {
@@ -38,7 +37,6 @@ export const fetchBooks = createAsyncThunk(
   }
 );
 
-// Async thunk para cargar todas las categorías
 export const loadAllCategories = createAsyncThunk(
   "books/loadAllCategories",
   async (_, { dispatch }) => {
@@ -51,7 +49,6 @@ export const loadAllCategories = createAsyncThunk(
   }
 );
 
-// Async thunk para buscar libros
 export const searchBooks = createAsyncThunk(
   "books/searchBooks",
   async (searchQuery, { dispatch }) => {
@@ -78,7 +75,6 @@ const booksSlice = createSlice({
     clearSearch: (state) => {
       state.categoryBooks = { ...state.originalCategoryBooks };
       state.searchQuery = "";
-      // Remover resultados de búsqueda previos
       delete state.categoryBooks["Search Results"];
     },
     setSearchQuery: (state, action) => {
@@ -123,7 +119,7 @@ const booksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Load all categories
+
       .addCase(loadAllCategories.pending, (state) => {
         state.loading = true;
         state.error = null;

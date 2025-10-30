@@ -1,13 +1,24 @@
 // Simple, sin librerías ni efectos. Misma distribución y contenido. Mismo nombre.
+import { useState } from "react";
+import { CiSearch } from "react-icons/ci";
+import { GiTrophiesShelf } from "react-icons/gi";
+import { HiOutlineCollection } from "react-icons/hi";
+import { MdOutlineFormatQuote, MdOutlinePets } from "react-icons/md";
+import { TfiStatsUp } from "react-icons/tfi";
+import { useNavigate } from "react-router-dom";
+
 import Stepper, { Step } from "./Stepper";
 
 function BentoSectionsHome() {
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+
   return (
     <div className="select-none overflow-hidden w-full flex justify-center bg-transparent h-full lg:max-h-[600px] lg:h-[600px] ">
       <div className="grid gap-2 p-3 w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:grid-rows-3 auto-rows-[minmax(180px,auto)]">
-        {/* Stepper - Large top left (spans 2 columns, 2 rows) */}
+        {/* Stepper */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl lg:col-span-2 lg:row-span-2"
+          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out hover:scale-[1.02] hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500/30 lg:col-span-2 lg:row-span-2"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
@@ -58,99 +69,82 @@ function BentoSectionsHome() {
           </Stepper>
         </div>
 
-        {/* Statistics - Top right first */}
+        {/* Statistics  */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+          className="cursor-pointer flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-75 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 hover:border-blue-500/30"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
-            <span className="text-base opacity-90">Statistics</span>
+            <span className="text-base opacity-90">Stats</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Statistics</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Track user behavior
-            </p>
+            <TfiStatsUp size={48} />
           </div>
         </div>
 
-        {/* trophies - Top right second */}
+        {/* trophies  */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+          className="cursor-pointer flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-100 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/20 hover:border-yellow-500/30"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
             <span className="text-base opacity-90">Trophies</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Trophies</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Centralized data view
-            </p>
+            <GiTrophiesShelf size={48} />
           </div>
         </div>
 
-        {/* Pet - Middle right (spans 2 columns) */}
+        {/* Pets */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl lg:col-span-2"
+          className=" cursor-pointer flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-150 hover:scale-[1.02] hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/20 hover:border-green-500/30 lg:col-span-2"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
             <span className="text-base opacity-90">Pets</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Pets</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Streamline workflows
-            </p>
+            <MdOutlinePets size={48} />
           </div>
         </div>
 
-        {/* Quote - Bottom (spans 2 columns) */}
+        {/* Quote */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl lg:col-span-2"
+          className="cursor-pointer flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-200 hover:scale-[1.02] hover:-translate-y-2 hover:shadow-2xl hover:shadow-pink-500/20 hover:border-pink-500/30 lg:col-span-2"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
-            <span className="text-base opacity-90">Motivation</span>
+            <span className="text-base opacity-90">Motivation quote</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Quote</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Inspirational daily quotes
-            </p>
+            <MdOutlineFormatQuote size={48} />
           </div>
         </div>
 
-        {/* Badges - Bottom left */}
+        {/* My Books */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+          className="cursor-pointer flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-250 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/20 hover:border-indigo-500/30"
           style={{ backgroundColor: "#060010" }}
         >
           <div className="flex justify-between items-start">
-            <span className="text-base opacity-90">Books</span>
+            <span className="text-base opacity-90">My Books</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Integration</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Connect favorite tools
-            </p>
+            <HiOutlineCollection size={48} />
           </div>
         </div>
 
-        {/* Security - Bottom second */}
+        {/* Search Books */}
         <div
-          className="flex flex-col justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+          className="flex flex-col cursor-pointer justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-300 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-500/30"
           style={{ backgroundColor: "#060010" }}
+          onClick={() => navigate("/discover-books")}
         >
           <div className="flex justify-between items-start">
-            <span className="text-base opacity-90">Collections</span>
+            <span className="text-base opacity-90">Search Books</span>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-medium mb-1 truncate">Security</h3>
-            <p className="text-xs leading-5 opacity-80 line-clamp-2">
-              Enterprise-grade protection
-            </p>
+            <CiSearch size={48} />
           </div>
         </div>
       </div>

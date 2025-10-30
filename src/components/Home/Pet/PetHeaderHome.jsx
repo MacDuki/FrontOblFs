@@ -1,4 +1,4 @@
-import { MdPets } from "react-icons/md";
+import { BiHide } from "react-icons/bi";
 
 export const PetHeaderHome = ({
   onCollapse,
@@ -13,7 +13,7 @@ export const PetHeaderHome = ({
         className="group flex items-center gap-2 text-white/80 cursor-pointer transition hover:text-white hover:scale-105"
         onClick={onCollapse}
       >
-        <MdPets />
+        <BiHide />
         <span className="text-xs opacity-0 transform translate-x-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
           Hide
         </span>
