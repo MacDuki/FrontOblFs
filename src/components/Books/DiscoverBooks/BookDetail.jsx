@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
-import { Bookmark, ChevronLeft, Heart, Star } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { useBookGradient } from "../../Utils/colorExtractor.js";
-import { rankDescription } from "../../Utils/textRanking.js";
+import { CiBookmark } from "react-icons/ci";
+
 import { useState } from "react";
+import { CiStar } from "react-icons/ci";
+import { IoIosArrowBack } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { rankDescription } from "../../Utils/textRanking.js";
 import ReviewModal from "./ReviewModal.jsx";
 
 import {
@@ -35,10 +37,6 @@ export default function BookDetail({ book }) {
 
   // Seleccionar gradiente predeterminado basado en el libro
   const bookInfo = book?.volumeInfo || {};
-  const { gradient, loading: gradientLoading } = useBookGradient(
-    book?.id,
-    bookInfo.title
-  );
 
   if (!book) return null;
 
@@ -47,21 +45,6 @@ export default function BookDetail({ book }) {
   const isSaved = savedBooks.some((b) => b.id === book.id);
   const coverImage = getCoverImage(info);
 
-  // Generar el estilo de fondo dinámico
-  const getBackgroundStyle = () => {
-    if (!gradient) {
-      return {
-        background:
-          "linear-gradient(135deg, #ff6b6b 0%, #ff8e53 35%, #ff6b9d 70%, #c44569 100%)",
-        transition: "background 0.8s ease-in-out",
-      };
-    }
-
-    return {
-      background: gradient.gradient,
-      transition: "background 0.8s ease-in-out",
-    };
-  };
   function DescriptionRanked({ description }) {
     if (!description)
       return <p className="text-white/60">No description available.</p>;
@@ -72,8 +55,7 @@ export default function BookDetail({ book }) {
       <div className="mt-3 space-y-2">
         {top.map(({ txt, score }, i) => (
           <div key={i} className="flex items-start gap-2">
-            <span className="mt-1 h-2 w-2 rounded-full bg-white/70 shrink-0" />
-            <p className="text-white/90 text-sm md:text-base">{txt}</p>
+            <p className="text-black/90 text-sm md:text-base">{txt}</p>
             <span className="sr-only">score {score.toFixed(1)}</span>
           </div>
         ))}
@@ -88,7 +70,7 @@ export default function BookDetail({ book }) {
   const handleSave = () =>
     isSaved ? dispatch(removeFromSaved(book.id)) : dispatch(addToSaved(book));
   const handleReview = () => setIsReviewModalOpen(true);
-  
+
   const handleReviewSubmit = (review) => {
     console.log("Reseña guardada:", review);
     // Aquí puedes agregar la lógica para guardar la reseña en Redux o enviarla al backend
@@ -105,12 +87,8 @@ export default function BookDetail({ book }) {
         transition={{ duration: 0.35 }}
         className="relative overflow-hidden rounded-3xl shadow-2xl"
       >
-        {/* Fondo dinámico basado en colores de la portada */}
         <div
-          className={`relative transition-all duration-700 ease-out ${
-            gradientLoading ? "animate-pulse" : ""
-          }`}
-          style={getBackgroundStyle()}
+          className={`relative transition-all duration-700 ease-out bg-slate-50 text-black`}
         >
           <div className="relative flex flex-col items-center md:flex-row  gap-6 p-6 md:p-8">
             {/* Flecha volver */}
@@ -120,7 +98,7 @@ export default function BookDetail({ book }) {
               aria-label="Volver"
               title="Volver"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-700" />
+              <IoIosArrowBack className="w-5 h-5 text-gray-700" />
             </button>
 
             {/* Portada flotante */}
@@ -139,82 +117,60 @@ export default function BookDetail({ book }) {
 
             {/* Contenido derecho */}
             <div className="flex-1 flex flex-col justify-center md:pl-4">
-              <h2 className="text-white text-2xl md:text-3xl font-semibold drop-shadow-sm">
+              <h2 className="text-black text-2xl md:text-3xl font-semibold drop-shadow-sm">
                 {info.title}
               </h2>
-              <p className="text-white/80 text-sm md:text-base mt-1">
+              <p className="text-black/80 text-sm md:text-base mt-1">
                 {info.authors?.join(", ") || "Unknown Author"}
               </p>
 
               {/* Descripción  */}
-              <div className="mt-3">
+              <div className="mt-3 text-black/80">
                 <DescriptionRanked description={info.description} />
               </div>
 
               {/* Botón Detalles + acciones pequeñas tipo icono */}
               <div className="mt-5 flex items-center gap-3">
-                <button
-                  onClick={() => {}}
-                  className="px-5 py-2 text-sm font-medium rounded-full bg-white/70 hover:bg-white text-gray-800 shadow transition"
-                >
-                  Detalles
-                </button>
-
                 <div className="flex items-center gap-2">
-                  <IconButton
-                    active={isFavorite}
-                    onClick={handleFavorite}
-                    label={isFavorite ? "Quitar de favoritos" : "Favorito"}
-                  >
-                    <Heart
-                      className={`w-4 h-4 ${
-                        isFavorite
-                          ? "fill-rose-500 text-rose-500"
-                          : "text-gray-700"
-                      }`}
-                    />
-                  </IconButton>
-
                   <IconButton
                     active={isSaved}
                     onClick={handleSave}
-                    label={isSaved ? "Quitar de guardados" : "Guardar"}
+                    label={isSaved ? "remove from list" : "Save to a list"}
                   >
-                    <Bookmark
+                    <CiBookmark
                       className={`w-4 h-4 ${
                         isSaved ? "fill-sky-500 text-sky-500" : "text-gray-700"
                       }`}
                     />
                   </IconButton>
 
-                  <IconButton onClick={handleReview} label="Reseñar">
-                    <Star className="w-4 h-4 text-yellow-500" />
+                  <IconButton onClick={handleReview} label="Review">
+                    <CiStar className="w-4 h-4 text-yellow-500" />
                   </IconButton>
                 </div>
               </div>
 
               {/* Meta compacta bajo el botón, opcional */}
-              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/80">
+              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-black/80">
                 {info.pageCount && (
                   <span>
-                    Páginas: <b className="text-white">{info.pageCount}</b>
+                    Pages: <b className="text-black">{info.pageCount}</b>
                   </span>
                 )}
                 {info.categories?.[0] && (
                   <span>
-                    Categoría:{" "}
-                    <b className="text-white">{info.categories[0]}</b>
+                    Category: <b className="text-black">{info.categories[0]}</b>
                   </span>
                 )}
                 {info.language && (
                   <span>
-                    Idioma:{" "}
-                    <b className="text-white">{info.language.toUpperCase()}</b>
+                    Language:{" "}
+                    <b className="text-black">{info.language.toUpperCase()}</b>
                   </span>
                 )}
                 {info.publisher && (
                   <span>
-                    Editorial: <b className="text-white">{info.publisher}</b>
+                    Editorial: <b className="text-black">{info.publisher}</b>
                   </span>
                 )}
               </div>
@@ -241,7 +197,7 @@ function IconButton({ children, onClick, label = "", active = false }) {
       whileTap={{ scale: 0.94 }}
       onClick={onClick}
       title={label}
-      className={`grid place-items-center w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow transition ${
+      className={`cursor-pointer grid place-items-center w-8 h-8 rounded-full bg-white/80 hover:bg-white shadow transition ${
         active ? "ring-2 ring-white/60" : ""
       }`}
       aria-label={label}
