@@ -54,9 +54,26 @@ export const loadAllCategories = createAsyncThunk(
 // Async thunk para buscar libros
 export const searchBooks = createAsyncThunk(
   "books/searchBooks",
-  async (searchQuery, { dispatch }) => {
+  async (searchQuery, { dispatch, getState }) => {
+    const state = getState();
+    const cacheKey = searchQuery.toLowerCase().trim();
+    
+    // Si ya existe en cache, retornar datos guardados
+    if (state.books.searchCache[cacheKey]) {
+      return { 
+        query: cacheKey,
+        books: state.books.searchCache[cacheKey],
+        fromCache: true 
+      };
+    }
+    
+    // Si no existe, hacer fetch
     const books = await dispatch(fetchBooks(searchQuery)).unwrap();
-    return { "Search Results": books };
+    return { 
+      query: cacheKey,
+      books,
+      fromCache: false 
+    };
   }
 );
 
@@ -65,6 +82,7 @@ const booksSlice = createSlice({
   initialState: {
     categoryBooks: {},
     originalCategoryBooks: {},
+    searchCache: {},
     favoriteBooks: [],
     savedBooks: [],
     selectedBook: null,
@@ -145,7 +163,15 @@ const booksSlice = createSlice({
       })
       .addCase(searchBooks.fulfilled, (state, action) => {
         state.loading = false;
-        state.categoryBooks = action.payload;
+        const { query, books, fromCache } = action.payload;
+        
+        // Guardar en cache si no venía de ahí
+        if (!fromCache) {
+          state.searchCache[query] = books;
+        }
+        
+        // Mostrar resultados
+        state.categoryBooks = { "Search Results": books };
       })
       .addCase(searchBooks.rejected, (state, action) => {
         state.loading = false;
