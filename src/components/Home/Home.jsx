@@ -8,7 +8,7 @@ function Home() {
 
   return (
     <>
-      <DarkVeil />
+      <DarkVeil speed={1.8} hueShift={221} />
       <MobileNavigation tab={tab} setTab={setTab} />
       <DesktopLayout />
     </>
