@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth/Auth.jsx";
 import DiscoverBooks from "./components/Books/DiscoverBooks/DiscoverBooks.jsx";
 import Home from "./components/Home/Home.jsx";
+import { NotFound } from "./components/NotFound/NotFound.jsx";
 import {
   ProtectedRoute,
   PublicRoute,
@@ -40,15 +41,8 @@ function App() {
           }
         />
 
-        {/* Ruta catch-all - redirige según el estado de autenticación */}
-        <Route
-          path="*"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+        {/* Ruta catch-all - maneja páginas no encontradas */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Provider>
   );
