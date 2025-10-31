@@ -7,7 +7,7 @@ import { CiStar } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { rankDescription } from "../../Utils/textRanking.js";
-import ReviewModal from "./ReviewModal.jsx";
+import ReviewModal from "../ReviewModal.jsx";
 
 export default function BookDetail({ book }) {
   const {

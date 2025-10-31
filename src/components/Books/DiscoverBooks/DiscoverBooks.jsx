@@ -1,24 +1,18 @@
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useBooks } from "../../../hooks/useBooks.js";
 import { Loader } from "../../ui/Loader.jsx";
 
-import {
-  clearSearch,
-  loadAllCategories,
-  searchBooks,
-  setSelectedBook,
-} from "../../../features/books.slice.js";
 import BookDetail from "./BookDetail";
 import CategorySection from "./CategorySection";
 import DiscoverBooksHeader from "./DiscoverBooksHeader";
 import EmptyState from "./EmptyState";
 
 export default function DiscoverBooks() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     categoryBooks,
@@ -27,33 +21,37 @@ export default function DiscoverBooks() {
     loading,
     initialized,
     visibleCategories,
-  } = useSelector((state) => state.books);
+    loadCategories,
+    searchForBooks,
+    clearSearchResults,
+    selectBook,
+  } = useBooks();
 
   // Cargar categorías solo si no han sido inicializadas
   useEffect(() => {
     if (!initialized) {
-      dispatch(loadAllCategories());
+      loadCategories();
     }
-  }, [dispatch, initialized]);
+  }, [initialized, loadCategories]);
 
   // Manejar búsquedas con debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery.trim() !== "") {
-        dispatch(searchBooks(searchQuery));
+        searchForBooks(searchQuery);
       } else {
-        dispatch(clearSearch());
+        clearSearchResults();
       }
     }, 500); // Esperar 500ms después de que el usuario deje de escribir
 
     return () => clearTimeout(timer);
-  }, [dispatch, searchQuery]);
+  }, [searchQuery, searchForBooks, clearSearchResults]);
 
   // Cerrar modal con tecla Escape
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape" && selectedBook) {
-        dispatch(setSelectedBook(null));
+        selectBook(null);
       }
     };
 
@@ -67,7 +65,7 @@ export default function DiscoverBooks() {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "unset";
     };
-  }, [selectedBook, dispatch]);
+  }, [selectedBook, selectBook]);
 
   return (
     <section className=" select-none h-screen bg-gray-100 text-black font-poppins overflow-auto">
@@ -128,7 +126,7 @@ export default function DiscoverBooks() {
               onClick={(e) => {
                 // Cerrar si se hace clic en el overlay (no en el contenido)
                 if (e.target === e.currentTarget) {
-                  dispatch(setSelectedBook(null));
+                  selectBook(null);
                 }
               }}
             >

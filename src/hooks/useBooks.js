@@ -1,14 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addBookToFavorites,
-  addBookToSaved,
   clearSearch,
   fetchBooks,
-  fetchFavoriteBooks,
-  fetchSavedBooks,
   loadAllCategories,
-  removeBookFromFavorites,
-  removeBookFromSaved,
   searchBooks,
   setSearchQuery,
   setSelectedBook,
@@ -35,25 +29,25 @@ export const useBooks = () => {
   const fetchBooksData = (query) => dispatch(fetchBooks(query));
 
   // Funciones para favoritos
-  const loadFavorites = () => dispatch(fetchFavoriteBooks());
+  const loadFavorites = () => console.log("fetchFavoriteBooks");
   const addToFavorites = async (bookId) => {
-    const result = await dispatch(addBookToFavorites(bookId));
-    return result;
+    console.log("addBookToFavorites", bookId);
+    return null;
   };
   const removeFromFavorites = async (bookId) => {
-    const result = await dispatch(removeBookFromFavorites(bookId));
-    return result;
+    console.log("removeBookFromFavorites", bookId);
+    return null;
   };
 
   // Funciones para libros guardados
-  const loadSavedBooks = () => dispatch(fetchSavedBooks());
+  const loadSavedBooks = () => console.log("fetchSavedBooks");
   const saveBook = async (bookId) => {
-    const result = await dispatch(addBookToSaved(bookId));
-    return result;
+    console.log("addBookToSaved", bookId);
+    return null;
   };
   const unsaveBook = async (bookId) => {
-    const result = await dispatch(removeBookFromSaved(bookId));
-    return result;
+    console.log("removeBookFromSaved", bookId);
+    return null;
   };
 
   // Funciones de UI
