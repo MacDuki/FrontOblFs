@@ -1,38 +1,31 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../api/api";
 
 export const categories = [
-  { name: "Thriller", query: "subject:thriller" },
-  { name: "Fiction", query: "subject:fiction" },
-  { name: "Fantasy", query: "subject:fantasy" },
-  { name: "Self Help", query: "subject:self-help" },
-  { name: "Romance", query: "subject:romance" },
+  { name: "Thriller", query: "thriller" },
+  { name: "Fiction", query: "fiction" },
+  { name: "Fantasy", query: "fantasy" },
+  { name: "Self Help", query: "self-help" },
+  { name: "Romance", query: "romance" },
 ];
 
 export const fetchBooks = createAsyncThunk(
   "books/fetchBooks",
-  async (query) => {
+  async (query, { rejectWithValue }) => {
     try {
-      const params = {
-        q: query,
-        orderBy: "relevance",
-        maxResults: 12,
-      };
+      const res = await api.get("/books", {
+        params: {
+          search: query,
+          limit: 12,
+        },
+      });
 
-      // Agregar API key si está disponible
-      if (import.meta.env.VITE_GOOGLE_BOOKS_API_KEY) {
-        params.key = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
-      }
-
-      const res = await axios.get(
-        "https://www.googleapis.com/books/v1/volumes",
-        { params }
-      );
-
-      return res.data.items || [];
+      return res.data.books || [];
     } catch (error) {
       console.error("API Error:", error);
-      return [];
+      return rejectWithValue(
+        error.response?.data?.message || "Error fetching books"
+      );
     }
   }
 );
@@ -54,23 +47,113 @@ export const searchBooks = createAsyncThunk(
   async (searchQuery, { dispatch, getState }) => {
     const state = getState();
     const cacheKey = searchQuery.toLowerCase().trim();
-    
+
     // Si ya existe en cache, retornar datos guardados
     if (state.books.searchCache[cacheKey]) {
-      return { 
+      return {
         query: cacheKey,
         books: state.books.searchCache[cacheKey],
-        fromCache: true 
+        fromCache: true,
       };
     }
-    
+
     // Si no existe, hacer fetch
     const books = await dispatch(fetchBooks(searchQuery)).unwrap();
-    return { 
+    return {
       query: cacheKey,
       books,
-      fromCache: false 
+      fromCache: false,
     };
+  }
+);
+
+// Thunk para obtener libros favoritos del usuario
+export const fetchFavoriteBooks = createAsyncThunk(
+  "books/fetchFavoriteBooks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/books/favorites");
+      return res.data.favorites || [];
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error fetching favorite books"
+      );
+    }
+  }
+);
+
+// Thunk para obtener libros guardados del usuario
+export const fetchSavedBooks = createAsyncThunk(
+  "books/fetchSavedBooks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("/books/saved");
+      return res.data.saved || [];
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error fetching saved books"
+      );
+    }
+  }
+);
+
+// Thunk para agregar libro a favoritos
+export const addBookToFavorites = createAsyncThunk(
+  "books/addBookToFavorites",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      const res = await api.post(`/books/${bookId}/favorite`);
+      return res.data.book;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error adding to favorites"
+      );
+    }
+  }
+);
+
+// Thunk para quitar libro de favoritos
+export const removeBookFromFavorites = createAsyncThunk(
+  "books/removeBookFromFavorites",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      await api.delete(`/books/${bookId}/favorite`);
+      return bookId;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error removing from favorites"
+      );
+    }
+  }
+);
+
+// Thunk para agregar libro a guardados
+export const addBookToSaved = createAsyncThunk(
+  "books/addBookToSaved",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      const res = await api.post(`/books/${bookId}/save`);
+      return res.data.book;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error saving book"
+      );
+    }
+  }
+);
+
+// Thunk para quitar libro de guardados
+export const removeBookFromSaved = createAsyncThunk(
+  "books/removeBookFromSaved",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      await api.delete(`/books/${bookId}/save`);
+      return bookId;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error removing saved book"
+      );
+    }
   }
 );
 
@@ -101,25 +184,27 @@ const booksSlice = createSlice({
     setSelectedBook: (state, action) => {
       state.selectedBook = action.payload;
     },
-    addToFavorites: (state, action) => {
+    // Estos reducers locales se mantienen para operaciones inmediatas de UI
+    // Los thunks se encargan de la sincronización con el servidor
+    addToFavoritesLocal: (state, action) => {
       const book = action.payload;
       const exists = state.favoriteBooks.find((b) => b.id === book.id);
       if (!exists) {
         state.favoriteBooks.push(book);
       }
     },
-    removeFromFavorites: (state, action) => {
+    removeFromFavoritesLocal: (state, action) => {
       const bookId = action.payload;
       state.favoriteBooks = state.favoriteBooks.filter((b) => b.id !== bookId);
     },
-    addToSaved: (state, action) => {
+    addToSavedLocal: (state, action) => {
       const book = action.payload;
       const exists = state.savedBooks.find((b) => b.id === book.id);
       if (!exists) {
         state.savedBooks.push(book);
       }
     },
-    removeFromSaved: (state, action) => {
+    removeFromSavedLocal: (state, action) => {
       const bookId = action.payload;
       state.savedBooks = state.savedBooks.filter((b) => b.id !== bookId);
     },
@@ -160,18 +245,82 @@ const booksSlice = createSlice({
       .addCase(searchBooks.fulfilled, (state, action) => {
         state.loading = false;
         const { query, books, fromCache } = action.payload;
-        
+
         // Guardar en cache si no venía de ahí
         if (!fromCache) {
           state.searchCache[query] = books;
         }
-        
+
         // Mostrar resultados
         state.categoryBooks = { "Search Results": books };
       })
       .addCase(searchBooks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      // Fetch favorite books
+      .addCase(fetchFavoriteBooks.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchFavoriteBooks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.favoriteBooks = action.payload;
+      })
+      .addCase(fetchFavoriteBooks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch saved books
+      .addCase(fetchSavedBooks.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSavedBooks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.savedBooks = action.payload;
+      })
+      .addCase(fetchSavedBooks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Add to favorites
+      .addCase(addBookToFavorites.fulfilled, (state, action) => {
+        const book = action.payload;
+        const exists = state.favoriteBooks.find((b) => b.id === book.id);
+        if (!exists) {
+          state.favoriteBooks.push(book);
+        }
+      })
+      .addCase(addBookToFavorites.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      // Remove from favorites
+      .addCase(removeBookFromFavorites.fulfilled, (state, action) => {
+        const bookId = action.payload;
+        state.favoriteBooks = state.favoriteBooks.filter(
+          (b) => b.id !== bookId
+        );
+      })
+      .addCase(removeBookFromFavorites.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      // Add to saved
+      .addCase(addBookToSaved.fulfilled, (state, action) => {
+        const book = action.payload;
+        const exists = state.savedBooks.find((b) => b.id === book.id);
+        if (!exists) {
+          state.savedBooks.push(book);
+        }
+      })
+      .addCase(addBookToSaved.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      // Remove from saved
+      .addCase(removeBookFromSaved.fulfilled, (state, action) => {
+        const bookId = action.payload;
+        state.savedBooks = state.savedBooks.filter((b) => b.id !== bookId);
+      })
+      .addCase(removeBookFromSaved.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });
@@ -180,10 +329,10 @@ export const {
   clearSearch,
   setSearchQuery,
   setSelectedBook,
-  addToFavorites,
-  removeFromFavorites,
-  addToSaved,
-  removeFromSaved,
+  addToFavoritesLocal,
+  removeFromFavoritesLocal,
+  addToSavedLocal,
+  removeFromSavedLocal,
   toggleCategoryVisibility,
 } = booksSlice.actions;
 export default booksSlice.reducer;

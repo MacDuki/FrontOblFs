@@ -5,21 +5,19 @@ import { CiBookmark } from "react-icons/ci";
 import { useState } from "react";
 import { CiStar } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
+import { useBooks } from "../../../hooks/useBooks.js";
 import { rankDescription } from "../../Utils/textRanking.js";
 import ReviewModal from "./ReviewModal.jsx";
 
-import {
-  addToFavorites,
-  addToSaved,
-  removeFromFavorites,
-  removeFromSaved,
-  setSelectedBook,
-} from "../../../features/books.slice";
-
 export default function BookDetail({ book }) {
-  const dispatch = useDispatch();
-  const { favoriteBooks, savedBooks } = useSelector((s) => s.books);
+  const {
+    favoriteBooks,
+    savedBooks,
+    selectBook,
+    saveBook,
+    unsaveBook,
+    isBookSaved,
+  } = useBooks();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const getCoverImage = (info) => {
@@ -42,7 +40,7 @@ export default function BookDetail({ book }) {
 
   const info = book.volumeInfo || {};
   const isFavorite = favoriteBooks.some((b) => b.id === book.id);
-  const isSaved = savedBooks.some((b) => b.id === book.id);
+  const isSaved = isBookSaved(book.id);
   const coverImage = getCoverImage(info);
 
   function DescriptionRanked({ description }) {
@@ -62,13 +60,15 @@ export default function BookDetail({ book }) {
       </div>
     );
   }
-  const handleClose = () => dispatch(setSelectedBook(null));
-  const handleFavorite = () =>
-    isFavorite
-      ? dispatch(removeFromFavorites(book.id))
-      : dispatch(addToFavorites(book));
-  const handleSave = () =>
-    isSaved ? dispatch(removeFromSaved(book.id)) : dispatch(addToSaved(book));
+  const handleClose = () => selectBook(null);
+
+  const handleSave = () => {
+    if (isSaved) {
+      unsaveBook(book.id);
+    } else {
+      saveBook(book.id);
+    }
+  };
   const handleReview = () => setIsReviewModalOpen(true);
 
   const handleReviewSubmit = (review) => {

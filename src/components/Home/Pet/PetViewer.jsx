@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { PET_CONFIGS } from "../../petConfig.js";
+import { PET_CONFIGS } from "../../Utils/petConfig.js";
 
 function PetViewer({
   petType = "cat",

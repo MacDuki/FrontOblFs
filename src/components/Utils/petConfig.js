@@ -2,12 +2,12 @@
 export const PET_CONFIGS = {
   cat: {
     idle: {
-      src: () => import("../assets/pets/cat/IDLE.gif"),
+      src: () => import("../../assets/pets/cat/IDLE.gif"),
       title: "Descansando",
     },
     actions: [
       {
-        src: () => import("../assets/pets/cat/WALK.gif"),
+        src: () => import("../../assets/pets/cat/WALK.gif"),
         title: "Caminando",
         duration: 3000, // duración en ms antes de volver a idle
       },
@@ -15,7 +15,7 @@ export const PET_CONFIGS = {
   },
   main: {
     idle: {
-      src: () => import("../assets/pets/main/IDLE.gif"),
+      src: () => import("../../assets/pets/main/IDLE.gif"),
       title: "Descansando",
     },
     actions: [], // Sin acciones adicionales

@@ -1,5 +1,9 @@
 import { useCallback, useState } from "react";
-import { PET_CONFIGS, getPetActions, petHasActions } from "./petConfig.js";
+import {
+  PET_CONFIGS,
+  getPetActions,
+  petHasActions,
+} from "../components/Utils/petConfig.js";
 
 /**
  * Hook personalizado para gestionar el estado y acciones de una mascota
