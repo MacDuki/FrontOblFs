@@ -96,160 +96,169 @@ export default function CollectionSelectorModal({ book, isOpen, onClose }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={onClose}
-        >
+        <>
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 relative">
-              <button
-                onClick={onClose}
-                className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full p-2 transition"
-              >
-                <IoClose className="w-5 h-5" />
-              </button>
-              <div className="flex items-center gap-3">
-                <BiCollection className="w-8 h-8 text-white" />
-                <div>
-                  <h2 className="text-white text-xl font-bold">
-                    Guardar en colección
-                  </h2>
-                  <p className="text-white/80 text-sm">
-                    {book.volumeInfo?.title}
-                  </p>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[200]"
+          />
+          <div className="fixed inset-0 z-[210] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 16 }}
+              transition={{ type: "spring", duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-2xl w-full max-w-md max-h-[80vh] overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] relative"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 relative border-b border-white/10 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-white/80">
+                  <BiCollection size={18} />
+                  <div>
+                    <h2 className="font-semibold tracking-tight text-white">
+                      Guardar en colección
+                    </h2>
+                    <p className="text-white/70 text-xs mt-0.5">
+                      {book.volumeInfo?.title}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              {loadingCollections ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                </div>
-              ) : collections.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-600">
-                    No tienes colecciones creadas aún
-                  </p>
-                  <p className="text-gray-500 text-sm mt-2">
-                    Crea una colección primero para guardar libros
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-[40vh] overflow-y-auto">
-                  {collections.map((collection) => {
-                    const itemCount = getItemCount(collection._id);
-                    const isSelected = selectedCollectionId === collection._id;
-
-                    return (
-                      <motion.button
-                        key={collection._id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => setSelectedCollectionId(collection._id)}
-                        className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                          isSelected
-                            ? "border-blue-500 bg-blue-50 shadow-md"
-                            : "border-gray-200 hover:border-gray-300 bg-white"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                              isSelected
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            <BiCollection className="w-5 h-5" />
-                          </div>
-                          <div className="text-left">
-                            <p
-                              className={`font-medium ${
-                                isSelected ? "text-blue-900" : "text-gray-900"
-                              }`}
-                            >
-                              {collection.name}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {itemCount} {itemCount === 1 ? "libro" : "libros"}
-                            </p>
-                          </div>
-                        </div>
-                        {isSelected && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"
-                          >
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path d="M5 13l4 4L19 7"></path>
-                            </svg>
-                          </motion.div>
-                        )}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg"
-                >
-                  <p className="text-red-600 text-sm">{error}</p>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Footer */}
-            {collections.length > 0 && (
-              <div className="border-t border-gray-200 p-4 flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium"
+                  className="p-2 rounded-lg hover:bg-white/10 transition-all active:scale-95"
+                  aria-label="Cerrar"
                 >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={!selectedCollectionId || savingBook}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {savingBook ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      Guardando...
-                    </>
-                  ) : (
-                    "Guardar"
-                  )}
+                  <IoClose className="w-5 h-5" />
                 </button>
               </div>
-            )}
-          </motion.div>
-        </motion.div>
+
+              {/* Content */}
+              <div className="p-6">
+                {loadingCollections ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400"></div>
+                  </div>
+                ) : collections.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-white/70">
+                      No tienes colecciones creadas aún
+                    </p>
+                    <p className="text-white/50 text-sm mt-2">
+                      Crea una colección primero para guardar libros
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+                    {collections.map((collection) => {
+                      const itemCount = getItemCount(collection._id);
+                      const isSelected =
+                        selectedCollectionId === collection._id;
+
+                      return (
+                        <motion.button
+                          key={collection._id}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() =>
+                            setSelectedCollectionId(collection._id)
+                          }
+                          className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                            isSelected
+                              ? "border-emerald-400/60 bg-white/10"
+                              : "border-white/10 hover:bg-white/5 bg-white/5"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                isSelected
+                                  ? "bg-emerald-600 text-white"
+                                  : "bg-white/10 text-white/70"
+                              }`}
+                            >
+                              <BiCollection className="w-5 h-5" />
+                            </div>
+                            <div className="text-left">
+                              <p
+                                className={`font-medium ${
+                                  isSelected ? "text-white" : "text-white/90"
+                                }`}
+                              >
+                                {collection.name}
+                              </p>
+                              <p className="text-sm text-white/60">
+                                {itemCount}{" "}
+                                {itemCount === 1 ? "libro" : "libros"}
+                              </p>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="w-6 h-6 bg-emerald-600 rounded-full flex items-center justify-center"
+                            >
+                              <svg
+                                className="w-4 h-4 text-white"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path d="M5 13l4 4L19 7"></path>
+                              </svg>
+                            </motion.div>
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg"
+                  >
+                    <p className="text-red-300 text-sm">{error}</p>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Footer */}
+              {collections.length > 0 && (
+                <div className="border-t border-white/10 p-4 flex gap-3">
+                  <button
+                    onClick={onClose}
+                    className="flex-1 px-4 py-2 border border-white/10 rounded-lg text-white/80 hover:bg-white/5 transition font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={!selectedCollectionId || savingBook}
+                    className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {savingBook ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Guardando...
+                      </>
+                    ) : (
+                      "Guardar"
+                    )}
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </>
       )}
     </AnimatePresence>
   );
