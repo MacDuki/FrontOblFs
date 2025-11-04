@@ -2,8 +2,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -31,7 +33,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     e.preventDefault();
     
     if (rating === 0) {
-      alert("Please select a rating before saving.");
+      alert(t('review.ratingRequired'));
       return;
     }
 
@@ -92,7 +94,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                 <button
                   onClick={handleClose}
                   className="absolute right-4 top-5 p-2 rounded-lg hover:bg-stone-900/5 transition-all group active:scale-95 z-10"
-                  aria-label="Cerrar"
+                  aria-label={t('common.close')}
                 >
                   <X className="w-5 h-5 text-stone-600 group-hover:text-stone-900 transition-colors" />
                 </button>
@@ -116,7 +118,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
                       <h2 className="text-xl font-bold text-stone-900 tracking-tight">
-                        Review
+                        {t('review.title')}
                       </h2>
                     </div>
                     <p className="text-stone-600 text-sm line-clamp-2 font-medium pr-8">
@@ -134,7 +136,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
               <form onSubmit={handleSubmit} className="px-8 py-7 space-y-6 relative">
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-stone-200/50">
                   <label className="block text-sm font-semibold text-stone-900 mb-4 tracking-wide uppercase text-xs">
-                    Your Rating
+                    {t('review.yourRating')}
                   </label>
                   <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -174,21 +176,21 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                     htmlFor="review-text"
                     className="block text-sm font-semibold text-stone-900 mb-3 tracking-wide uppercase text-xs"
                   >
-                    Your Thoughts
-                    <span className="text-stone-500 font-normal normal-case ml-2 text-xs">(optional)</span>
+                    {t('review.yourThoughts')}
+                    <span className="text-stone-500 font-normal normal-case ml-2 text-xs">({t('review.optional')})</span>
                   </label>
                   <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-stone-200/50 focus-within:border-amber-400/50 focus-within:ring-2 focus-within:ring-amber-400/20 transition-all">
                     <textarea
                       id="review-text"
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
-                      placeholder="Share what you loved, what surprised you, or what you learned..."
+                      placeholder={t('review.placeholder')}
                       rows={5}
                       className="w-full px-5 py-4 bg-transparent border-none focus:outline-none resize-none transition text-stone-800 placeholder:text-stone-400 text-[15px] leading-relaxed"
                     />
                     <div className="flex justify-between items-center px-5 py-3 border-t border-stone-200/50 bg-stone-50/50">
                       <p className="text-xs text-stone-500 font-medium">
-                        {reviewText.length} characters
+                        {reviewText.length} {t('review.characters')}
                       </p>
                       {reviewText.length > 0 && (
                         <motion.div
@@ -197,7 +199,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                           className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium"
                         >
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Writing
+                          {t('review.writing')}
                         </motion.div>
                       )}
                     </div>
@@ -213,7 +215,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-5 py-3 border border-stone-300 rounded-xl text-stone-700 font-semibold hover:bg-stone-100/80 hover:border-stone-400 transition-all backdrop-blur-sm"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </motion.button>
                   <motion.button
                     type="submit"
@@ -229,10 +231,10 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                           className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                         />
-                        Saving...
+                        {t('review.saving')}
                       </span>
                     ) : (
-                      "Publish Review"
+                      t('review.publishReview')
                     )}
                   </motion.button>
                 </div>

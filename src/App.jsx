@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { Provider } from "react-redux";
+import { useTranslation } from "react-i18next";
 import DiscoverBooks from "./components/Books/DiscoverBooks/DiscoverBooks.jsx";
 import Home from "./components/Home/Home.jsx";
+import LanguageSwitcher from "./components/LanguageSwitcher.jsx";
 import { store } from "./store/store.js";
 
-function App() {
+function AppContent() {
+  const { t } = useTranslation();
   const [currentSection, setCurrentSection] = useState("home");
 
   const sections = {
-    home: { component: <Home />, title: "Home" },
-    books: { component: <DiscoverBooks />, title: "Discover Books" },
+    home: { component: <Home />, title: t('common.home') },
+    books: { component: <DiscoverBooks />, title: t('books.discover') },
   };
 
   const toggleSection = () => {
@@ -17,16 +20,15 @@ function App() {
   };
 
   return (
-    <Provider store={store}>
-      <div className="">
-        {/* Botón de navegación */}
+    <div className="">
+      <LanguageSwitcher />
         <button
           onClick={toggleSection}
           className="section-toggle-btn"
           style={{
             position: "fixed",
             top: "20px",
-            right: "20px",
+            right: "100px",
             zIndex: 1000,
             padding: "10px 20px",
             backgroundColor: "#007bff",
@@ -42,12 +44,18 @@ function App() {
           onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
           onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
         >
-          Ir a {currentSection === "home" ? "Books" : "Home"}
+          {t('common.goTo')} {currentSection === "home" ? t('books.title') : t('common.home')}
         </button>
 
-        {/* Renderizar solo la sección actual */}
-        <div className="">{sections[currentSection].component}</div>
-      </div>
+      <div className="">{sections[currentSection].component}</div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
     </Provider>
   );
 }

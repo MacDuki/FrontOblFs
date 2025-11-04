@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import SearchBar from "./SearchBar.jsx";
 
 export default function DiscoverBooksHeader() {
+  const { t } = useTranslation();
+  
   return (
     <motion.div
       className="p-6 mb-8"
@@ -15,7 +18,7 @@ export default function DiscoverBooksHeader() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
       >
-        Discover Books
+        {t('books.discover')}
       </motion.h1>
 
       <motion.div

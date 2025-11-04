@@ -1,7 +1,17 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import BooksGrid from "./BooksGrid";
+import { categories } from "../../../features/books.slice";
 
 export default function CategorySection({ category, books, index }) {
+  const { t } = useTranslation();
+  
+  // Buscar la clave de traducción para la categoría
+  const categoryData = categories.find(cat => cat.name === category);
+  const translatedCategory = categoryData?.translationKey 
+    ? t(categoryData.translationKey) 
+    : category;
+  
   return (
     <motion.div
       key={category}
@@ -42,14 +52,14 @@ export default function CategorySection({ category, books, index }) {
             transition: { delay: index * 0.1 + 0.1 },
           }}
         >
-          {category}
+          {translatedCategory}
         </motion.h2>
         <motion.button
           className="cursor-pointer text-sm text-black/90"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          See More
+          {t('books.seeMore')}
         </motion.button>
       </div>
       <motion.div

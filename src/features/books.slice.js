@@ -2,11 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const categories = [
-  { name: "Thriller", query: "subject:thriller" },
-  { name: "Fiction", query: "subject:fiction" },
-  { name: "Fantasy", query: "subject:fantasy" },
-  { name: "Self Help", query: "subject:self-help" },
-  { name: "Romance", query: "subject:romance" },
+  { name: "Thriller", query: "subject:thriller", translationKey: "categories.thriller" },
+  { name: "Fiction", query: "subject:fiction", translationKey: "categories.fiction" },
+  { name: "Fantasy", query: "subject:fantasy", translationKey: "categories.fantasy" },
+  { name: "Self Help", query: "subject:self-help", translationKey: "categories.selfHelp" },
+  { name: "Romance", query: "subject:romance", translationKey: "categories.romance" },
 ];
 
 // Async thunk para obtener libros

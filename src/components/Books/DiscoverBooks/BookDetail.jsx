@@ -5,6 +5,7 @@ import { CiBookmark } from "react-icons/ci";
 import { useState } from "react";
 import { CiStar } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { rankDescription } from "../../Utils/textRanking.js";
 import ReviewModal from "./ReviewModal.jsx";
@@ -18,6 +19,7 @@ import {
 } from "../../../features/books.slice";
 
 export default function BookDetail({ book }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { favoriteBooks, savedBooks } = useSelector((s) => s.books);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -47,7 +49,7 @@ export default function BookDetail({ book }) {
 
   function DescriptionRanked({ description }) {
     if (!description)
-      return <p className="text-white/60">No description available.</p>;
+      return <p className="text-white/60">{t('books.noDescription')}</p>;
     const ranked = rankDescription(description);
     const top = ranked.slice(0, 3);
 
@@ -95,8 +97,8 @@ export default function BookDetail({ book }) {
             <button
               onClick={handleClose}
               className=" cursor-pointer relative left-4 top-1/2 -translate-y-1/2 grid place-items-center w-9 h-9 rounded-full bg-white/70 hover:bg-white shadow transition"
-              aria-label="Volver"
-              title="Volver"
+              aria-label={t('common.back')}
+              title={t('common.back')}
             >
               <IoIosArrowBack className="w-5 h-5 text-gray-700" />
             </button>
@@ -121,7 +123,7 @@ export default function BookDetail({ book }) {
                 {info.title}
               </h2>
               <p className="text-black/80 text-sm md:text-base mt-1">
-                {info.authors?.join(", ") || "Unknown Author"}
+                {info.authors?.join(", ") || t('books.unknownAuthor')}
               </p>
 
               {/* Descripción  */}
@@ -135,7 +137,7 @@ export default function BookDetail({ book }) {
                   <IconButton
                     active={isSaved}
                     onClick={handleSave}
-                    label={isSaved ? "remove from list" : "Save to a list"}
+                    label={isSaved ? t('books.removeFromList') : t('books.saveToList')}
                   >
                     <CiBookmark
                       className={`w-4 h-4 ${
@@ -144,7 +146,7 @@ export default function BookDetail({ book }) {
                     />
                   </IconButton>
 
-                  <IconButton onClick={handleReview} label="Review">
+                  <IconButton onClick={handleReview} label={t('review.title')}>
                     <CiStar className="w-4 h-4 text-yellow-500" />
                   </IconButton>
                 </div>
@@ -154,23 +156,23 @@ export default function BookDetail({ book }) {
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-black/80">
                 {info.pageCount && (
                   <span>
-                    Pages: <b className="text-black">{info.pageCount}</b>
+                    {t('books.pages')}: <b className="text-black">{info.pageCount}</b>
                   </span>
                 )}
                 {info.categories?.[0] && (
                   <span>
-                    Category: <b className="text-black">{info.categories[0]}</b>
+                    {t('books.category')}: <b className="text-black">{info.categories[0]}</b>
                   </span>
                 )}
                 {info.language && (
                   <span>
-                    Language:{" "}
+                    {t('books.language')}:{" "}
                     <b className="text-black">{info.language.toUpperCase()}</b>
                   </span>
                 )}
                 {info.publisher && (
                   <span>
-                    Editorial: <b className="text-black">{info.publisher}</b>
+                    {t('books.publisher')}: <b className="text-black">{info.publisher}</b>
                   </span>
                 )}
               </div>
