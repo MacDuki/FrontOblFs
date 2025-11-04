@@ -8,17 +8,12 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { rankDescription } from "../../Utils/textRanking.js";
 import ReviewModal from "../ReviewModal.jsx";
+import CollectionSelectorModal from "./CollectionSelectorModal.jsx";
 
 export default function BookDetail({ book }) {
-  const {
-    favoriteBooks,
-    savedBooks,
-    selectBook,
-    saveBook,
-    unsaveBook,
-    isBookSaved,
-  } = useBooks();
+  const { selectBook, isBookSaved } = useBooks();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
 
   const getCoverImage = (info) => {
     const img = info?.imageLinks;
@@ -33,13 +28,9 @@ export default function BookDetail({ book }) {
     );
   };
 
-  // Seleccionar gradiente predeterminado basado en el libro
-  const bookInfo = book?.volumeInfo || {};
-
   if (!book) return null;
 
   const info = book.volumeInfo || {};
-  const isFavorite = favoriteBooks.some((b) => b.id === book.id);
   const isSaved = isBookSaved(book.id);
   const coverImage = getCoverImage(info);
 
@@ -63,12 +54,10 @@ export default function BookDetail({ book }) {
   const handleClose = () => selectBook(null);
 
   const handleSave = () => {
-    if (isSaved) {
-      unsaveBook(book.id);
-    } else {
-      saveBook(book.id);
-    }
+    // Abrir el modal de selección de colección
+    setIsCollectionModalOpen(true);
   };
+
   const handleReview = () => setIsReviewModalOpen(true);
 
   const handleReviewSubmit = (review) => {
@@ -135,7 +124,7 @@ export default function BookDetail({ book }) {
                   <IconButton
                     active={isSaved}
                     onClick={handleSave}
-                    label={isSaved ? "remove from list" : "Save to a list"}
+                    label="Save to a list"
                   >
                     <CiBookmark
                       className={`w-4 h-4 ${
@@ -185,6 +174,13 @@ export default function BookDetail({ book }) {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         onSubmit={handleReviewSubmit}
+      />
+
+      {/* Modal de Selección de Colección */}
+      <CollectionSelectorModal
+        book={book}
+        isOpen={isCollectionModalOpen}
+        onClose={() => setIsCollectionModalOpen(false)}
       />
     </div>
   );
