@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-vars */
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdPets } from "react-icons/md";
 import backGround from "../../../assets/imgs/bg1.png";
+import usePet from "../../../hooks/usePet";
 import { Loader } from "../../ui/Loader.jsx";
 import { PetBackground } from "./PetBackground";
 import { PetHeaderHome } from "./PetHeaderHome";
+import PetSelectorModal from "./PetSelectorModal";
 import PetStatusPanel from "./PetStatusPanel";
 import { PetViewer } from "./PetViewer";
 function PetHome({
@@ -17,6 +19,44 @@ function PetHome({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContent, setShowContent] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    hunger,
+    happiness,
+    loading,
+    error,
+    loadSelectedPet,
+    loadAllPets,
+    recalc,
+    selectPet,
+    refreshAll,
+    clearError,
+    pets,
+    selectedPet,
+  } = usePet();
+
+  const [selectedId, setSelectedId] = useState("");
+
+  useEffect(() => {
+    // Cargar la mascota seleccionada al montar el componente
+    loadSelectedPet();
+  }, [loadSelectedPet]);
+
+  useEffect(() => {
+    // Sincronizar el selector con la mascota seleccionada cuando cambie
+    if (selectedPet?._id) setSelectedId(selectedPet._id);
+  }, [selectedPet]);
+
+  // Auto-actualización periódica de hambre/felicidad (recalc) sin recargar
+  useEffect(() => {
+    if (!autoActions) return;
+    if (!selectedPet?._id) return;
+    const intervalMs = 8000; // cada 8s por defecto
+    const id = setInterval(() => {
+      recalc();
+    }, intervalMs);
+    return () => clearInterval(id);
+  }, [autoActions, selectedPet?._id, recalc]);
 
   const toggleCollapse = () => {
     if (isCollapsed) {
@@ -66,7 +106,7 @@ function PetHome({
         </div>
       ) : (
         <div className="relative">
-          {isLoading ? (
+          {isLoading || loading ? (
             <Loader
               icon={<MdPets size={20} />}
               className="h-[300px]"
@@ -81,28 +121,28 @@ function PetHome({
                   onCollapse={toggleCollapse}
                   title="My Pet"
                   className="animate-delay-75"
+                  onOpenModal={() => setIsModalOpen(true)}
                 />
 
                 {/* Contenido principal centrado */}
                 <div className="animate-delay-150 flex-1 flex flex-col items-center justify-center px-5">
                   {/* Panel de estado centrado arriba */}
                   <div className="animate-delay-225 ">
-                    <PetStatusPanel hunger={35} happiness={90} />
+                    <PetStatusPanel
+                      hunger={hunger ?? 0}
+                      happiness={happiness ?? 0}
+                    />
                   </div>
 
                   {/* Mascota centrada con título */}
                   <div className="animate-delay-300 flex-1 flex flex-col items-center justify-center w-full">
                     <PetBackground backgroundImage={backGround}>
                       <PetViewer
-                        petType={petType}
                         className={` ${
                           petType !== "main" ? "h-[120px]" : "h-[150px]"
                         } w-auto saturate-[1.2] 
                         drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]
                         transition-transform duration-300 hover:scale-105`}
-                        autoActions={autoActions}
-                        onActionComplete={onPetActionComplete}
-                        actionInterval={8000}
                       />
                     </PetBackground>
                   </div>
@@ -112,6 +152,13 @@ function PetHome({
           )}
         </div>
       )}
+
+      {/* Modal para gestionar/seleccionar mascota */}
+      <PetSelectorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onActionComplete={onPetActionComplete}
+      />
 
       <style jsx>{`
         @keyframes slide-up-fade-in {

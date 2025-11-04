@@ -1,98 +1,80 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  PET_CONFIGS,
-  getPetActions,
-  petHasActions,
-} from "../components/Utils/petConfig.js";
+  clearPetError,
+  fetchAllPets,
+  fetchSelectedPet,
+  recalcSelectedPet,
+  selectAllPets,
+  selectPetById,
+  selectPetError,
+  selectPetHappiness,
+  selectPetHunger,
+  selectPetLoading,
+  selectSelectedPet,
+  setSelectedPetLocal,
+} from "../features/pet.slice";
 
-/**
- * Hook personalizado para gestionar el estado y acciones de una mascota
- * @param {string} initialPetType - Tipo inicial de mascota
- * @param {number} initialHealth - Salud inicial
- * @param {number} maxHealth - Salud máxima
- */
-function usePet(initialPetType = "cat", initialHealth = 3, maxHealth = 3) {
-  const [petType, setPetType] = useState(initialPetType);
-  const [health, setHealth] = useState(initialHealth);
-  const [isPerformingAction, setIsPerformingAction] = useState(false);
-  const [lastAction, setLastAction] = useState(null);
+export default function usePet() {
+  const dispatch = useDispatch();
 
-  // Cambiar tipo de mascota
-  const changePetType = useCallback((newPetType) => {
-    if (PET_CONFIGS[newPetType]) {
-      setPetType(newPetType);
-      setIsPerformingAction(false);
-      setLastAction(null);
-    } else {
-      console.warn(`Pet type "${newPetType}" not found`);
-    }
-  }, []);
+  const pets = useSelector(selectAllPets);
+  const selectedPet = useSelector(selectSelectedPet);
+  const hunger = useSelector(selectPetHunger);
+  const happiness = useSelector(selectPetHappiness);
+  const loading = useSelector(selectPetLoading);
+  const error = useSelector(selectPetError);
 
-  // Modificar salud
-  const modifyHealth = useCallback(
-    (amount) => {
-      setHealth((prevHealth) => {
-        const newHealth = Math.max(0, Math.min(maxHealth, prevHealth + amount));
-        return newHealth;
-      });
+  const loadSelectedPet = useCallback(() => {
+    return dispatch(fetchSelectedPet());
+  }, [dispatch]);
+
+  const loadAllPets = useCallback(() => {
+    return dispatch(fetchAllPets());
+  }, [dispatch]);
+
+  const recalc = useCallback(() => {
+    return dispatch(recalcSelectedPet());
+  }, [dispatch]);
+
+  const selectPet = useCallback(
+    async (petId) => {
+      if (!petId) return;
+      // Selección optimista local para cambiar la imagen al instante y evitar loaders
+      dispatch(setSelectedPetLocal(petId));
+      // Ejecuta las operaciones reales en background para no activar loaders globales
+      await dispatch(selectPetById({ petId, background: true }));
+      return dispatch(fetchSelectedPet({ background: true }));
     },
-    [maxHealth]
+    [dispatch]
   );
 
-  // Curar completamente
-  const heal = useCallback(() => {
-    setHealth(maxHealth);
-  }, [maxHealth]);
+  const refreshAll = useCallback(async () => {
+    // carga listado y la seleccionada; evita dependencias de orden
+    await dispatch(fetchAllPets());
+    await dispatch(fetchSelectedPet());
+  }, [dispatch]);
 
-  // Reducir salud
-  const damage = useCallback(
-    (amount = 1) => {
-      modifyHealth(-amount);
-    },
-    [modifyHealth]
+  const clearErrorNow = useCallback(() => {
+    dispatch(clearPetError());
+  }, [dispatch]);
+
+  const state = useMemo(
+    () => ({ pets, selectedPet, hunger, happiness, loading, error }),
+    [pets, selectedPet, hunger, happiness, loading, error]
   );
 
-  // Callback cuando la mascota completa una acción
-  const handleActionComplete = useCallback((actionTitle) => {
-    setIsPerformingAction(false);
-    setLastAction(actionTitle);
-  }, []);
+  const actions = useMemo(
+    () => ({
+      loadSelectedPet,
+      loadAllPets,
+      recalc,
+      selectPet,
+      refreshAll,
+      clearError: clearErrorNow,
+    }),
+    [loadSelectedPet, loadAllPets, recalc, selectPet, refreshAll, clearErrorNow]
+  );
 
-  // Obtener acciones disponibles para la mascota actual
-  const availableActions = getPetActions(petType);
-  const hasActions = petHasActions(petType);
-
-  // Estado calculado
-  const isAlive = health > 0;
-  const isHealthy = health === maxHealth;
-  const isInjured = health < maxHealth && health > 0;
-  const healthPercentage = (health / maxHealth) * 100;
-
-  return {
-    // Estado de la mascota
-    petType,
-    health,
-    maxHealth,
-    isAlive,
-    isHealthy,
-    isInjured,
-    healthPercentage,
-
-    // Estado de acciones
-    isPerformingAction,
-    lastAction,
-    availableActions,
-    hasActions,
-
-    // Métodos para modificar estado
-    changePetType,
-    modifyHealth,
-    heal,
-    damage,
-
-    // Callbacks
-    handleActionComplete,
-  };
+  return { ...state, ...actions };
 }
-
-export { usePet };

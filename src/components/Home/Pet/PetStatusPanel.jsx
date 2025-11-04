@@ -26,24 +26,29 @@ function getColorByValue(value, type) {
  * Props: hunger (0-100), happiness (0-100)
  */
 export default function PetStatusPanel({ hunger, happiness }) {
-  const h = clamp(hunger);
-  const hp = clamp(happiness);
+  // Normaliza entrada a 0-100; soporta 0-1 y 0-100
+  const hRaw = normalizePct(hunger);
+  const hpRaw = normalizePct(happiness);
 
-  const hungerColors = getColorByValue(h, "hunger");
-  const happinessColors = getColorByValue(hp, "happiness");
+  // Invertir el anillo de hambre: 0 (sin hambre) => anillo lleno
+  const hFill = 100 - hRaw;
+  const hpFill = hpRaw;
+
+  const hungerColors = getColorByValue(hRaw, "hunger");
+  const happinessColors = getColorByValue(hpRaw, "happiness");
 
   return (
     <div className=" w-full max-w-sm">
       <div className="flex justify-center gap-8">
         <CircularProgress
-          value={h}
+          value={hFill}
           strokeColor={hungerColors.strokeColor}
           iconColor={hungerColors.iconColor}
           icon={<IoRestaurant size={18} />}
           label="Hambre"
         />
         <CircularProgress
-          value={hp}
+          value={hpFill}
           strokeColor={happinessColors.strokeColor}
           iconColor={happinessColors.iconColor}
           icon={<IoHappy size={18} />}
@@ -102,4 +107,12 @@ function CircularProgress({ value, strokeColor, iconColor, icon }) {
 function clamp(n) {
   const v = Number.isFinite(n) ? n : 0;
   return Math.max(0, Math.min(100, v));
+}
+
+function normalizePct(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return 0;
+  // Si parece estar entre 0 y 1, interpreta como fracción => escala a %
+  const scaled = v > 0 && v <= 1 ? v * 100 : v;
+  return clamp(scaled);
 }
