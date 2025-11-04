@@ -18,10 +18,13 @@ export const fetchBooks = createAsyncThunk(
           category: category,
         },
       });
-
+      console.log(
+        `📖 [Books API] fetchBooks (${category}) response:`,
+        res.data
+      );
       return res.data || [];
     } catch (error) {
-      console.error("API Error:", error);
+      console.error(`❌ [Books API] fetchBooks (${category}) error:`, error);
       return rejectWithValue(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -34,11 +37,15 @@ export const fetchBooks = createAsyncThunk(
 export const loadAllCategories = createAsyncThunk(
   "books/loadAllCategories",
   async (_, { dispatch }) => {
+    console.log(
+      "📖 [Books API] loadAllCategories - iniciando carga de todas las categorías"
+    );
     const results = {};
     for (let cat of categories) {
       const books = await dispatch(fetchBooks(cat.query)).unwrap();
       results[cat.name] = books;
     }
+    console.log("📖 [Books API] loadAllCategories - completado:", results);
     return results;
   }
 );
@@ -52,10 +59,16 @@ export const fetchSearchBooks = createAsyncThunk(
           q: searchQuery,
         },
       });
-
+      console.log(
+        `📖 [Books API] fetchSearchBooks (${searchQuery}) response:`,
+        res.data
+      );
       return res.data || [];
     } catch (error) {
-      console.error("Search API Error:", error);
+      console.error(
+        `❌ [Books API] fetchSearchBooks (${searchQuery}) error:`,
+        error
+      );
       return rejectWithValue(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -70,10 +83,10 @@ export const fetchAllBooks = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await api.get("/books");
-
+      console.log("📖 [Books API] fetchAllBooks response:", res.data);
       return res.data || [];
     } catch (error) {
-      console.error("All books API Error:", error);
+      console.error("❌ [Books API] fetchAllBooks error:", error);
       return rejectWithValue(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -86,11 +99,15 @@ export const fetchAllBooks = createAsyncThunk(
 export const searchBooks = createAsyncThunk(
   "books/searchBooks",
   async (searchQuery, { dispatch, getState }) => {
+    console.log(`📖 [Books API] searchBooks - query: "${searchQuery}"`);
     const state = getState();
     const cacheKey = searchQuery.toLowerCase().trim();
 
     // Si ya existe en cache, retornar datos guardados
     if (state.books.searchCache[cacheKey]) {
+      console.log(
+        `📖 [Books API] searchBooks - usando cache para: "${searchQuery}"`
+      );
       return {
         query: cacheKey,
         books: state.books.searchCache[cacheKey],
@@ -100,6 +117,10 @@ export const searchBooks = createAsyncThunk(
 
     // Si no existe, hacer fetch usando el endpoint de búsqueda
     const books = await dispatch(fetchSearchBooks(searchQuery)).unwrap();
+    console.log(
+      `📖 [Books API] searchBooks - resultado para "${searchQuery}":`,
+      books
+    );
     return {
       query: cacheKey,
       books,

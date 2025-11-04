@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SYNC_CONFIG } from "../config/syncConfig";
 import {
   clearPetError,
   fetchAllPets,
@@ -15,7 +16,14 @@ import {
   setSelectedPetLocal,
 } from "../features/pet.slice";
 
-export default function usePet() {
+export default function usePet({
+  // eslint-disable-next-line no-unused-vars
+  pollMs = SYNC_CONFIG.pet.pollMs,
+  // eslint-disable-next-line no-unused-vars
+  refetchOnWindowFocus = SYNC_CONFIG.pet.refetchOnWindowFocus,
+  // eslint-disable-next-line no-unused-vars
+  refetchOnVisibility = SYNC_CONFIG.pet.refetchOnVisibility,
+} = {}) {
   const dispatch = useDispatch();
 
   const pets = useSelector(selectAllPets);

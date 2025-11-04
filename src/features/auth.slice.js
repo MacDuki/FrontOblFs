@@ -1,56 +1,70 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../api/api';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../api/api";
 
 // Helper para obtener token de localStorage o sessionStorage
 const getStoredToken = () => {
-  return localStorage.getItem('token') || sessionStorage.getItem('token');
+  return localStorage.getItem("token") || sessionStorage.getItem("token");
 };
 
 // Thunk para login
 export const loginUser = createAsyncThunk(
-  'auth/login',
+  "auth/login",
   async ({ username, password, rememberMe = false }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/login', { username, password });
+      const response = await api.post("/auth/login", { username, password });
       const { token, user } = response.data;
-      
+      console.log("🔐 [Auth API] loginUser response:", {
+        user,
+        token: token ? "***" : null,
+      });
+
       // Guardar token según la opción "remember me"
       if (rememberMe) {
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
       } else {
         // Usar sessionStorage para sesión temporal
-        sessionStorage.setItem('token', token);
+        sessionStorage.setItem("token", token);
       }
-      
+
       return { token, user, rememberMe };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Error en el login');
+      console.error("❌ [Auth API] loginUser error:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Error en el login"
+      );
     }
   }
 );
 
 // Thunk para register
 export const registerUser = createAsyncThunk(
-  'auth/register',
-  async ({ username, email, password, repeat_password }, { rejectWithValue }) => {
+  "auth/register",
+  async (
+    { username, email, password, repeat_password },
+    { rejectWithValue }
+  ) => {
     try {
-      await api.post('/auth/register', { 
-        username, 
-        email, 
-        password, 
-        repeat_password 
+      const response = await api.post("/auth/register", {
+        username,
+        email,
+        password,
+        repeat_password,
       });
-      
+      console.log("🔐 [Auth API] registerUser response:", response.data);
+
       // El registro solo retorna éxito, no hace login automático
       return { success: true };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Error en el registro');
+      console.error("❌ [Auth API] registerUser error:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Error en el registro"
+      );
     }
   }
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: {
     user: null,
     token: getStoredToken(),
@@ -64,8 +78,8 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       // Limpiar ambos storages
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
     },
     clearError: (state) => {
       state.error = null;

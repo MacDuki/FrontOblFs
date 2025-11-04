@@ -1,4 +1,4 @@
-import BentoSectionsHome from "./BentoSectionsHome.jsx";
+import Collections from "../library/Collections/Collections.jsx";
 function SectionsHome() {
   return (
     <div
@@ -7,9 +7,10 @@ function SectionsHome() {
          text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] 
         backdrop-blur-sm transition-all duration-900 ease-out overflow-hidden 
         relative justify-self-center
+        overflow-y-auto
       `}
     >
-      <BentoSectionsHome />
+      <Collections />
     </div>
   );
 }

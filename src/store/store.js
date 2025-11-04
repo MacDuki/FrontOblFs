@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth.slice";
 import booksReducer from "../features/books.slice";
+import collectionsReducer from "../features/collections.slice";
+import libraryItemsReducer from "../features/libraryItem.slice";
 import petReducer from "../features/pet.slice";
 
 export const store = configureStore({
@@ -8,5 +10,7 @@ export const store = configureStore({
     books: booksReducer,
     auth: authReducer,
     pets: petReducer,
+    collections: collectionsReducer,
+    libraryItems: libraryItemsReducer,
   },
 });

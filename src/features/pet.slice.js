@@ -32,6 +32,7 @@ export const fetchSelectedPet = createAsyncThunk(
   async (opts, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/pets/selected");
+      console.log("🐾 [Pet API] fetchSelectedPet response:", data);
       // data: { pet, hunger, happiness, lastUpdate }
       return {
         pet: data.pet,
@@ -41,6 +42,7 @@ export const fetchSelectedPet = createAsyncThunk(
         background: opts?.background || false,
       };
     } catch (err) {
+      console.error("❌ [Pet API] fetchSelectedPet error:", err);
       return rejectWithValue(
         err.response?.data?.message || "Error al traer la mascota seleccionada"
       );
@@ -53,6 +55,7 @@ export const recalcSelectedPet = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.post("/pets/selected/recalc");
+      console.log("🐾 [Pet API] recalcSelectedPet response:", data);
       // data: { hunger, happiness, petId }
       return {
         petId: data.petId,
@@ -61,6 +64,7 @@ export const recalcSelectedPet = createAsyncThunk(
         lastUpdate: new Date().toISOString(),
       };
     } catch (err) {
+      console.error("❌ [Pet API] recalcSelectedPet error:", err);
       return rejectWithValue(
         err.response?.data?.message || "Error al recalcular felicidad/hambre"
       );
@@ -74,9 +78,12 @@ export const selectPetById = createAsyncThunk(
     try {
       const petId = typeof arg === "string" ? arg : arg?.petId;
       const { data } = await api.post(`/pets/select/${petId}`);
+      console.log(`🐾 [Pet API] selectPetById (${petId}) response:`, data);
       // La API devuelve el objeto mascota directamente (no envuelve en { pet })
       return data;
     } catch (err) {
+      const petId = typeof arg === "string" ? arg : arg?.petId;
+      console.error(`❌ [Pet API] selectPetById (${petId}) error:`, err);
       return rejectWithValue(
         err.response?.data?.message || "Error al seleccionar mascota"
       );
@@ -89,12 +96,14 @@ export const fetchAllPets = createAsyncThunk(
   async (opts, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/pets");
+      console.log("🐾 [Pet API] fetchAllPets response:", data);
       // data: array de mascotas
       return {
         list: data.map((pet) => pet),
         background: opts?.background || false,
       };
     } catch (err) {
+      console.error("❌ [Pet API] fetchAllPets error:", err);
       return rejectWithValue(
         err.response?.data?.message || "Error al traer mascotas"
       );

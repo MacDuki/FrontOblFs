@@ -51,7 +51,7 @@ function PetHome({
   useEffect(() => {
     if (!autoActions) return;
     if (!selectedPet?._id) return;
-    const intervalMs = 8000; // cada 8s por defecto
+    const intervalMs = 10000; // cada 10s por defecto
     const id = setInterval(() => {
       recalc();
     }, intervalMs);
