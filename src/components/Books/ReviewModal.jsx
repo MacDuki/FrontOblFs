@@ -2,12 +2,19 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star } from "lucide-react";
 import { useState } from "react";
+import useLibraryItems from "../../hooks/useLibraryItem";
+import api from "../../api/api";
 
 export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  
+
+  const { items } = useLibraryItems();
 
   if (!book) return null;
 
@@ -35,27 +42,46 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
       return;
     }
 
-    setIsSubmitting(true);
-    
-    
-    const review = {
-      bookId: book.id,
-      bookTitle: info.title,
-      rating,
-      review: reviewText,
-      timestamp: new Date().toISOString(),
-    };
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    console.log("Review submitted:", review);
-
-    if (onSubmit) {
-      onSubmit(review);
+    // Verificar que el libro esté agregado como library item
+    const libraryItem = items.find((it) => it.originalBookId === book.id);
+    if (!libraryItem) {
+      setError(
+        "Debes agregar este libro a tu biblioteca antes de crear una reseña."
+      );
+      return;
     }
 
-    setIsSubmitting(false);
-    handleClose();
+    setIsSubmitting(true);
+    setError(null);
+
+    const reviewPayload = {
+      originalBookId: book.id,
+      bookTitle: info.title,
+      score: Number(rating),
+    };
+
+    if (reviewText && reviewText.trim() !== "") {
+      reviewPayload.comment = reviewText.trim();
+    } else {
+      reviewPayload.comment = "Sin comentario";
+    }
+
+    try {
+      const { data } = await api.post("/reviews", reviewPayload);
+      setSuccess("Reseña publicada correctamente");
+      if (onSubmit) onSubmit(data);
+      setTimeout(() => {
+        setSuccess(null);
+        handleClose();
+      }, 1200);
+    } catch (err) {
+      console.error("Error creating review:", err);
+      const body = err.response?.data;
+      const msg = body?.message || body?.error || err.message || "Error al crear la reseña";
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -132,6 +158,18 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
               </div>
 
               <form onSubmit={handleSubmit} className="px-8 py-7 space-y-6 relative">
+                {/* Feedback */}
+                {error && (
+                  <div className="p-3 bg-red-700/20 border border-red-600/30 rounded-lg text-sm text-red-100">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="p-3 bg-emerald-700/20 border border-emerald-600/30 rounded-lg text-sm text-emerald-900">
+                    {success}
+                  </div>
+                )}
+                
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-stone-200/50">
                   <label className="block text-sm font-semibold text-stone-900 mb-4 tracking-wide uppercase text-xs">
                     Your Rating
