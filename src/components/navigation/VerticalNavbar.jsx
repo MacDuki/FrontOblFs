@@ -1,6 +1,7 @@
 import { CiSearch } from "react-icons/ci";
 import { FaBookOpenReader } from "react-icons/fa6";
 import { GiTrophiesShelf } from "react-icons/gi";
+import { FaStar } from "react-icons/fa6";
 import { HiOutlineCollection } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
@@ -20,6 +21,7 @@ function VerticalNavbar({ isVisible, onTogglePanel }) {
 
   const navItems = [
     { icon: FaBookOpenReader, label: "Start Reading", color: "pink" },
+    { icon: FaStar, label: "My Reviews", color: "pink", onClick: () => navigate("/my-reviews") },
     { icon: TfiStatsUp, label: "Stats", color: "blue" },
     { icon: GiTrophiesShelf, label: "Trophies", color: "yellow" },
     { icon: MdOutlinePets, label: "Pets", color: "green" },

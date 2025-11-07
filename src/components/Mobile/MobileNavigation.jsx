@@ -1,6 +1,7 @@
 import { PetHome } from "../Home/Pet/PetHome";
 import { SectionsHome } from "../Home/SectionsHome";
 import UserHome from "../Home/UserHome";
+import ReviewsList from "../Home/ReviewsList";
 import TabButton from "./TabButton";
 
 function MobileNavigation({ tab, setTab }) {
@@ -13,6 +14,8 @@ function MobileNavigation({ tab, setTab }) {
             <PetHome />
           </div>
         );
+      case "reviews":
+        return <ReviewsList />;
       case "sections":
         return <SectionsHome />;
       default:
@@ -45,6 +48,13 @@ function MobileNavigation({ tab, setTab }) {
               icon="📚"
               active={tab === "sections"}
               onClick={() => setTab("sections")}
+            />
+
+            <TabButton
+              label="Reviews"
+              icon="⭐"
+              active={tab === "reviews"}
+              onClick={() => setTab("reviews")}
             />
           </ul>
         </div>

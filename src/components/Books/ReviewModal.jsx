@@ -68,6 +68,24 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
 
     try {
       const { data } = await api.post("/reviews", reviewPayload);
+      // Persist a local copy so the client can show the review even if backend
+      // doesn't provide a GET endpoint for reviews.
+      try {
+        const saved = data || { ...reviewPayload, _id: `local_${Date.now()}` };
+        const existing = JSON.parse(localStorage.getItem("my_reviews") || "[]");
+        existing.unshift(saved);
+        // keep a reasonable cap
+        localStorage.setItem("my_reviews", JSON.stringify(existing.slice(0, 200)));
+        // notify other parts of the app (ReviewsList) that local reviews updated
+        try {
+          window.dispatchEvent(new CustomEvent("my_reviews_updated", { detail: saved }));
+        } catch (e) {
+          // ignore if CustomEvent not available in some env
+        }
+        console.debug("[ReviewModal] saved local review", saved);
+      } catch (e) {
+        console.warn("Could not persist local review:", e);
+      }
       setSuccess("Reseña publicada correctamente");
       if (onSubmit) onSubmit(data);
       setTimeout(() => {
