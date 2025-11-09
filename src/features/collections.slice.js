@@ -146,21 +146,44 @@ const collectionsSlice = createSlice({
       // create
       .addCase(createCollection.fulfilled, (state, action) => {
         const real = action.payload;
-        // Si se creó con placeholder, reemplazar id temporal
-        const tempId = Object.keys(state.byId).find(
-          (k) => state.byId[k]?.__tempKey === real?.__tempKey
+        if (!real?._id) return;
+
+        // Buscar y eliminar cualquier placeholder temporal
+        // 1. Buscar por __tempKey si existe
+        let tempId = Object.keys(state.byId).find(
+          (k) =>
+            k.startsWith("temp-") &&
+            state.byId[k]?.__tempKey === real?.__tempKey
         );
-        if (tempId && real?._id) {
-          // mover datos al id real
-          const wasFirst = state.allIds[0] === tempId;
+
+        // 2. Si no se encuentra por __tempKey, buscar el placeholder más reciente
+        if (!tempId) {
+          const tempIds = Object.keys(state.byId).filter((k) =>
+            k.startsWith("temp-")
+          );
+          if (tempIds.length > 0) {
+            // Ordenar por timestamp descendente y tomar el más reciente
+            tempId = tempIds.sort((a, b) => {
+              const timeA = parseInt(a.split("-")[1]) || 0;
+              const timeB = parseInt(b.split("-")[1]) || 0;
+              return timeB - timeA;
+            })[0];
+          }
+        }
+
+        // Eliminar el placeholder si se encontró
+        if (tempId) {
           delete state.byId[tempId];
-          state.byId[real._id] = { ...real };
-          state.allIds = state.allIds.filter((x) => x !== tempId).concat([]);
-          if (wasFirst) state.allIds.unshift(real._id);
-          else state.allIds.push(real._id);
-        } else if (real?._id) {
+          state.allIds = state.allIds.filter((x) => x !== tempId);
+        }
+
+        // Agregar la colección real si no existe ya
+        if (!state.byId[real._id]) {
           state.byId[real._id] = real;
-          if (!state.allIds.includes(real._id)) state.allIds.unshift(real._id);
+          state.allIds.unshift(real._id);
+        } else {
+          // Si ya existe, solo actualizar los datos
+          state.byId[real._id] = real;
         }
       })
       .addCase(createCollection.rejected, (state, action) => {
