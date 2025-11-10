@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import useCollections from "../../../hooks/useCollections";
 import useLibraryItems from "../../../hooks/useLibraryItem";
 import { Loader } from "../../ui/Loader";
+import AddPagesModal from "../AddPagesModal";
 import LibraryItemCard from "../LibraryItemCard";
-
 export default function CollectionsView() {
   const {
     collections,
@@ -84,6 +84,25 @@ export default function CollectionsView() {
   const handleViewDetails = (item) => {
     console.log("Ver detalles de:", item);
     // Aquí puedes abrir un modal o navegar a una página de detalles
+  };
+
+  // Modal para agregar páginas (lifted state)
+  const [showAddPages, setShowAddPages] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { addPages } = useLibraryItems({
+    pollMs: 0,
+    refetchOnWindowFocus: false,
+    refetchOnVisibility: false,
+  });
+
+  const openAddPagesFor = (item) => {
+    setSelectedItem(item);
+    setShowAddPages(true);
+  };
+
+  const handleConfirmAddPages = async (pages) => {
+    if (!selectedItem?._id) return;
+    await addPages({ id: selectedItem._id, pages });
   };
 
   return (
@@ -201,6 +220,7 @@ export default function CollectionsView() {
                           item={item}
                           onRemove={handleRemoveItem}
                           onViewDetails={handleViewDetails}
+                          onRequestAddPages={openAddPagesFor}
                         />
                       ))}
                     </div>
@@ -211,6 +231,17 @@ export default function CollectionsView() {
           })}
         </ul>
       )}
+      {/* Modal global para agregar páginas */}
+      <AddPagesModal
+        open={showAddPages}
+        progreso={selectedItem?.progreso || 0}
+        pageCount={selectedItem?.pageCount || 0}
+        onClose={() => {
+          setShowAddPages(false);
+          setSelectedItem(null);
+        }}
+        onConfirm={handleConfirmAddPages}
+      />
     </div>
   );
 }

@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { CiTrash } from "react-icons/ci";
 import { FiBook, FiBookOpen, FiCheckCircle, FiPlus } from "react-icons/fi";
 import useLibraryItems from "../../hooks/useLibraryItem";
-import AddPagesModal from "./AddPagesModal";
+// Modal movido a nivel de Collections; este card solo emite eventos.
 
-export default function LibraryItemCard({ item, onRemove }) {
+export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
   // Extraer información del libro - Adaptado para la estructura de la API
   const title = item?.titulo || "Sin título";
   const authors = item?.authors?.join(", ") || "Autor desconocido";
@@ -14,10 +14,9 @@ export default function LibraryItemCard({ item, onRemove }) {
   const coverUrl = item?.coverUrl;
 
   // Hook para mutaciones
-  const { addPages, changeEstado, ESTADOS_LIBRO } = useLibraryItems();
+  const { changeEstado, ESTADOS_LIBRO } = useLibraryItems();
 
-  // UI estado modal
-  const [showAddPages, setShowAddPages] = useState(false);
+  // Ya no maneja el modal internamente
   const [showEstadoMenu, setShowEstadoMenu] = useState(false);
   // quick/custom moved into AddPagesModal
 
@@ -67,16 +66,10 @@ export default function LibraryItemCard({ item, onRemove }) {
         </div>
 
         {/* Botones de acción (aparecen al hover) */}
-        <div
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-center gap-2 ${
-            showAddPages
-              ? "opacity-0 pointer-events-none"
-              : "opacity-0 group-hover:opacity-100"
-          }`}
-        >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
           {/* Botón: Agregar páginas */}
           <button
-            onClick={() => setShowAddPages(true)}
+            onClick={() => onRequestAddPages?.(item)}
             className="p-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-colors border border-white/20"
             title="Agregar páginas"
           >
@@ -136,16 +129,7 @@ export default function LibraryItemCard({ item, onRemove }) {
           )}
         </div>
 
-        {/* Modal para agregar páginas */}
-        <AddPagesModal
-          open={showAddPages}
-          progreso={progreso}
-          pageCount={pageCount}
-          onClose={() => setShowAddPages(false)}
-          onConfirm={async (pages) => {
-            await addPages({ id: item._id, pages });
-          }}
-        />
+        {/* Modal removido: ahora se renderiza en Collections */}
       </div>
 
       {/* Información del libro */}
