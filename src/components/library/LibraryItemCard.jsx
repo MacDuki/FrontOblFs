@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { CiTrash } from "react-icons/ci";
-import { FiBook, FiBookOpen, FiCheckCircle, FiPlus } from "react-icons/fi";
-import useLibraryItems from "../../hooks/useLibraryItem";
+import { FiPlus } from "react-icons/fi";
+// import useLibraryItems from "../../hooks/useLibraryItem";
 // Modal movido a nivel de Collections; este card solo emite eventos.
 import EstadoSelector from "./EstadoSelector";
 
@@ -14,8 +14,7 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
   const estado = item?.estado || "NONE";
   const coverUrl = item?.coverUrl;
 
-  // Hook para mutaciones
-  const { ESTADOS_LIBRO } = useLibraryItems();
+  // No necesita mutaciones aquí; las maneja EstadoSelector/Collections
 
   // Ya no maneja el modal internamente ni el menú manualmente
   // quick/custom moved into AddPagesModal
@@ -26,26 +25,7 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
     return Math.min(Math.round((progreso / pageCount) * 100), 100);
   }, [progreso, pageCount]);
 
-  // Mapeo de estados a UI
-  const estadoConfig = {
-    NONE: {
-      label: "Sin empezar",
-      icon: <FiBook className="w-4 h-4" />,
-      badgeClasses: "bg-gray-500 text-white border-gray-400/30",
-    },
-    LEYENDO: {
-      label: "Leyendo",
-      icon: <FiBookOpen className="w-4 h-4" />,
-      badgeClasses: "bg-blue-500/20 text-white border-blue-400/30",
-    },
-    TERMINADO: {
-      label: "Terminado",
-      icon: <FiCheckCircle className="w-4 h-4" />,
-      badgeClasses: "bg-emerald-500/20 text-white border-emerald-400/30",
-    },
-  };
-
-  const currentEstado = estadoConfig[estado] || estadoConfig.NONE;
+  // Estado visual lo maneja EstadoSelector
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-lg border border-white/10 hover:border-white/20 transition-all duration-300 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,.3)] group">
@@ -56,14 +36,7 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
           alt={title}
           className="w-full h-full object-contain"
         />
-        {/* Badge de estado */}
-        <div
-          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold 
-            flex items-center gap-1 backdrop-blur-sm border shadow-sm ${currentEstado.badgeClasses}`}
-        >
-          {currentEstado.icon}
-          {currentEstado.label}
-        </div>
+        {/* Badge de estado removido: reemplazado por EstadoSelector */}
 
         {/* Botones de acción (aparecen al hover) */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
