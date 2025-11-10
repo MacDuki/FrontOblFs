@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CiTrash } from "react-icons/ci";
 import { FiBook, FiBookOpen, FiCheckCircle, FiPlus } from "react-icons/fi";
 import useLibraryItems from "../../hooks/useLibraryItem";
 // Modal movido a nivel de Collections; este card solo emite eventos.
+import EstadoSelector from "./EstadoSelector";
 
 export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
   // Extraer información del libro - Adaptado para la estructura de la API
@@ -14,10 +15,9 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
   const coverUrl = item?.coverUrl;
 
   // Hook para mutaciones
-  const { changeEstado, ESTADOS_LIBRO } = useLibraryItems();
+  const { ESTADOS_LIBRO } = useLibraryItems();
 
-  // Ya no maneja el modal internamente
-  const [showEstadoMenu, setShowEstadoMenu] = useState(false);
+  // Ya no maneja el modal internamente ni el menú manualmente
   // quick/custom moved into AddPagesModal
 
   // Calcular progreso en porcentaje
@@ -54,7 +54,7 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
         <img
           src={coverUrl}
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
         {/* Badge de estado */}
         <div
@@ -86,50 +86,10 @@ export default function LibraryItemCard({ item, onRemove, onRequestAddPages }) {
           )}
         </div>
 
-        {/* Badge de estado con menú */}
+        {/* Selector de estado componetizado */}
         <div className="absolute top-2 right-2">
-          <button
-            onClick={() => setShowEstadoMenu((v) => !v)}
-            className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 backdrop-blur-sm border shadow-sm ${currentEstado.badgeClasses} cursor-pointer`}
-            title="Cambiar estado"
-          >
-            {currentEstado.icon}
-            {currentEstado.label}
-          </button>
-          {showEstadoMenu && (
-            <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/15 bg-black/70 backdrop-blur-xl shadow-xl p-2 z-30">
-              {[
-                ESTADOS_LIBRO.NONE,
-                ESTADOS_LIBRO.LEYENDO,
-                ESTADOS_LIBRO.TERMINADO,
-              ].map((st) => (
-                <button
-                  key={st}
-                  onClick={async () => {
-                    try {
-                      await changeEstado({ id: item._id, estado: st });
-                    } finally {
-                      setShowEstadoMenu(false);
-                    }
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${
-                    estado === st
-                      ? "bg-white/10 text-white"
-                      : "text-white/80 hover:bg-white/5"
-                  }`}
-                >
-                  <span className="shrink-0">{estadoConfig[st]?.icon}</span>
-                  <span>
-                    {estadoConfig[st]?.label || st}
-                    {estado === st ? " •" : ""}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
+          <EstadoSelector itemId={item._id} estado={estado} className="" />
         </div>
-
-        {/* Modal removido: ahora se renderiza en Collections */}
       </div>
 
       {/* Información del libro */}
