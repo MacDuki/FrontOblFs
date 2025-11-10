@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { CiTrash } from "react-icons/ci";
-import { FiBook, FiBookOpen, FiCheckCircle, FiPlus, FiX } from "react-icons/fi";
+import { FiBook, FiBookOpen, FiCheckCircle, FiPlus } from "react-icons/fi";
 import useLibraryItems from "../../hooks/useLibraryItem";
+import AddPagesModal from "./AddPagesModal";
 
 export default function LibraryItemCard({ item, onRemove }) {
   // Extraer información del libro - Adaptado para la estructura de la API
@@ -18,8 +19,7 @@ export default function LibraryItemCard({ item, onRemove }) {
   // UI estado modal
   const [showAddPages, setShowAddPages] = useState(false);
   const [showEstadoMenu, setShowEstadoMenu] = useState(false);
-  const [quickPages, setQuickPages] = useState(10);
-  const [customPages, setCustomPages] = useState("");
+  // quick/custom moved into AddPagesModal
 
   // Calcular progreso en porcentaje
   const progressPercent = useMemo(() => {
@@ -76,11 +76,7 @@ export default function LibraryItemCard({ item, onRemove }) {
         >
           {/* Botón: Agregar páginas */}
           <button
-            onClick={() => {
-              setShowAddPages(true);
-              setQuickPages(10);
-              setCustomPages("");
-            }}
+            onClick={() => setShowAddPages(true)}
             className="p-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-colors border border-white/20"
             title="Agregar páginas"
           >
@@ -141,97 +137,15 @@ export default function LibraryItemCard({ item, onRemove }) {
         </div>
 
         {/* Modal para agregar páginas */}
-        {showAddPages && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center p-3">
-            <div className="relative w-full max-w-xs rounded-xl border border-white/15 bg-black/60 backdrop-blur-xl shadow-2xl p-4 text-white">
-              {/* Cerrar */}
-              <button
-                onClick={() => setShowAddPages(false)}
-                className="absolute right-2 top-2 p-1 rounded-full hover:bg-white/10 text-white/80"
-                aria-label="Cerrar"
-                title="Cerrar"
-              >
-                <FiX className="w-4 h-4" />
-              </button>
-
-              <div className="space-y-3">
-                <div>
-                  <h4 className="font-semibold text-sm">Agregar páginas</h4>
-                  <p className="text-xs text-white/70">
-                    Progreso actual: {progreso} / {pageCount}
-                  </p>
-                </div>
-
-                {/* Opciones rápidas */}
-                <div className="grid grid-cols-3 gap-2">
-                  {[10, 20, 30].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => {
-                        setQuickPages(n);
-                        setCustomPages("");
-                      }}
-                      className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
-                        quickPages === n && customPages === ""
-                          ? "bg-emerald-500/30 border-emerald-400/40"
-                          : "bg-white/5 border-white/10 hover:bg-white/10"
-                      }`}
-                    >
-                      +{n}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Input personalizado */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={1}
-                    step={1}
-                    placeholder="Personalizado"
-                    value={customPages}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setCustomPages(v);
-                      if (v) setQuickPages(0);
-                    }}
-                    className="w-32 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
-                  />
-                  <span className="text-xs text-white/60">páginas</span>
-                </div>
-
-                {/* Acciones */}
-                <div className="flex items-center justify-end gap-2 pt-1">
-                  <button
-                    onClick={() => setShowAddPages(false)}
-                    className="px-3 py-2 rounded-lg text-sm border border-white/10 text-white/80 hover:bg-white/10"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={async () => {
-                      const custom = parseInt(customPages, 10);
-                      const pagesToAdd =
-                        Number.isFinite(custom) && custom > 0
-                          ? custom
-                          : quickPages;
-                      if (!pagesToAdd || pagesToAdd <= 0) return;
-                      try {
-                        await addPages({ id: item._id, pages: pagesToAdd });
-                        setShowAddPages(false);
-                      } catch (e) {
-                        console.error("No se pudieron agregar páginas", e);
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm bg-emerald-500/80 hover:bg-emerald-500 text-black font-semibold"
-                  >
-                    Agregar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <AddPagesModal
+          open={showAddPages}
+          progreso={progreso}
+          pageCount={pageCount}
+          onClose={() => setShowAddPages(false)}
+          onConfirm={async (pages) => {
+            await addPages({ id: item._id, pages });
+          }}
+        />
       </div>
 
       {/* Información del libro */}
