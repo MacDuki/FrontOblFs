@@ -5,6 +5,7 @@ import collectionsReducer from "../features/collections.slice";
 import libraryItemsReducer from "../features/libraryItem.slice";
 import petReducer from "../features/pet.slice";
 import reviewsReducer from "../features/reviews.slice";
+import userReducer from "../features/user.slice";
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +15,6 @@ export const store = configureStore({
     collections: collectionsReducer,
     libraryItems: libraryItemsReducer,
     reviews: reviewsReducer,
+    user: userReducer,
   },
 });

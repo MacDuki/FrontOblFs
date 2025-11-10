@@ -44,6 +44,14 @@ export const SYNC_CONFIG = {
     syncOnMount: true,
   },
 
+  // ========== USER ==========
+  user: {
+    pollMs: 0, // Polling deshabilitado por defecto
+    refetchOnWindowFocus: false,
+    refetchOnVisibility: false,
+    syncOnMount: true, // Sincronizar perfil y nivel al montar
+  },
+
   // ========== CONFIGURACIÓN GLOBAL ==========
   global: {
     // Tiempo mínimo entre llamadas a la misma API (throttling)

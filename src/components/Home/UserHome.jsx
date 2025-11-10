@@ -1,22 +1,39 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CiUser } from "react-icons/ci";
+import { useUser } from "../../hooks/useUser";
 import { Loader } from "../ui/Loader";
 import { ProfileAvatar } from "./Profile/ProfileAvatar";
 import { ProfileHeader } from "./Profile/ProfileHeader";
 import { ProfileStats } from "./Profile/ProfileStats";
 
 /* ---- main card ---- */
-export default function UserHome({
-  name = "Mr. Explore",
-  level = 12,
-  streakDays = 15,
-  currentBadge = "Gold",
-  totalCoins = "2.6K",
-}) {
+export default function UserHome() {
+  const {
+    username,
+    currentLevel,
+    totalPoints,
+    levelName,
+    isLoading: isLoadingUser,
+  } = useUser();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContent, setShowContent] = useState(true);
+
+  // Formatear totalPoints para mostrar (ej: 2600 -> "2.6K")
+  const formatPoints = (points) => {
+    if (points >= 1000) {
+      return `${(points / 1000).toFixed(1)}K`;
+    }
+    return points.toString();
+  };
+
+  // Datos para mostrar
+  const displayName = username || "Usuario";
+  const displayLevel = currentLevel || 1;
+  const displayStreakDays = 0; // TODO: Implementar streak cuando esté disponible en el backend
+  const displayBadge = levelName || "Principiante";
+  const displayCoins = formatPoints(totalPoints || 0);
 
   const toggleCollapse = () => {
     if (isCollapsed) {
@@ -61,13 +78,13 @@ export default function UserHome({
           onClick={toggleCollapse}
         >
           <div className="text-white  text-sm font-medium flex flex-row items-center justify-center space-x-2 ">
-            <p>{name}</p>
+            <p>{displayName}</p>
             <CiUser size={18} />
           </div>
         </div>
       ) : (
         <div className="relative ">
-          {isLoading ? (
+          {isLoading || isLoadingUser ? (
             <Loader
               icon={<CiUser size={20} />}
               className="h-[300px]"
@@ -80,24 +97,24 @@ export default function UserHome({
                 <ProfileHeader onHide={toggleCollapse} />
               </div>
               <div className="animate-delay-150">
-                <ProfileAvatar name={name} level={level} />
+                <ProfileAvatar name={displayName} level={displayLevel} />
               </div>
               <div className="animate-delay-225">
                 <ProfileStats
-                  streakDays={streakDays}
-                  currentBadge={currentBadge}
-                  totalCoins={totalCoins}
+                  streakDays={displayStreakDays}
+                  currentBadge={displayBadge}
+                  totalCoins={displayCoins}
                 />
               </div>
             </div>
           ) : (
             <div className="animate-fade-out ">
               <ProfileHeader onHide={toggleCollapse} />
-              <ProfileAvatar name={name} level={level} />
+              <ProfileAvatar name={displayName} level={displayLevel} />
               <ProfileStats
-                streakDays={streakDays}
-                currentBadge={currentBadge}
-                totalCoins={totalCoins}
+                streakDays={displayStreakDays}
+                currentBadge={displayBadge}
+                totalCoins={displayCoins}
               />
             </div>
           )}
