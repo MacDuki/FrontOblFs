@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 // Thunk para obtener el resumen de puntos totales
 export const getPointsSummary = createAsyncThunk(
@@ -110,6 +111,15 @@ const pointsSlice = createSlice({
       .addCase(getPointsByDate.rejected, (state, action) => {
         state.isLoadingPointsByDate = false;
         state.pointsByDateError = action.payload;
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.summary = null;
+        state.pointsByDate = [];
+        state.summaryError = null;
+        state.pointsByDateError = null;
+        state.lastSummaryUpdate = null;
+        state.lastPointsByDateUpdate = null;
       });
   },
 });

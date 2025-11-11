@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 export const categories = [
   { name: "Thriller", query: "thriller" },
@@ -233,6 +234,21 @@ const booksSlice = createSlice({
       .addCase(searchBooks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.categoryBooks = {};
+        state.originalCategoryBooks = {};
+        state.searchCache = {};
+        state.favoriteBooks = [];
+        state.savedBooks = [];
+        state.selectedBook = null;
+        state.searchQuery = "";
+        state.visibleCategories = categories.map((cat) => cat.name);
+        state.loading = false;
+        state.initialized = false;
+        state.error = null;
+        state.lastSyncAt = 0;
       });
   },
 });

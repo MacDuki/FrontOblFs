@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 // Thunk para obtener el perfil del usuario
 export const getProfile = createAsyncThunk(
@@ -104,6 +105,15 @@ const userSlice = createSlice({
       .addCase(getLevel.rejected, (state, action) => {
         state.isLoadingLevel = false;
         state.levelError = action.payload;
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.profile = null;
+        state.level = null;
+        state.profileError = null;
+        state.levelError = null;
+        state.lastProfileUpdate = null;
+        state.lastLevelUpdate = null;
       });
   },
 });

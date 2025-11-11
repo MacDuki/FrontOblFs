@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 // ---------- Thunks ----------
 export const fetchCollections = createAsyncThunk(
@@ -209,6 +210,14 @@ const collectionsSlice = createSlice({
       })
       .addCase(deleteCollection.rejected, (state, action) => {
         state.error = action.payload || action.error.message;
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.byId = {};
+        state.allIds = [];
+        state.loading = false;
+        state.error = null;
+        state.lastSyncAt = 0;
       });
   },
 });

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 export const fetchAllReviews = createAsyncThunk(
   "reviews/fetchAll",
@@ -323,6 +324,16 @@ const reviewsSlice = createSlice({
         } else {
           state.error = errorPayload || action.error.message;
         }
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.byId = {};
+        state.allIds = [];
+        state.myReviewsIds = [];
+        state.bookReviewsCache = {};
+        state.loading = false;
+        state.error = null;
+        state.lastSyncAt = 0;
       });
   },
 });

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 // --------- Constantes ----------
 export const ESTADOS_LIBRO = {
@@ -304,6 +305,14 @@ const slice = createSlice({
       })
       .addCase(changeEstadoLibraryItem.rejected, (s, a) => {
         s.error = a.payload || a.error.message;
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (s) => {
+        s.byId = {};
+        s.allIds = [];
+        s.loading = false;
+        s.error = null;
+        s.lastSyncAt = 0;
       });
   },
 });

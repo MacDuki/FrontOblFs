@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
+import { logout } from "./auth.slice";
 
 // ---------- Utils ----------
 const shallowEqual = (a, b) => {
@@ -279,6 +280,16 @@ const petSlice = createSlice({
       .addCase(fetchAllPets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Error";
+      })
+      // Escuchar el logout de auth para limpiar el estado
+      .addCase(logout, (state) => {
+        state.pets = [];
+        state.selectedPet = null;
+        state.hunger = null;
+        state.happiness = null;
+        state.lastUpdate = null;
+        state.loading = false;
+        state.error = null;
       });
   },
 });
