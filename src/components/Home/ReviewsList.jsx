@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, Calendar } from "lucide-react";
 import {
   fetchMyReviews,
   selectMyReviews,
@@ -35,6 +35,51 @@ function ReviewsList() {
   }, [dispatch, lastSyncAt]);
 
   const [editingReview, setEditingReview] = useState(null);
+  const [dateFilter, setDateFilter] = useState("all");
+  const [customDateFrom, setCustomDateFrom] = useState("");
+  const [customDateTo, setCustomDateTo] = useState("");
+  const [showCustomDates, setShowCustomDates] = useState(false);
+
+  const filteredReviews = useMemo(() => {
+    if (dateFilter === "all") return reviews;
+    
+    const now = new Date();
+    let filterDateFrom = null;
+    let filterDateTo = null;
+    
+    if (dateFilter === "week") {
+      filterDateFrom = new Date();
+      filterDateFrom.setDate(now.getDate() - 7);
+      filterDateFrom.setHours(0, 0, 0, 0);
+      filterDateTo = new Date();
+      filterDateTo.setHours(23, 59, 59, 999);
+    } else if (dateFilter === "month") {
+      filterDateFrom = new Date();
+      filterDateFrom.setMonth(now.getMonth() - 1);
+      filterDateFrom.setHours(0, 0, 0, 0);
+      filterDateTo = new Date();
+      filterDateTo.setHours(23, 59, 59, 999);
+    } else if (dateFilter === "custom") {
+      if (customDateFrom) {
+        const [year, month, day] = customDateFrom.split('-').map(Number);
+        filterDateFrom = new Date(year, month - 1, day, 0, 0, 0, 0);
+      }
+      if (customDateTo) {
+        const [year, month, day] = customDateTo.split('-').map(Number);
+        filterDateTo = new Date(year, month - 1, day, 23, 59, 59, 999);
+      }
+    }
+    
+    return reviews.filter((review) => {
+      if (!review.createdAt) return true;
+      const reviewDate = new Date(review.createdAt);
+      
+      if (filterDateFrom && reviewDate < filterDateFrom) return false;
+      if (filterDateTo && reviewDate > filterDateTo) return false;
+      
+      return true;
+    });
+  }, [reviews, dateFilter, customDateFrom, customDateTo]);
 
   const handleDelete = async (reviewId) => {
     try {
@@ -62,7 +107,6 @@ function ReviewsList() {
     } catch (err) {
       dispatch(revertUpdate({ id }));
       const errorMessage = err.message || err || "Error al actualizar la reseña";
-      console.error("❌ Error al actualizar review:", errorMessage);
       setTimeout(() => dispatch(clearError()), 100);
       throw new Error(errorMessage);
     }
@@ -91,11 +135,10 @@ function ReviewsList() {
     return null;
   };
 
-  // Función para buscar el libro en Redux por ID o título
   const findBook = (review) => {
     const { categoryBooks } = booksState;
     
-    // Buscar en todas las categorías
+    
     for (const category in categoryBooks) {
       const books = categoryBooks[category];
       if (Array.isArray(books)) {
@@ -137,9 +180,116 @@ function ReviewsList() {
     );
 
   return (
-    <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-      <div className="grid gap-4">
-        {reviews.map((review) => {
+    <div className="space-y-4">
+      {/* Date Filter */}
+      <div className="p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+        <div className="flex items-center gap-3 mb-3">
+          <Calendar size={18} className="text-amber-400" />
+          <span className="text-sm font-medium text-gray-300">Filtrar por:</span>
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => {
+                setDateFilter("week");
+                setShowCustomDates(false);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                dateFilter === "week"
+                  ? "bg-amber-500 text-white shadow-lg shadow-amber-500/30"
+                  : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
+              }`}
+            >
+              Última semana
+            </button>
+            <button
+              onClick={() => {
+                setDateFilter("month");
+                setShowCustomDates(false);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                dateFilter === "month"
+                  ? "bg-amber-500 text-white shadow-lg shadow-amber-500/30"
+                  : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
+              }`}
+            >
+              Último mes
+            </button>
+            <button
+              onClick={() => {
+                setDateFilter("custom");
+                setShowCustomDates(true);
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                dateFilter === "custom"
+                  ? "bg-amber-500 text-white shadow-lg shadow-amber-500/30"
+                  : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
+              }`}
+            >
+              Personalizado
+            </button>
+            <button
+              onClick={() => {
+                setDateFilter("all");
+                setShowCustomDates(false);
+                setCustomDateFrom("");
+                setCustomDateTo("");
+              }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                dateFilter === "all"
+                  ? "bg-amber-500 text-white shadow-lg shadow-amber-500/30"
+                  : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
+              }`}
+            >
+              Todo
+            </button>
+          </div>
+          {dateFilter !== "all" && (
+            <span className="ml-auto text-xs text-gray-500">
+              {filteredReviews.length} de {reviews.length} reviews
+            </span>
+          )}
+        </div>
+
+        {/* Custom Date Range Inputs */}
+        {showCustomDates && (
+          <div className="flex items-center gap-3 pt-3 border-t border-white/10 animate-fade-in">
+            <div className="flex items-center gap-2 flex-1">
+              <label className="text-xs text-gray-400 whitespace-nowrap">Desde:</label>
+              <input
+                type="date"
+                value={customDateFrom}
+                onChange={(e) => setCustomDateFrom(e.target.value)}
+                max={customDateTo || new Date().toISOString().split('T')[0]}
+                className="flex-1 px-3 py-1.5 text-xs bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex items-center gap-2 flex-1">
+              <label className="text-xs text-gray-400 whitespace-nowrap">Hasta:</label>
+              <input
+                type="date"
+                value={customDateTo}
+                onChange={(e) => setCustomDateTo(e.target.value)}
+                min={customDateFrom}
+                max={new Date().toISOString().split('T')[0]}
+                className="flex-1 px-3 py-1.5 text-xs bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Reviews List */}
+      {filteredReviews.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <div className="text-4xl mb-3">📅</div>
+          <p className="text-base text-gray-300 font-medium">There are no reviews in this period of time.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Try another date range
+          </p>
+        </div>
+      ) : (
+        <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="grid gap-4 pb-18">
+            {filteredReviews.map((review) => {
           const rating = review.score ?? review.rating ?? 0;
           const bookCover = getCoverImage(review);
           const book = findBook(review);
@@ -152,9 +302,8 @@ function ReviewsList() {
           return (
             <div
               key={review._id || review.id}
-              className="group relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1"
+              className="group relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-1"
             >
-              {/* Action buttons - top right */}
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
                 <button
                   onClick={() => handleEdit(review)}
@@ -245,15 +394,15 @@ function ReviewsList() {
                   )}
                 </div>
               </div>
-
-              {/* Hover gradient effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-pink-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:via-pink-500/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-orange-500/0 to-amber-500/0 group-hover:from-amber-500/5 group-hover:via-orange-500/5 group-hover:to-amber-500/5 transition-all duration-500 pointer-events-none" />
             </div>
           );
         })}
-      </div>
+          </div>
+        </div>
+      )}
 
-      {/* Modal de edición */}
+      
       <EditReviewModal
         review={editingReview}
         isOpen={!!editingReview}
@@ -270,11 +419,31 @@ function ReviewsList() {
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.5);
+          background: rgba(245, 158, 11, 0.5);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.7);
+          background: rgba(245, 158, 11, 0.7);
+        }
+        
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(1);
+          cursor: pointer;
         }
       `}</style>
     </div>
