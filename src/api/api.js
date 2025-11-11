@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Configuración de la instancia de Axios
 const api = axios.create({
   baseURL: "https://obligatorio-fs-psi.vercel.app/v1",
   headers: {
@@ -8,7 +7,7 @@ const api = axios.create({
   },
 });
 
-// Interceptor para agregar el token a las peticiones
+
 api.interceptors.request.use(
   (config) => {
     const token =

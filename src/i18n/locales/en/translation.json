@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "Home",
+    "discover": "Discover",
+    "library": "Library",
+    "myReviews": "My Reviews",
+    "achievements": "Achievements"
+  },
+  "collections": {
+    "title": "My Collections",
+    "newCollection": "New collection...",
+    "add": "Add",
+    "refresh": "Refresh",
+    "empty": "No collections yet",
+    "emptyDescription": "Create a collection to organize your books",
+    "deleteConfirm": "Are you sure you want to delete this book?",
+    "deleteError": "Could not delete",
+    "createError": "Could not create",
+    "noBooks": "No books in this collection",
+    "noBooksDescription": "Add books from your library",
+    "viewDetails": "View details",
+    "addPages": "Add pages",
+    "removeBook": "Remove book",
+    "renameCollection": "Rename collection"
+  },
+  "library": {
+    "title": "My Library",
+    "readingNow": "Reading Now",
+    "finished": "Finished",
+    "wantToRead": "Want to Read",
+    "allBooks": "All Books",
+    "noBooks": "No books yet",
+    "noBooksDescription": "Start adding books to your library",
+    "addToCollection": "Add to collection",
+    "progress": "Progress",
+    "pagesRead": "pages read",
+    "totalPages": "total pages",
+    "startReading": "Start reading",
+    "continueReading": "Continue reading",
+    "markAsFinished": "Mark as finished"
+  },
+  "reviews": {
+    "title": "My Reviews",
+    "noReviews": "No reviews yet",
+    "noReviewsDescription": "Start reading and share your thoughts!",
+    "filterBy": "Filter by:",
+    "lastWeek": "Last week",
+    "lastMonth": "Last month",
+    "custom": "Custom",
+    "all": "All",
+    "from": "From:",
+    "to": "To:",
+    "of": "of",
+    "noPeriodReviews": "No reviews in this period",
+    "tryAnotherRange": "Try another date range",
+    "edit": "Edit review",
+    "delete": "Delete review",
+    "by": "by"
+  },
+  "reviewModal": {
+    "title": "Review this book",
+    "editTitle": "Edit review",
+    "rating": "Rating",
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "Share your thoughts about this book...",
+    "submit": "Submit Review",
+    "update": "Update Review",
+    "cancel": "Cancel",
+    "submitting": "Submitting...",
+    "updating": "Updating..."
+  },
+  "profile": {
+    "level": "Level",
+    "streak": "Day Streak",
+    "badge": "Current Badge",
+    "coins": "Total Coins",
+    "changePlan": "Change Plan",
+    "hide": "Hide"
+  },
+  "planModal": {
+    "title": "Choose Your Plan",
+    "currentPlan": "Current",
+    "selectPlan": "Select Plan",
+    "upgrading": "Upgrading...",
+    "plus": {
+      "name": "Plus",
+      "price": "$9.99/month",
+      "features": [
+        "Up to 10 reviews",
+        "Basic statistics",
+        "Standard support"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "$19.99/month",
+      "features": [
+        "Unlimited reviews",
+        "Advanced analytics",
+        "Priority support",
+        "Exclusive badges"
+      ]
+    }
+  },
+  "books": {
+    "addToLibrary": "Add to Library",
+    "removeFromLibrary": "Remove from Library",
+    "writeReview": "Write a Review",
+    "pages": "pages",
+    "published": "Published",
+    "categories": "Categories",
+    "description": "Description",
+    "authors": "Authors",
+    "viewMore": "View more",
+    "viewLess": "View less"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "add": "Add",
+    "remove": "Remove",
+    "refresh": "Refresh",
+    "confirm": "Confirm",
+    "back": "Back"
+  }
+}

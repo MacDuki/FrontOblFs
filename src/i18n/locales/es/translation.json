@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "discover": "Descubrir",
+    "library": "Biblioteca",
+    "myReviews": "Mis Reseñas",
+    "achievements": "Logros"
+  },
+  "collections": {
+    "title": "Mis Colecciones",
+    "newCollection": "Nueva colección...",
+    "add": "Agregar",
+    "refresh": "Actualizar",
+    "empty": "No hay colecciones todavía",
+    "emptyDescription": "Crea una colección para organizar tus libros",
+    "deleteConfirm": "¿Seguro que quieres eliminar este libro?",
+    "deleteError": "No se pudo eliminar",
+    "createError": "No se pudo crear",
+    "noBooks": "No hay libros en esta colección",
+    "noBooksDescription": "Agrega libros desde tu biblioteca",
+    "viewDetails": "Ver detalles",
+    "addPages": "Agregar páginas",
+    "removeBook": "Quitar libro",
+    "renameCollection": "Renombrar colección"
+  },
+  "library": {
+    "title": "Mi Biblioteca",
+    "readingNow": "Leyendo Ahora",
+    "finished": "Terminados",
+    "wantToRead": "Quiero Leer",
+    "allBooks": "Todos los Libros",
+    "noBooks": "No hay libros todavía",
+    "noBooksDescription": "Comienza a agregar libros a tu biblioteca",
+    "addToCollection": "Agregar a colección",
+    "progress": "Progreso",
+    "pagesRead": "páginas leídas",
+    "totalPages": "páginas totales",
+    "startReading": "Comenzar a leer",
+    "continueReading": "Continuar leyendo",
+    "markAsFinished": "Marcar como terminado"
+  },
+  "reviews": {
+    "title": "Mis Reseñas",
+    "noReviews": "No hay reseñas todavía",
+    "noReviewsDescription": "¡Empieza a leer y comparte tus opiniones!",
+    "filterBy": "Filtrar por:",
+    "lastWeek": "Última semana",
+    "lastMonth": "Último mes",
+    "custom": "Personalizado",
+    "all": "Todo",
+    "from": "Desde:",
+    "to": "Hasta:",
+    "of": "de",
+    "noPeriodReviews": "No hay reseñas en este período",
+    "tryAnotherRange": "Intenta con otro rango de fecha",
+    "edit": "Editar reseña",
+    "delete": "Eliminar reseña",
+    "by": "por"
+  },
+  "reviewModal": {
+    "title": "Reseñar este libro",
+    "editTitle": "Editar reseña",
+    "rating": "Puntuación",
+    "comment": "Comentario (opcional)",
+    "commentPlaceholder": "Comparte tu opinión sobre este libro...",
+    "submit": "Enviar Reseña",
+    "update": "Actualizar Reseña",
+    "cancel": "Cancelar",
+    "submitting": "Enviando...",
+    "updating": "Actualizando..."
+  },
+  "profile": {
+    "level": "Nivel",
+    "streak": "Racha de días",
+    "badge": "Insignia Actual",
+    "coins": "Monedas Totales",
+    "changePlan": "Cambiar Plan",
+    "hide": "Ocultar"
+  },
+  "planModal": {
+    "title": "Elige Tu Plan",
+    "currentPlan": "Actual",
+    "selectPlan": "Seleccionar Plan",
+    "upgrading": "Actualizando...",
+    "plus": {
+      "name": "Plus",
+      "price": "$9.99/mes",
+      "features": [
+        "Hasta 10 reseñas",
+        "Estadísticas básicas",
+        "Soporte estándar"
+      ]
+    },
+    "premium": {
+      "name": "Premium",
+      "price": "$19.99/mes",
+      "features": [
+        "Reseñas ilimitadas",
+        "Análisis avanzados",
+        "Soporte prioritario",
+        "Insignias exclusivas"
+      ]
+    }
+  },
+  "books": {
+    "addToLibrary": "Agregar a Biblioteca",
+    "removeFromLibrary": "Quitar de Biblioteca",
+    "writeReview": "Escribir una Reseña",
+    "pages": "páginas",
+    "published": "Publicado",
+    "categories": "Categorías",
+    "description": "Descripción",
+    "authors": "Autores",
+    "viewMore": "Ver más",
+    "viewLess": "Ver menos"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "username": "Usuario",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "hasAccount": "¿Ya tienes una cuenta?"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "add": "Agregar",
+    "remove": "Quitar",
+    "refresh": "Actualizar",
+    "confirm": "Confirmar",
+    "back": "Volver"
+  }
+}

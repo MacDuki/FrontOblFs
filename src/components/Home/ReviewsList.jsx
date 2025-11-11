@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Trash2, Edit2, Calendar } from "lucide-react";
 import {
   fetchMyReviews,
@@ -17,6 +18,7 @@ import useLibraryItems from "../../hooks/useLibraryItem";
 import EditReviewModal from "./EditReviewModal";
 
 function ReviewsList() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const reviews = useSelector(selectMyReviews);
   const loading = useSelector(selectReviewsLoading);
@@ -159,11 +161,11 @@ function ReviewsList() {
     return null;
   };
 
-  if (loading) return <div className="p-4 text-white">Loading reviews...</div>;
+  if (loading) return <div className="p-4 text-white">{t('common.loading')}</div>;
   if (error)
     return (
       <div className="p-4 text-red-400">
-        <div className="font-semibold">Error loading reviews</div>
+        <div className="font-semibold">{t('common.error')} loading reviews</div>
         <div className="text-sm mt-1">{String(error)}</div>
       </div>
     );
@@ -172,9 +174,9 @@ function ReviewsList() {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <div className="text-6xl mb-4">📚</div>
-        <p className="text-lg text-gray-300 font-medium">No reviews yet</p>
+        <p className="text-lg text-gray-300 font-medium">{t('reviews.noReviews')}</p>
         <p className="text-sm text-gray-500 mt-2">
-          Start reading and share your thoughts!
+          {t('reviews.noReviewsDescription')}
         </p>
       </div>
     );
@@ -185,7 +187,7 @@ function ReviewsList() {
       <div className="p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
         <div className="flex items-center gap-3 mb-3">
           <Calendar size={18} className="text-amber-400" />
-          <span className="text-sm font-medium text-gray-300">Filtrar por:</span>
+          <span className="text-sm font-medium text-gray-300">{t('reviews.filterBy')}</span>
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => {
@@ -198,7 +200,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Última semana
+              {t('reviews.lastWeek')}
             </button>
             <button
               onClick={() => {
@@ -211,7 +213,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Último mes
+              {t('reviews.lastMonth')}
             </button>
             <button
               onClick={() => {
@@ -224,7 +226,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Personalizado
+              {t('reviews.custom')}
             </button>
             <button
               onClick={() => {
@@ -239,12 +241,12 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Todo
+              {t('reviews.all')}
             </button>
           </div>
           {dateFilter !== "all" && (
             <span className="ml-auto text-xs text-gray-500">
-              {filteredReviews.length} de {reviews.length} reviews
+              {filteredReviews.length} {t('reviews.of')} {reviews.length} reviews
             </span>
           )}
         </div>
@@ -253,7 +255,7 @@ function ReviewsList() {
         {showCustomDates && (
           <div className="flex items-center gap-3 pt-3 border-t border-white/10 animate-fade-in">
             <div className="flex items-center gap-2 flex-1">
-              <label className="text-xs text-gray-400 whitespace-nowrap">Desde:</label>
+              <label className="text-xs text-gray-400 whitespace-nowrap">{t('reviews.from')}</label>
               <input
                 type="date"
                 value={customDateFrom}
@@ -263,7 +265,7 @@ function ReviewsList() {
               />
             </div>
             <div className="flex items-center gap-2 flex-1">
-              <label className="text-xs text-gray-400 whitespace-nowrap">Hasta:</label>
+              <label className="text-xs text-gray-400 whitespace-nowrap">{t('reviews.to')}</label>
               <input
                 type="date"
                 value={customDateTo}
@@ -281,9 +283,9 @@ function ReviewsList() {
       {filteredReviews.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 text-center">
           <div className="text-4xl mb-3">📅</div>
-          <p className="text-base text-gray-300 font-medium">There are no reviews in this period of time.</p>
+          <p className="text-base text-gray-300 font-medium">{t('reviews.noPeriodReviews')}</p>
           <p className="text-sm text-gray-500 mt-1">
-            Try another date range
+            {t('reviews.tryAnotherRange')}
           </p>
         </div>
       ) : (
@@ -308,14 +310,14 @@ function ReviewsList() {
                 <button
                   onClick={() => handleEdit(review)}
                   className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 hover:scale-110 transition-all"
-                  title="Editar review"
+                  title={t('reviews.edit')}
                 >
                   <Edit2 size={16} />
                 </button>
                 <button
                   onClick={() => handleDelete(review._id || review.id)}
                   className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:scale-110 transition-all"
-                  title="Eliminar review"
+                  title={t('reviews.delete')}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -349,7 +351,7 @@ function ReviewsList() {
 
                   {(info?.authors || libraryItem?.authors) && (
                     <p className="text-xs text-gray-400 mb-2">
-                      by {Array.isArray(info?.authors) 
+                      {t('reviews.by')} {Array.isArray(info?.authors) 
                         ? info.authors.join(', ') 
                         : Array.isArray(libraryItem?.authors)
                         ? libraryItem.authors.join(', ')

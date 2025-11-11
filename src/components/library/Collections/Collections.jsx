@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BsCollection } from "react-icons/bs";
 import { CiTrash } from "react-icons/ci";
 import { FaBookOpen } from "react-icons/fa";
@@ -10,6 +11,7 @@ import AddPagesModal from "../AddPagesModal";
 import LibraryItemCard from "../LibraryItemCard";
 
 export default function CollectionsView() {
+  const { t } = useTranslation();
   const {
     collections,
     loading,
@@ -77,12 +79,12 @@ export default function CollectionsView() {
   };
 
   const handleRemoveItem = async (itemId) => {
-    if (!window.confirm("¿Seguro que quieres eliminar este libro?")) return;
+    if (!window.confirm(t('collections.deleteConfirm'))) return;
     try {
       await removeLibraryItem(itemId);
     } catch (e) {
       console.error(e);
-      alert(typeof e === "string" ? e : e?.message || "No se pudo eliminar");
+      alert(typeof e === "string" ? e : e?.message || t('collections.deleteError'));
     }
   };
 
@@ -113,7 +115,7 @@ export default function CollectionsView() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-5 mb-6">
-        <h1 className="text-3xl font-bold text-white">Mis Colecciones</h1>
+        <h1 className="text-3xl font-bold text-white">{t('collections.title')}</h1>
 
         <BsCollection size={24} />
       </div>
@@ -124,7 +126,7 @@ export default function CollectionsView() {
       >
         <input
           type="text"
-          placeholder="Nueva colección..."
+          placeholder={t('collections.newCollection')}
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           className="flex-1 border border-white/10 bg-white/5 text-white placeholder-white/50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
@@ -152,7 +154,7 @@ export default function CollectionsView() {
         <div className="flex items-center gap-3 mb-6 bg-white/5 backdrop-blur-xl p-4 rounded-lg border border-white/10">
           <Loader size={28} iconSize={0} />
           <span className="text-white/80 font-medium">
-            Cargando colecciones y libros…
+            {t('common.loading')}
           </span>
         </div>
       )}
@@ -171,10 +173,10 @@ export default function CollectionsView() {
       {isEmpty ? (
         <div className="text-center py-16 bg-white/5 backdrop-blur-xl rounded-lg border-2 border-dashed border-white/10">
           <p className="text-white/70 text-lg mb-2">
-            📭 No hay colecciones todavía
+            📭 {t('collections.empty')}
           </p>
           <p className="text-white/50 text-sm">
-            Crea tu primera colección arriba para organizar tus libros
+            {t('collections.emptyDescription')}
           </p>
         </div>
       ) : (
@@ -217,9 +219,9 @@ export default function CollectionsView() {
 
                   {itemsForCollection.length === 0 ? (
                     <div className="text-center py-8 text-white/60 bg-white/5 rounded-lg border border-white/10">
-                      <p className="text-sm">No hay libros en esta colección</p>
+                      <p className="text-sm">{t('collections.noBooks')}</p>
                       <p className="text-xs mt-1 text-white/50">
-                        Agrega libros desde la sección de descubrir
+                        {t('collections.noBooksDescription')}
                       </p>
                     </div>
                   ) : (
