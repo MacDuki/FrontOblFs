@@ -10,7 +10,7 @@ import { TfiStatsUp } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
 
-function VerticalNavbar({ isVisible, onTogglePanel }) {
+function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
@@ -21,7 +21,15 @@ function VerticalNavbar({ isVisible, onTogglePanel }) {
 
   const navItems = [
     { icon: FaBookOpenReader, label: "Start Reading", color: "pink" },
-    { icon: FaStar, label: "My Reviews", color: "pink", onClick: () => navigate("/my-reviews") },
+    { 
+      icon: FaStar, 
+      label: "My Reviews", 
+      color: "pink", 
+      onClick: () => {
+        setTab("reviews");
+        onTogglePanel(); // Mostrar el panel
+      }
+    },
     { icon: TfiStatsUp, label: "Stats", color: "blue" },
     { icon: GiTrophiesShelf, label: "Trophies", color: "yellow" },
     { icon: MdOutlinePets, label: "Pets", color: "green" },
@@ -46,7 +54,10 @@ function VerticalNavbar({ isVisible, onTogglePanel }) {
       <nav className="flex flex-col gap-3 p-3 rounded-2xl border border-white/10 backdrop-blur-md bg-white/5">
         {/* Toggle button to show SectionsHome */}
         <button
-          onClick={onTogglePanel}
+          onClick={() => {
+            setTab("sections");
+            onTogglePanel();
+          }}
           className="group relative p-3 rounded-xl border border-white/10 text-white      flex items-center justify-center  overflow-hidden 
             transition-all duration-300 ease-out hover:scale-110 hover:-translate-y-1 
             hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-500/30 

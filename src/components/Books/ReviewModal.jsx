@@ -1,11 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import useLibraryItems from "../../hooks/useLibraryItem";
-import api from "../../api/api";
+import { createReview, createOptimistic, removeOptimistic } from "../../features/reviews.slice";
 
 export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
+  const dispatch = useDispatch();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -67,35 +68,47 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     }
 
     try {
-      const { data } = await api.post("/reviews", reviewPayload);
-      // Persist a local copy so the client can show the review even if backend
-      // doesn't provide a GET endpoint for reviews.
-      try {
-        const saved = data || { ...reviewPayload, _id: `local_${Date.now()}` };
-        const existing = JSON.parse(localStorage.getItem("my_reviews") || "[]");
-        existing.unshift(saved);
-        // keep a reasonable cap
-        localStorage.setItem("my_reviews", JSON.stringify(existing.slice(0, 200)));
-        // notify other parts of the app (ReviewsList) that local reviews updated
-        try {
-          window.dispatchEvent(new CustomEvent("my_reviews_updated", { detail: saved }));
-        } catch (e) {
-          // ignore if CustomEvent not available in some env
+      // Crear un placeholder temporal con ID único
+      const tempId = `temp-${Date.now()}`;
+      const tempKey = `k-${Date.now()}`;
+      const tempReview = {
+        _id: tempId,
+        __tempKey: tempKey,
+        originalBookId: book.id,
+        bookTitle: info.title,
+        score: Number(rating),
+        comment: reviewText && reviewText.trim() !== "" ? reviewText.trim() : "Sin comentario",
+        createdAt: new Date().toISOString(),
+        // Datos temporales para mostrar mientras se carga
+        user: {
+          username: "Tu usuario" // Esto se reemplazará con los datos reales
         }
-        console.debug("[ReviewModal] saved local review", saved);
-      } catch (e) {
-        console.warn("Could not persist local review:", e);
+      };
+
+      // Dispatch optimista: agregar inmediatamente al state
+      dispatch(createOptimistic(tempReview));
+
+      try {
+        // Enviar al backend con el tempKey para identificar el placeholder
+        const resultAction = await dispatch(
+          createReview({ ...reviewPayload, __tempKey: tempKey })
+        ).unwrap();
+        
+        setSuccess("Reseña publicada correctamente");
+        if (onSubmit) onSubmit(resultAction);
+        
+        setTimeout(() => {
+          setSuccess(null);
+          handleClose();
+        }, 1200);
+      } catch (err) {
+        // Si falla, revertir el cambio optimista
+        dispatch(removeOptimistic(tempId));
+        throw err;
       }
-      setSuccess("Reseña publicada correctamente");
-      if (onSubmit) onSubmit(data);
-      setTimeout(() => {
-        setSuccess(null);
-        handleClose();
-      }, 1200);
     } catch (err) {
-      console.error("Error creating review:", err);
-      const body = err.response?.data;
-      const msg = body?.message || body?.error || err.message || "Error al crear la reseña";
+      console.error("❌ [ReviewModal] Error creating review:", err);
+      const msg = typeof err === "string" ? err : err?.message || "Error al crear la reseña";
       setError(msg);
     } finally {
       setIsSubmitting(false);

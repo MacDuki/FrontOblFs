@@ -1,15 +1,35 @@
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import ReviewsList from "../ReviewsList";
 import { PetHome } from "../Pet/PetHome";
 import { SectionsHome } from "../SectionsHome";
 import UserHome from "../UserHome";
 import VerticalNavbar from "../VerticalNavbar.jsx";
 
-function DesktopLayout() {
+function DesktopLayout({ tab, setTab }) {
   const [isPanelVisible, setIsPanelVisible] = useState(true);
 
   const togglePanel = () => {
     setIsPanelVisible(!isPanelVisible);
+  };
+
+  // Renderizar contenido según el tab activo
+  const renderMainContent = () => {
+    switch (tab) {
+      case "reviews":
+        return (
+          <div className="h-full max-h-[600px] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 flex flex-col overflow-hidden">
+            <h2 className="text-2xl font-bold text-white mb-4 flex-shrink-0">My Reviews</h2>
+            <div className="flex-1 overflow-hidden">
+              <ReviewsList />
+            </div>
+          </div>
+        );
+      case "sections":
+        return <SectionsHome />;
+      default:
+        return <SectionsHome />;
+    }
   };
 
   return (
@@ -39,11 +59,16 @@ function DesktopLayout() {
             <IoIosArrowBack size={20} />
           )}
         </button>
-        <SectionsHome />
+        {renderMainContent()}
       </section>
 
       {/* Vertical navbar - appears when main panel is hidden */}
-      <VerticalNavbar isVisible={!isPanelVisible} onTogglePanel={togglePanel} />
+      <VerticalNavbar 
+        isVisible={!isPanelVisible} 
+        onTogglePanel={togglePanel}
+        currentTab={tab}
+        setTab={setTab}
+      />
     </main>
   );
 }

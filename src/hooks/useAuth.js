@@ -20,7 +20,7 @@ export const useAuth = () => {
     if (token && !isAuthenticated) {
       // Aquí podrías hacer una verificación del token con el servidor
       // Por ahora, confiamos en el token guardado en localStorage o sessionStorage
-      console.log("Token found in storage, user should be authenticated");
+      
     }
 
     // Limpiar sessionStorage cuando la ventana se cierra (para "remember me" = false)

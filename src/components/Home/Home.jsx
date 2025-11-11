@@ -6,7 +6,7 @@ import MobileNavigation from "../Mobile/MobileNavigation.jsx";
 import DesktopLayout from "./layout/DesktopLayout.jsx";
 
 function Home() {
-  const [tab, setTab] = useState("home"); // 'home' | 'sections'
+  const [tab, setTab] = useState("home"); // 'home' | 'sections' | 'reviews'
   const dispatch = useDispatch();
 
   // Pre-carga silenciosa en segundo plano al iniciar el Home
@@ -19,7 +19,7 @@ function Home() {
     <>
       <DarkVeil speed={1.2} hueShift={221} />
       <MobileNavigation tab={tab} setTab={setTab} />
-      <DesktopLayout />
+      <DesktopLayout tab={tab} setTab={setTab} />
     </>
   );
 }
