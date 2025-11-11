@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
 
-// ---------- Thunks ----------
 export const fetchAllReviews = createAsyncThunk(
   "reviews/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -22,10 +21,7 @@ export const fetchMyReviews = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/reviews/my-reviews");
-      
-      // El backend puede devolver { reviews: [...] } o directamente [...]
       const reviewsArray = Array.isArray(data) ? data : (data.reviews || []);
-      
       return reviewsArray;
     } catch (err) {
       console.error("❌ [Reviews API] fetchMyReviews error:", err);
@@ -41,10 +37,7 @@ export const createReview = createAsyncThunk(
   async (reviewData, { rejectWithValue }) => {
     try {
       const { data } = await api.post("/reviews", reviewData);
-      
-      // El backend puede devolver { review: {...} } o directamente {...}
       const review = data?.review || data;
-      
       return review;
     } catch (err) {
       console.error("❌ [Reviews API] createReview error:", err);
@@ -69,19 +62,38 @@ export const deleteReview = createAsyncThunk(
   }
 );
 
-// ---------- Slice ----------
+export const updateReview = createAsyncThunk(
+  "reviews/update",
+  async ({ id, score, comment }, { rejectWithValue }) => {
+    try {
+      console.log("📤 Enviando PATCH /reviews/" + id, { score, comment });
+      const { data } = await api.patch(`/reviews/${id}`, { score, comment });
+      console.log("✅ Respuesta del servidor:", data);
+      
+      const review = data?.review || data;
+      return { id, ...review };
+    } catch (err) {
+      console.error("❌ [Reviews API] updateReview error:", err);
+      console.error("❌ Error response:", err.response?.data);
+      console.error("❌ Error status:", err.response?.status);
+      return rejectWithValue(
+        err.response?.data?.message || "Error al actualizar reseña"
+      );
+    }
+  }
+);
+
 const reviewsSlice = createSlice({
   name: "reviews",
   initialState: {
-    byId: {}, // _id -> review
-    allIds: [], // orden estable
-    myReviewsIds: [], // IDs de mis reseñas
+    byId: {},
+    allIds: [],
+    myReviewsIds: [],
     loading: false,
     error: null,
     lastSyncAt: 0,
   },
   reducers: {
-    // Optimista: crear placeholder antes de POST
     createOptimistic(state, action) {
       const tempReview = action.payload;
       state.byId[tempReview._id] = tempReview;
@@ -92,20 +104,46 @@ const reviewsSlice = createSlice({
         state.myReviewsIds.unshift(tempReview._id);
       }
     },
-    // Revertir placeholder si falla
     removeOptimistic(state, action) {
       const id = action.payload;
       delete state.byId[id];
       state.allIds = state.allIds.filter((x) => x !== id);
       state.myReviewsIds = state.myReviewsIds.filter((x) => x !== id);
     },
+    updateOptimistic(state, action) {
+      const { id, score, comment } = action.payload;
+      if (state.byId[id]) {
+        state.byId[id] = {
+          ...state.byId[id],
+          score,
+          comment,
+          __prevScore: state.byId[id].score,
+          __prevComment: state.byId[id].comment,
+        };
+      }
+    },
+    revertUpdate(state, action) {
+      const { id } = action.payload;
+      if (state.byId[id]) {
+        if (state.byId[id].__prevScore !== undefined) {
+          state.byId[id].score = state.byId[id].__prevScore;
+          delete state.byId[id].__prevScore;
+        }
+        if (state.byId[id].__prevComment !== undefined) {
+          state.byId[id].comment = state.byId[id].__prevComment;
+          delete state.byId[id].__prevComment;
+        }
+      }
+    },
     markSynced(state) {
       state.lastSyncAt = Date.now();
+    },
+    clearError(state) {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      // fetch all
       .addCase(fetchAllReviews.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -125,7 +163,6 @@ const reviewsSlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      // fetch my reviews
       .addCase(fetchMyReviews.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -147,26 +184,22 @@ const reviewsSlice = createSlice({
         state.loading = false;
         state.error = action.payload || action.error.message;
       })
-      // create
       .addCase(createReview.fulfilled, (state, action) => {
         const real = action.payload;
         if (!real?._id) return;
 
-        // Buscar y eliminar el placeholder temporal
         const tempId = Object.keys(state.byId).find(
           (id) =>
             id.startsWith("temp-") &&
             state.byId[id]?.__tempKey === real.__tempKey
         );
 
-        // Eliminar el placeholder si se encontró
         if (tempId) {
           delete state.byId[tempId];
           state.allIds = state.allIds.filter((x) => x !== tempId);
           state.myReviewsIds = state.myReviewsIds.filter((x) => x !== tempId);
         }
 
-        // Agregar la review real
         state.byId[real._id] = real;
         if (!state.allIds.includes(real._id)) {
           state.allIds.unshift(real._id);
@@ -178,26 +211,36 @@ const reviewsSlice = createSlice({
       .addCase(createReview.rejected, (state, action) => {
         state.error = action.payload || action.error.message;
       })
-      // delete
       .addCase(deleteReview.fulfilled, (state, action) => {
         const reviewId = action.payload;
-        // Eliminar del objeto byId
         delete state.byId[reviewId];
-        // Eliminar de allIds
         state.allIds = state.allIds.filter(id => id !== reviewId);
-        // Eliminar de myReviewsIds
         state.myReviewsIds = state.myReviewsIds.filter(id => id !== reviewId);
       })
       .addCase(deleteReview.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(updateReview.fulfilled, (state, action) => {
+        const updated = action.payload;
+        if (updated?.id && state.byId[updated.id]) {
+          state.byId[updated.id] = {
+            ...state.byId[updated.id],
+            ...updated,
+            _id: updated.id,
+          };
+          delete state.byId[updated.id].__prevScore;
+          delete state.byId[updated.id].__prevComment;
+        }
+      })
+      .addCase(updateReview.rejected, (state, action) => {
         state.error = action.payload || action.error.message;
       });
   },
 });
 
-export const { createOptimistic, removeOptimistic, markSynced } = reviewsSlice.actions;
+export const { createOptimistic, removeOptimistic, updateOptimistic, revertUpdate, markSynced, clearError } = reviewsSlice.actions;
 export default reviewsSlice.reducer;
 
-// ---------- Selectores ----------
 export const selectReviewsState = (s) => s.reviews;
 export const selectAllReviews = (s) =>
   s.reviews.allIds.map((id) => s.reviews.byId[id]).filter(Boolean);

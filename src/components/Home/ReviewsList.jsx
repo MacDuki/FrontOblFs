@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit2 } from "lucide-react";
 import {
   fetchMyReviews,
   selectMyReviews,
@@ -8,8 +8,13 @@ import {
   selectReviewsLoading,
   selectReviewsState,
   deleteReview,
+  updateReview,
+  updateOptimistic,
+  revertUpdate,
+  clearError,
 } from "../../features/reviews.slice";
 import useLibraryItems from "../../hooks/useLibraryItem";
+import EditReviewModal from "./EditReviewModal";
 
 function ReviewsList() {
   const dispatch = useDispatch();
@@ -17,8 +22,8 @@ function ReviewsList() {
   const loading = useSelector(selectReviewsLoading);
   const error = useSelector(selectReviewsError);
   const { lastSyncAt, myReviewsIds } = useSelector(selectReviewsState);
-  const booksState = useSelector((state) => state.books); // Obtener el state completo de books
-  const { items: libraryItems } = useLibraryItems(); // Obtener items de la biblioteca con coverUrl
+  const booksState = useSelector((state) => state.books);
+  const { items: libraryItems } = useLibraryItems();
 
   useEffect(() => {
     const FIVE_MINUTES = 5 * 60 * 1000;
@@ -29,7 +34,8 @@ function ReviewsList() {
     }
   }, [dispatch, lastSyncAt]);
 
-  // Función para manejar la eliminación de una review
+  const [editingReview, setEditingReview] = useState(null);
+
   const handleDelete = async (reviewId) => {
     try {
       await dispatch(deleteReview(reviewId)).unwrap();
@@ -38,9 +44,31 @@ function ReviewsList() {
     }
   };
 
-  // Función para obtener la imagen del libro
+  const handleEdit = (review) => {
+    setEditingReview(review);
+  };
+
+  const handleSaveEdit = async (id, score, comment) => {
+    const validComment = comment && typeof comment === 'string' && comment.trim().length > 0
+      ? comment.trim()
+      : "Sin comentario";
+    
+    dispatch(clearError());
+    dispatch(updateOptimistic({ id, score, comment: validComment }));
+    
+    try {
+      await dispatch(updateReview({ id, score, comment: validComment })).unwrap();
+      setEditingReview(null);
+    } catch (err) {
+      dispatch(revertUpdate({ id }));
+      const errorMessage = err.message || err || "Error al actualizar la reseña";
+      console.error("❌ Error al actualizar review:", errorMessage);
+      setTimeout(() => dispatch(clearError()), 100);
+      throw new Error(errorMessage);
+    }
+  };
+
   const getCoverImage = (review) => {
-    // 1. Primero intentar buscar en libraryItems (tienen coverUrl guardada)
     if (review.originalBookId && libraryItems) {
       const libraryItem = libraryItems.find(
         item => item.originalBookId === review.originalBookId
@@ -50,7 +78,6 @@ function ReviewsList() {
       }
     }
 
-    // 2. Si no está en library, buscar en Redux books (categoryBooks)
     const book = findBook(review);
     if (book) {
       const info = book.volumeInfo;
@@ -72,13 +99,11 @@ function ReviewsList() {
     for (const category in categoryBooks) {
       const books = categoryBooks[category];
       if (Array.isArray(books)) {
-        // Buscar por originalBookId si existe
         if (review.originalBookId) {
           const book = books.find(b => b.id === review.originalBookId);
           if (book) return book;
         }
         
-        // Buscar por título como fallback
         const bookTitle = review.bookTitle || review.title;
         if (bookTitle) {
           const book = books.find(b => 
@@ -129,17 +154,25 @@ function ReviewsList() {
               key={review._id || review.id}
               className="group relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-1"
             >
-              {/* Delete button - top right */}
-              <button
-                onClick={() => handleDelete(review._id || review.id)}
-                className="absolute top-3 right-3 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-500/20 hover:scale-110 z-10"
-                title="Eliminar review"
-              >
-                <Trash2 size={16} />
-              </button>
+              {/* Action buttons - top right */}
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10">
+                <button
+                  onClick={() => handleEdit(review)}
+                  className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 hover:scale-110 transition-all"
+                  title="Editar review"
+                >
+                  <Edit2 size={16} />
+                </button>
+                <button
+                  onClick={() => handleDelete(review._id || review.id)}
+                  className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:scale-110 transition-all"
+                  title="Eliminar review"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
 
               <div className="flex gap-4 p-4">
-                {/* Book Cover */}
                 <div className="flex-shrink-0">
                   {bookCover ? (
                     <img
@@ -160,14 +193,11 @@ function ReviewsList() {
                   </div>
                 </div>
 
-                {/* Review Content */}
                 <div className="flex-1 min-w-0">
-                  {/* Book Title */}
                   <h3 className="font-semibold text-white text-lg mb-1 truncate">
                     {info?.title || libraryItem?.titulo || review.bookTitle || review.title || "Unknown Book"}
                   </h3>
 
-                  {/* Author if available */}
                   {(info?.authors || libraryItem?.authors) && (
                     <p className="text-xs text-gray-400 mb-2">
                       by {Array.isArray(info?.authors) 
@@ -178,7 +208,6 @@ function ReviewsList() {
                     </p>
                   )}
 
-                  {/* Rating Stars */}
                   <div className="flex items-center gap-2 mb-3">
                     <div className="flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -199,14 +228,12 @@ function ReviewsList() {
                     </span>
                   </div>
 
-                  {/* Review Comment */}
                   {review.comment && (
                     <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">
                       {review.comment}
                     </p>
                   )}
 
-                  {/* Review Date */}
                   {review.createdAt && (
                     <p className="text-xs text-gray-500 mt-2">
                       {new Date(review.createdAt).toLocaleDateString('en-US', {
@@ -225,6 +252,14 @@ function ReviewsList() {
           );
         })}
       </div>
+
+      {/* Modal de edición */}
+      <EditReviewModal
+        review={editingReview}
+        isOpen={!!editingReview}
+        onClose={() => setEditingReview(null)}
+        onSave={handleSaveEdit}
+      />
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
