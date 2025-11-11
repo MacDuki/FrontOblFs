@@ -5,8 +5,10 @@ import { FaBookOpen } from "react-icons/fa";
 import { IoAdd, IoRefreshCircleOutline } from "react-icons/io5";
 import useCollections from "../../../hooks/useCollections";
 import useLibraryItems from "../../../hooks/useLibraryItem";
+import ReviewModal from "../../Books/ReviewModal";
 import { Loader } from "../../ui/Loader";
 import AddPagesModal from "../AddPagesModal";
+import BookReviewsModal from "../BookReviewsModal";
 import LibraryItemCard from "../LibraryItemCard";
 
 export default function CollectionsView() {
@@ -100,9 +102,46 @@ export default function CollectionsView() {
     refetchOnVisibility: false,
   });
 
+  // Modal para ver reviews
+  const [showReviews, setShowReviews] = useState(false);
+  const [selectedItemForReviews, setSelectedItemForReviews] = useState(null);
+
+  // Modal para hacer review
+  const [showMakeReview, setShowMakeReview] = useState(false);
+  const [selectedItemForMakeReview, setSelectedItemForMakeReview] =
+    useState(null);
+
   const openAddPagesFor = (item) => {
     setSelectedItem(item);
     setShowAddPages(true);
+  };
+
+  const openReviewsFor = (item) => {
+    setSelectedItemForReviews(item);
+    setShowReviews(true);
+  };
+
+  const openMakeReviewFor = (item) => {
+    setSelectedItemForMakeReview(item);
+    setShowMakeReview(true);
+  };
+
+  // Convertir item de biblioteca a formato de Google Books API para ReviewModal
+  const convertToGoogleBooksFormat = (item) => {
+    if (!item) return null;
+    return {
+      id: item.originalBookId || item._id,
+      volumeInfo: {
+        title: item.titulo || "Sin título",
+        authors: item.authors || ["Autor desconocido"],
+        pageCount: item.pageCount || 0,
+        imageLinks: {
+          thumbnail:
+            item.coverUrl ||
+            "https://via.placeholder.com/120x180?text=No+Cover",
+        },
+      },
+    };
   };
 
   const handleConfirmAddPages = async (pages) => {
@@ -231,6 +270,8 @@ export default function CollectionsView() {
                           onRemove={handleRemoveItem}
                           onViewDetails={handleViewDetails}
                           onRequestAddPages={openAddPagesFor}
+                          onRequestViewReviews={openReviewsFor}
+                          onRequestMakeReview={openMakeReviewFor}
                         />
                       ))}
                     </div>
@@ -251,6 +292,30 @@ export default function CollectionsView() {
           setSelectedItem(null);
         }}
         onConfirm={handleConfirmAddPages}
+      />
+
+      {/* Modal global para ver reviews */}
+      <BookReviewsModal
+        item={selectedItemForReviews}
+        isOpen={showReviews}
+        onClose={() => {
+          setShowReviews(false);
+          setSelectedItemForReviews(null);
+        }}
+      />
+
+      {/* Modal global para hacer review */}
+      <ReviewModal
+        book={convertToGoogleBooksFormat(selectedItemForMakeReview)}
+        isOpen={showMakeReview}
+        onClose={() => {
+          setShowMakeReview(false);
+          setSelectedItemForMakeReview(null);
+        }}
+        onSubmit={() => {
+          setShowMakeReview(false);
+          setSelectedItemForMakeReview(null);
+        }}
       />
     </div>
   );

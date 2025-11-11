@@ -1,13 +1,17 @@
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
-import { CiFolderOn } from "react-icons/ci";
+import { CgDetailsMore } from "react-icons/cg";
+import { CiFolderOn, CiStar, CiTrash } from "react-icons/ci";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { IoAdd } from "react-icons/io5";
 
 export default function OptionsMinimizedBook({
   children,
   options = [],
   onOptionClick = () => {},
   disabled = false,
+  variant = "discover", // "discover" | "collections"
 }) {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [animationsComplete, setAnimationsComplete] = useState(false);
@@ -60,37 +64,53 @@ export default function OptionsMinimizedBook({
     setIsOptionsVisible(false);
   };
 
-  const defaultOptions = [
+  // Variant-based default option sets
+  const discoverOptions = [
     {
-      id: "favorite",
-      icon: "❤️",
-      label: "Favorito",
-      position: "top",
-      color: "rose",
-    },
-    {
-      id: "read-later",
-      icon: <CiFolderOn />,
-      label: "Leer después",
-      position: "right",
-      color: "blue",
-    },
-    {
-      id: "share",
-      icon: "🔗",
-      label: "Compartir",
-      position: "bottom",
-      color: "green",
-    },
-    {
-      id: "info",
-      icon: "ℹ️",
-      label: "Información",
+      id: "details",
+      icon: <CgDetailsMore />,
+      label: "Ver detalles",
       position: "left",
-      color: "purple",
+    },
+    {
+      id: "add-to-collection",
+      icon: <CiFolderOn />,
+      label: "Añadir a colección",
+      position: "right",
+    },
+    {
+      id: "view-reviews",
+      icon: <CiStar />,
+      label: "Ver reviews",
+      position: "bottom",
     },
   ];
-  const optionsToShow = options.length > 0 ? options : defaultOptions;
+
+  const collectionsOptions = [
+    { id: "delete", icon: <CiTrash />, label: "Eliminar", position: "left" },
+    {
+      id: "make-review",
+      icon: <HiOutlinePencilSquare />,
+      label: "Hacer review",
+      position: "bottom",
+    },
+    {
+      id: "view-review",
+      icon: <CiStar />,
+      label: "Ver reviews",
+      position: "right",
+    },
+    {
+      id: "add-pages",
+      icon: <IoAdd />,
+      label: "Agregar páginas leídas",
+      position: "top",
+    },
+  ];
+
+  const variantDefaults =
+    variant === "collections" ? collectionsOptions : discoverOptions;
+  const optionsToShow = options.length > 0 ? options : variantDefaults;
 
   // Función para obtener colores pastel según el tipo de opción
   // Removed per visual alignment: all option chips use a neutral glass style
@@ -99,15 +119,15 @@ export default function OptionsMinimizedBook({
   const posToXY = (p) => {
     switch (p) {
       case "top":
-        return { x: 0, y: -130 };
+        return { x: 0, y: -70 };
       case "right":
-        return { x: 90, y: 0 };
+        return { x: 40, y: 0 };
       case "bottom":
-        return { x: 0, y: 80 };
+        return { x: 0, y: 40 };
       case "left":
-        return { x: -90, y: 0 };
+        return { x: -40, y: 0 };
       default:
-        return { x: 0, y: -48 };
+        return { x: 0, y: -40 };
     }
   };
 
@@ -172,7 +192,7 @@ export default function OptionsMinimizedBook({
           <>
             {/* overlay sutil */}
             <motion.div
-              className="absolute inset-0 rounded-xl bg-stone-300"
+              className="absolute inset-0 rounded-xl bg-green-300"
               variants={overlayVar}
               initial="hidden"
               animate="visible"
@@ -189,14 +209,6 @@ export default function OptionsMinimizedBook({
               exit="exit"
             >
               {/* punto central */}
-              <motion.span
-                className="absolute left-1/2 top-1/2 -ml-1 -mt-1 w-2 h-2 rounded-full bg-amber-500"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.16 }}
-                style={{ pointerEvents: "none" }}
-              />
 
               {/* contenedor relativo al centro */}
               <div className="absolute left-1/2 top-1/2">
@@ -213,8 +225,8 @@ export default function OptionsMinimizedBook({
                         onMouseLeave={() => setHoveredOption(null)}
                         className={`cursor-pointer absolute -left-4 -top-4 w-8 h-8
                           flex items-center justify-center rounded-full text-sm
-                          bg-white/80 text-stone-700 border border-stone-200/70 shadow-md backdrop-blur-xl
-                          ${animationsComplete ? "hover:bg-white" : ""}
+                          bg-white text-stone-700 border border-stone-200/70 shadow-md backdrop-blur-xl
+                          
                           transition-[box-shadow,transform,background-color] will-change-transform focus:outline-none focus:ring-2 focus:ring-amber-400/30`}
                         whileHover={
                           animationsComplete

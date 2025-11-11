@@ -1,6 +1,7 @@
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -23,8 +24,31 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [redirecting, setRedirecting] = useState(false);
+  const [portalEl, setPortalEl] = useState(null);
 
   const { items } = useLibraryItems();
+
+  // Create (or reuse) a portal root for modals
+  useEffect(() => {
+    let el = document.getElementById("app-modal-root");
+    if (!el) {
+      el = document.createElement("div");
+      el.setAttribute("id", "app-modal-root");
+      document.body.appendChild(el);
+    }
+    setPortalEl(el);
+  }, []);
+
+  // Lock body scroll when open
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   if (!book) return null;
 
@@ -187,7 +211,9 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     onClose();
   };
 
-  return (
+  if (!isOpen || !portalEl) return null;
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
         <>
@@ -347,4 +373,6 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
       )}
     </AnimatePresence>
   );
+
+  return createPortal(modalContent, portalEl);
 }

@@ -81,7 +81,10 @@ export default function EstadoSelector({
   return (
     <div ref={ref} className={` relative inline-block text-left ${className}`}>
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
         className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 backdrop-blur-sm border shadow-sm ${currentEstado.badgeClasses} cursor-pointer`}
         title="Cambiar estado"
         aria-haspopup="true"
@@ -96,6 +99,7 @@ export default function EstadoSelector({
           className="absolute right-0 mt-2 min-w-full w-max max-w-sm rounded-xl border border-white/15 bg-black/70 backdrop-blur-xl shadow-xl p-2 z-30"
           role="menu"
           aria-label="Seleccionar estado"
+          onClick={(e) => e.stopPropagation()}
         >
           {[
             ESTADOS_LIBRO.NONE,
@@ -104,7 +108,10 @@ export default function EstadoSelector({
           ].map((st) => (
             <button
               key={st}
-              onClick={() => handleSelect(st)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelect(st);
+              }}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${
                 estado === st
                   ? "bg-white/10 text-white"

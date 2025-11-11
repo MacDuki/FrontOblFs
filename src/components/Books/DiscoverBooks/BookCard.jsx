@@ -1,10 +1,13 @@
-import { CgDetailsMore } from "react-icons/cg";
-import { CiFolderOn, CiHeart, CiShare2 } from "react-icons/ci";
 import { useDispatch } from "react-redux";
 import { setSelectedBook } from "../../../features/books.slice";
 
 import OptionsMinimizedBook from "./OptionsMinimizedBook";
-export default function BookCard({ book, onClick }) {
+export default function BookCard({
+  book,
+  onClick,
+  onOpenCollection,
+  onOpenReviews,
+}) {
   const dispatch = useDispatch();
   const info = book.volumeInfo;
 
@@ -21,35 +24,8 @@ export default function BookCard({ book, onClick }) {
       img.smallThumbnail
     );
   };
-  // Opciones personalizadas para los libros
-  const bookOptions = [
-    {
-      id: "favorite",
-      icon: <CiHeart size={22} />,
-      label: "Add to favorites",
-      position: "top",
-    },
-    {
-      id: "add-to-section",
-      icon: <CiFolderOn size={22} />,
-      label: "Add to section",
-      position: "right",
-    },
-    {
-      id: "share",
-      icon: <CiShare2 size={22} />,
-      label: "Share",
-      position: "bottom",
-    },
-    {
-      id: "info",
-      icon: <CgDetailsMore size={22} />,
-      label: "View details",
-      position: "left",
-    },
-  ];
 
-  const handleOptionClick = (option, book) => {
+  const handleOptionClick = (option) => {
     console.log(
       `Opción ${option.id} clickeada para el libro:`,
       book.volumeInfo.title,
@@ -58,18 +34,17 @@ export default function BookCard({ book, onClick }) {
     );
 
     switch (option.id) {
-      case "favorite":
-        // Lógica para agregar a favoritos
-        break;
-      case "add-to-section":
-        // Lógica para leer después
-        break;
-      case "share":
-        // Lógica para compartir
-        break;
-      case "info":
-        // Mostrar información adicional o ir a detalles
+      case "details":
+        // Ver detalles del libro
         dispatch(setSelectedBook(book));
+        break;
+      case "add-to-collection":
+        // Abrir modal de colecciones
+        onOpenCollection?.(book);
+        break;
+      case "view-reviews":
+        // Abrir modal de reviews del libro
+        onOpenReviews?.(book);
         break;
       default:
         break;
@@ -79,8 +54,8 @@ export default function BookCard({ book, onClick }) {
     <div className="group flex flex-col items-start transition-transform duration-200 hover:scale-[1.02]">
       <OptionsMinimizedBook
         key={book.id}
-        options={bookOptions}
-        onOptionClick={(option) => handleOptionClick(option, book)}
+        onOptionClick={handleOptionClick}
+        variant="discover"
       >
         <div
           className="relative h-52 w-34 cursor-pointer overflow-hidden rounded-2xl border border-stone-200/70 shadow-md bg-stone-100/40"

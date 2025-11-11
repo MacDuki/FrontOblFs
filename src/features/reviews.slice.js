@@ -21,12 +21,28 @@ export const fetchMyReviews = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/reviews/my-reviews");
-      const reviewsArray = Array.isArray(data) ? data : (data.reviews || []);
+      const reviewsArray = Array.isArray(data) ? data : data.reviews || [];
       return reviewsArray;
     } catch (err) {
       console.error("❌ [Reviews API] fetchMyReviews error:", err);
       return rejectWithValue(
         err.response?.data?.message || "Error al obtener mis reseñas"
+      );
+    }
+  }
+);
+
+export const fetchReviewsByBook = createAsyncThunk(
+  "reviews/fetchByBook",
+  async (originalBookId, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get(`/reviews/book/${originalBookId}`);
+      const reviewsArray = Array.isArray(data) ? data : data.reviews || [];
+      return { originalBookId, reviews: reviewsArray };
+    } catch (err) {
+      console.error("❌ [Reviews API] fetchReviewsByBook error:", err);
+      return rejectWithValue(
+        err.response?.data?.message || "Error al obtener reseñas del libro"
       );
     }
   }
@@ -43,22 +59,24 @@ export const createReview = createAsyncThunk(
       console.error("❌ [Reviews API] createReview error:", err);
       console.error("❌ Response status:", err.response?.status);
       console.error("❌ Response data:", err.response?.data);
-      
-      const errorMessage = err.response?.data?.message || 
-                          err.response?.data?.error ||
-                          "Error al crear reseña";
-      
+
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Error al crear reseña";
+
       const errorPayload = {
         message: errorMessage,
         status: err.response?.status,
-        data: err.response?.data
+        data: err.response?.data,
       };
-      
+
       if (err.response?.status === 403) {
         console.warn("⚠️ 403 Forbidden - Plan limit reached");
-        errorPayload.message = errorMessage || "Has alcanzado el límite de tu plan";
+        errorPayload.message =
+          errorMessage || "Has alcanzado el límite de tu plan";
       }
-      
+
       return rejectWithValue(errorPayload);
     }
   }
@@ -69,7 +87,7 @@ export const deleteReview = createAsyncThunk(
   async (reviewId, { rejectWithValue }) => {
     try {
       await api.delete(`/reviews/${reviewId}`);
-      return reviewId; 
+      return reviewId;
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || "Error al eliminar reseña"
@@ -85,7 +103,7 @@ export const updateReview = createAsyncThunk(
       console.log("📤 Enviando PATCH /reviews/" + id, { score, comment });
       const { data } = await api.patch(`/reviews/${id}`, { score, comment });
       console.log("✅ Respuesta del servidor:", data);
-      
+
       const review = data?.review || data;
       return { id, ...review };
     } catch (err) {
@@ -105,6 +123,7 @@ const reviewsSlice = createSlice({
     byId: {},
     allIds: [],
     myReviewsIds: [],
+    bookReviewsCache: {}, // Cache para reviews por libro: { [originalBookId]: [reviewIds] }
     loading: false,
     error: null,
     lastSyncAt: 0,
@@ -178,7 +197,7 @@ const reviewsSlice = createSlice({
       .addCase(fetchAllReviews.rejected, (state, action) => {
         state.loading = false;
         const errorPayload = action.payload;
-        if (typeof errorPayload === 'object' && errorPayload?.message) {
+        if (typeof errorPayload === "object" && errorPayload?.message) {
           state.error = errorPayload.message;
         } else {
           state.error = errorPayload || action.error.message;
@@ -204,7 +223,7 @@ const reviewsSlice = createSlice({
       .addCase(fetchMyReviews.rejected, (state, action) => {
         state.loading = false;
         const errorPayload = action.payload;
-        if (typeof errorPayload === 'object' && errorPayload?.message) {
+        if (typeof errorPayload === "object" && errorPayload?.message) {
           state.error = errorPayload.message;
         } else {
           state.error = errorPayload || action.error.message;
@@ -234,7 +253,7 @@ const reviewsSlice = createSlice({
           state.myReviewsIds.unshift(real._id);
         }
       })
-      .addCase(createReview.rejected, (state, action) => {
+      .addCase(createReview.rejected, () => {
         // NO establecer el error en el state para createReview
         // porque el error se maneja localmente en el ReviewModal
         // Esto evita que aparezca "[object Object]" en la lista de reviews
@@ -242,12 +261,12 @@ const reviewsSlice = createSlice({
       .addCase(deleteReview.fulfilled, (state, action) => {
         const reviewId = action.payload;
         delete state.byId[reviewId];
-        state.allIds = state.allIds.filter(id => id !== reviewId);
-        state.myReviewsIds = state.myReviewsIds.filter(id => id !== reviewId);
+        state.allIds = state.allIds.filter((id) => id !== reviewId);
+        state.myReviewsIds = state.myReviewsIds.filter((id) => id !== reviewId);
       })
       .addCase(deleteReview.rejected, (state, action) => {
         const errorPayload = action.payload;
-        if (typeof errorPayload === 'object' && errorPayload?.message) {
+        if (typeof errorPayload === "object" && errorPayload?.message) {
           state.error = errorPayload.message;
         } else {
           state.error = errorPayload || action.error.message;
@@ -267,7 +286,39 @@ const reviewsSlice = createSlice({
       })
       .addCase(updateReview.rejected, (state, action) => {
         const errorPayload = action.payload;
-        if (typeof errorPayload === 'object' && errorPayload?.message) {
+        if (typeof errorPayload === "object" && errorPayload?.message) {
+          state.error = errorPayload.message;
+        } else {
+          state.error = errorPayload || action.error.message;
+        }
+      })
+      .addCase(fetchReviewsByBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchReviewsByBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        const { originalBookId, reviews } = action.payload;
+
+        // Guardar reviews en byId y crear lista de IDs para el libro
+        const reviewIds = [];
+        for (const r of reviews) {
+          state.byId[r._id] = r;
+          reviewIds.push(r._id);
+          if (!state.allIds.includes(r._id)) {
+            state.allIds.push(r._id);
+          }
+        }
+
+        // Actualizar cache de reviews por libro
+        state.bookReviewsCache[originalBookId] = reviewIds;
+        state.lastSyncAt = Date.now();
+      })
+      .addCase(fetchReviewsByBook.rejected, (state, action) => {
+        state.loading = false;
+        const errorPayload = action.payload;
+        if (typeof errorPayload === "object" && errorPayload?.message) {
           state.error = errorPayload.message;
         } else {
           state.error = errorPayload || action.error.message;
@@ -276,7 +327,14 @@ const reviewsSlice = createSlice({
   },
 });
 
-export const { createOptimistic, removeOptimistic, updateOptimistic, revertUpdate, markSynced, clearError } = reviewsSlice.actions;
+export const {
+  createOptimistic,
+  removeOptimistic,
+  updateOptimistic,
+  revertUpdate,
+  markSynced,
+  clearError,
+} = reviewsSlice.actions;
 export default reviewsSlice.reducer;
 
 export const selectReviewsState = (s) => s.reviews;
@@ -286,3 +344,7 @@ export const selectMyReviews = (s) =>
   s.reviews.myReviewsIds.map((id) => s.reviews.byId[id]).filter(Boolean);
 export const selectReviewsLoading = (s) => s.reviews.loading;
 export const selectReviewsError = (s) => s.reviews.error;
+export const selectReviewsByBook = (originalBookId) => (s) => {
+  const reviewIds = s.reviews.bookReviewsCache[originalBookId] || [];
+  return reviewIds.map((id) => s.reviews.byId[id]).filter(Boolean);
+};

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 
 /**
@@ -21,8 +22,31 @@ export default function AddPagesModal({
   const [quickPages, setQuickPages] = useState(10);
   const [customPages, setCustomPages] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [portalEl, setPortalEl] = useState(null);
 
-  if (!open) return null;
+  // Create (or reuse) a portal root for modals
+  useEffect(() => {
+    let el = document.getElementById("app-modal-root");
+    if (!el) {
+      el = document.createElement("div");
+      el.setAttribute("id", "app-modal-root");
+      document.body.appendChild(el);
+    }
+    setPortalEl(el);
+  }, []);
+
+  // Lock body scroll when open
+  useEffect(() => {
+    if (open) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [open]);
+
+  if (!open || !portalEl) return null;
 
   const remaining = Math.max((pageCount || 0) - (progreso || 0), 0);
 
@@ -46,8 +70,8 @@ export default function AddPagesModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+  const modalContent = (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-3">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div className="relative w-full max-w-xs rounded-xl border border-white/15 bg-black/60 backdrop-blur-xl shadow-2xl p-4 text-white">
         {/* Cerrar */}
@@ -134,4 +158,6 @@ export default function AddPagesModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, portalEl);
 }

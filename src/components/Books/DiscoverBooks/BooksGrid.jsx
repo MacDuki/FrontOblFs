@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { setSelectedBook } from "../../../features/books.slice";
 import BookCard from "./BookCard";
 
-export default function BooksGrid({ books }) {
+export default function BooksGrid({ books, onOpenCollection, onOpenReviews }) {
   const dispatch = useDispatch();
 
   const handleSelectBook = (book) => {
@@ -16,6 +16,8 @@ export default function BooksGrid({ books }) {
           key={book.id}
           book={book}
           onClick={() => handleSelectBook(book)}
+          onOpenCollection={onOpenCollection}
+          onOpenReviews={onOpenReviews}
         />
       ))}
     </div>

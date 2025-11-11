@@ -5,6 +5,7 @@ import { IoBookSharp } from "react-icons/io5";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { Loader } from "../../ui/Loader.jsx";
 
+import BookReviewsModal from "../../library/BookReviewsModal";
 import ReviewModal from "../ReviewModal.jsx";
 import BookDetail from "./BookDetail";
 import CategorySection from "./CategorySection";
@@ -25,6 +26,8 @@ export default function DiscoverBooks({ embedded = false }) {
 
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const [isBookReviewsModalOpen, setIsBookReviewsModalOpen] = useState(false);
+  const [selectedBookForReviews, setSelectedBookForReviews] = useState(null);
 
   // Cerrar modales cuando se cierra el detalle del libro
   useEffect(() => {
@@ -46,6 +49,36 @@ export default function DiscoverBooks({ embedded = false }) {
 
     return () => clearTimeout(timer);
   }, [searchQuery, searchForBooks, clearSearchResults]);
+
+  // Handlers para las opciones del BookCard
+  const handleOpenCollection = (book) => {
+    setIsCollectionModalOpen(true);
+    selectBook(book);
+  };
+
+  const handleOpenReviews = (book) => {
+    // Convertir el libro de Google Books al formato que espera BookReviewsModal
+    const convertedBook = {
+      originalBookId: book.id,
+      titulo: book.volumeInfo?.title || "Sin título",
+      authors: book.volumeInfo?.authors || ["Autor desconocido"],
+      coverUrl: getCoverImage(book.volumeInfo),
+    };
+    setSelectedBookForReviews(convertedBook);
+    setIsBookReviewsModalOpen(true);
+  };
+
+  const getCoverImage = (info) => {
+    const img = info?.imageLinks;
+    if (!img) return "https://via.placeholder.com/120x180?text=No+Cover";
+    return (
+      img.thumbnail ||
+      img.smallThumbnail ||
+      img.medium ||
+      img.large ||
+      "https://via.placeholder.com/120x180?text=No+Cover"
+    );
+  };
 
   // Cerrar modal con tecla Escape
   useEffect(() => {
@@ -121,6 +154,8 @@ export default function DiscoverBooks({ embedded = false }) {
                     category={category}
                     books={books}
                     index={index}
+                    onOpenCollection={handleOpenCollection}
+                    onOpenReviews={handleOpenReviews}
                   />
                 ))}
           </AnimatePresence>
@@ -179,6 +214,14 @@ export default function DiscoverBooks({ embedded = false }) {
           book={selectedBook}
           isOpen={isCollectionModalOpen}
           onClose={() => setIsCollectionModalOpen(false)}
+        />
+        <BookReviewsModal
+          item={selectedBookForReviews}
+          isOpen={isBookReviewsModalOpen}
+          onClose={() => {
+            setIsBookReviewsModalOpen(false);
+            setSelectedBookForReviews(null);
+          }}
         />
       </div>
     </section>

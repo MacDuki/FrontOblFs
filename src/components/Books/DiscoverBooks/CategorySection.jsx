@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 import BooksGrid from "./BooksGrid";
 
-export default function CategorySection({ category, books, index }) {
+export default function CategorySection({
+  category,
+  books,
+  index,
+  onOpenCollection,
+  onOpenReviews,
+}) {
   return (
     <motion.div
       key={category}
@@ -59,7 +65,11 @@ export default function CategorySection({ category, books, index }) {
           transition: { delay: index * 0.1 + 0.2 },
         }}
       >
-        <BooksGrid books={books} />
+        <BooksGrid
+          books={books}
+          onOpenCollection={onOpenCollection}
+          onOpenReviews={onOpenReviews}
+        />
       </motion.div>
     </motion.div>
   );
