@@ -1,4 +1,4 @@
-import { SectionsHome } from "../Home/MyCollections";
+import { MyCollections } from "../Home/MyCollections";
 import { PetHome } from "../Home/Pet/PetHome";
 import ReviewsList from "../Home/ReviewsList";
 import UserHome from "../Home/UserHome";
@@ -17,7 +17,7 @@ function MobileNavigation({ tab, setTab }) {
       case "reviews":
         return <ReviewsList />;
       case "sections":
-        return <SectionsHome />;
+        return <MyCollections />;
       default:
         return (
           <div className="flex flex-col gap-4">

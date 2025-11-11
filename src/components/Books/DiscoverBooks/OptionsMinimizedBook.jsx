@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { CiFolderOn } from "react-icons/ci";
@@ -92,76 +93,7 @@ export default function OptionsMinimizedBook({
   const optionsToShow = options.length > 0 ? options : defaultOptions;
 
   // Función para obtener colores pastel según el tipo de opción
-  const getOptionColors = (option) => {
-    const colorMap = {
-      favorite: {
-        bg: "bg-rose-200",
-        hover: "hover:bg-rose-300",
-        text: "text-rose-800",
-        shadow: "rgba(244, 63, 94, 0.4)",
-      },
-      "read-later": {
-        bg: "bg-blue-200",
-        hover: "hover:bg-blue-300",
-        text: "text-blue-800",
-        shadow: "rgba(59, 130, 246, 0.4)",
-      },
-      share: {
-        bg: "bg-green-200",
-        hover: "hover:bg-green-300",
-        text: "text-green-800",
-        shadow: "rgba(34, 197, 94, 0.4)",
-      },
-      info: {
-        bg: "bg-purple-200",
-        hover: "hover:bg-purple-300",
-        text: "text-purple-800",
-        shadow: "rgba(147, 51, 234, 0.4)",
-      },
-      // Colores adicionales para opciones personalizadas
-      yellow: {
-        bg: "bg-yellow-200",
-        hover: "hover:bg-yellow-300",
-        text: "text-yellow-800",
-        shadow: "rgba(245, 158, 11, 0.4)",
-      },
-      orange: {
-        bg: "bg-orange-200",
-        hover: "hover:bg-orange-300",
-        text: "text-orange-800",
-        shadow: "rgba(249, 115, 22, 0.4)",
-      },
-      pink: {
-        bg: "bg-pink-200",
-        hover: "hover:bg-pink-300",
-        text: "text-pink-800",
-        shadow: "rgba(236, 72, 153, 0.4)",
-      },
-      indigo: {
-        bg: "bg-indigo-200",
-        hover: "hover:bg-indigo-300",
-        text: "text-indigo-800",
-        shadow: "rgba(99, 102, 241, 0.4)",
-      },
-      teal: {
-        bg: "bg-teal-200",
-        hover: "hover:bg-teal-300",
-        text: "text-teal-800",
-        shadow: "rgba(20, 184, 166, 0.4)",
-      },
-    };
-
-    // Usar el color específico de la opción o el ID como fallback, o gris por defecto
-    const colorKey = option.color || option.id || "gray";
-    return (
-      colorMap[colorKey] || {
-        bg: "bg-gray-200",
-        hover: "hover:bg-gray-300",
-        text: "text-gray-800",
-        shadow: "rgba(107, 114, 128, 0.4)",
-      }
-    );
-  };
+  // Removed per visual alignment: all option chips use a neutral glass style
 
   // offsets radiales en px
   const posToXY = (p) => {
@@ -240,7 +172,7 @@ export default function OptionsMinimizedBook({
           <>
             {/* overlay sutil */}
             <motion.div
-              className="absolute inset-0 rounded-xl bg-blue-500"
+              className="absolute inset-0 rounded-xl bg-stone-300"
               variants={overlayVar}
               initial="hidden"
               animate="visible"
@@ -258,7 +190,7 @@ export default function OptionsMinimizedBook({
             >
               {/* punto central */}
               <motion.span
-                className="absolute left-1/2 top-1/2 -ml-1 -mt-1 w-2 h-2 rounded-full bg-red-500"
+                className="absolute left-1/2 top-1/2 -ml-1 -mt-1 w-2 h-2 rounded-full bg-amber-500"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
@@ -270,7 +202,6 @@ export default function OptionsMinimizedBook({
               <div className="absolute left-1/2 top-1/2">
                 {optionsToShow.map((option) => {
                   const { x, y } = posToXY(option.position);
-                  const colors = getOptionColors(option);
                   return (
                     <div key={option.id} className="relative">
                       <motion.button
@@ -280,23 +211,16 @@ export default function OptionsMinimizedBook({
                           animationsComplete && setHoveredOption(option.id)
                         }
                         onMouseLeave={() => setHoveredOption(null)}
-                        className={`cursor-pointer
-                          absolute -left-4 -top-4 w-8 h-8
-                          flex items-center justify-center
-                          rounded-full text-sm
-                          ${colors.bg} ${
-                          animationsComplete ? colors.hover : ""
-                        } ${colors.text}
-                          border border-white/20
-                          shadow-lg backdrop-blur-sm
-                          transition-[box-shadow,transform,background-color] will-change-transform
-                          focus:outline-none focus:ring-2 focus:ring-white/40
-                          `}
+                        className={`cursor-pointer absolute -left-4 -top-4 w-8 h-8
+                          flex items-center justify-center rounded-full text-sm
+                          bg-white/80 text-stone-700 border border-stone-200/70 shadow-md backdrop-blur-xl
+                          ${animationsComplete ? "hover:bg-white" : ""}
+                          transition-[box-shadow,transform,background-color] will-change-transform focus:outline-none focus:ring-2 focus:ring-amber-400/30`}
                         whileHover={
                           animationsComplete
                             ? {
-                                scale: 1.1,
-                                boxShadow: `0 0 12px ${colors.shadow}`,
+                                scale: 1.08,
+                                boxShadow: `0 6px 16px rgba(0,0,0,0.12)`,
                               }
                             : {}
                         }
@@ -315,10 +239,10 @@ export default function OptionsMinimizedBook({
                             transition={{ duration: 0.15 }}
                             className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none"
                           >
-                            <div className="bg-gray-900 text-white text-xs px-3 py-1.5 rounded-4xl shadow-lg whitespace-nowrap">
+                            <div className="bg-stone-900 text-white text-xs px-3 py-1.5 rounded-4xl shadow-lg whitespace-nowrap">
                               {option.label}
                               {/* Tooltip arrow */}
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-stone-900 rotate-45 -mt-1"></div>
                             </div>
                           </motion.div>
                         )}

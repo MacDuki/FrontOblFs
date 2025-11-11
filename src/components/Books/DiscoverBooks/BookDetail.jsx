@@ -2,18 +2,13 @@
 import { motion } from "framer-motion";
 import { CiBookmark } from "react-icons/ci";
 
-import { useState } from "react";
 import { CiStar } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { rankDescription } from "../../Utils/textRanking.js";
-import ReviewModal from "../ReviewModal.jsx";
-import CollectionSelectorModal from "./CollectionSelectorModal.jsx";
 
-export default function BookDetail({ book }) {
+export default function BookDetail({ book, onOpenReview, onOpenCollection }) {
   const { selectBook, isBookSaved } = useBooks();
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
 
   const getCoverImage = (info) => {
     const img = info?.imageLinks;
@@ -35,8 +30,7 @@ export default function BookDetail({ book }) {
   const coverImage = getCoverImage(info);
 
   function DescriptionRanked({ description }) {
-    if (!description)
-      return <p className="text-white/60">No description available.</p>;
+    if (!description) return <p className="">No description available.</p>;
     const ranked = rankDescription(description);
     const top = ranked.slice(0, 3);
 
@@ -44,7 +38,7 @@ export default function BookDetail({ book }) {
       <div className="mt-3 space-y-2">
         {top.map(({ txt, score }, i) => (
           <div key={i} className="flex items-start gap-2">
-            <p className="text-black/90 text-sm md:text-base">{txt}</p>
+            <p className=" text-sm md:text-base">{txt}</p>
             <span className="sr-only">score {score.toFixed(1)}</span>
           </div>
         ))}
@@ -54,36 +48,31 @@ export default function BookDetail({ book }) {
   const handleClose = () => selectBook(null);
 
   const handleSave = () => {
-    // Abrir el modal de selección de colección
-    setIsCollectionModalOpen(true);
+    if (onOpenCollection) onOpenCollection();
   };
 
-  const handleReview = () => setIsReviewModalOpen(true);
-
-  const handleReviewSubmit = (review) => {
-    console.log("Reseña guardada:", review);
-    // Aquí puedes agregar la lógica para guardar la reseña en Redux o enviarla al backend
-    // Por ejemplo: dispatch(addReview(review));
+  const handleReview = () => {
+    if (onOpenReview) onOpenReview();
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto overflow-hidden">
+    <div className="w-full max-w-5xl mx-auto ">
       {/* CARD */}
       <motion.div
         layout
         initial={{ opacity: 0, y: 30, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.35 }}
-        className="relative overflow-hidden rounded-3xl shadow-2xl"
+        className="relative overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl"
       >
         <div
-          className={`relative transition-all duration-700 ease-out bg-slate-50 text-black`}
+          className={`relative transition-all duration-700 ease-out text-black`}
         >
           <div className="relative flex flex-col items-center md:flex-row  gap-6 p-6 md:p-8">
             {/* Flecha volver */}
             <button
               onClick={handleClose}
-              className=" cursor-pointer relative left-4 top-1/2 -translate-y-1/2 grid place-items-center w-9 h-9 rounded-full bg-white/70 hover:bg-white shadow transition"
+              className="cursor-pointer relative left-4 top-1/2 -translate-y-1/2 grid place-items-center w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow border border-stone-200/60 transition"
               aria-label="Volver"
               title="Volver"
             >
@@ -100,26 +89,26 @@ export default function BookDetail({ book }) {
                 initial={{ rotate: -2, y: 8 }}
                 whileHover={{ y: -2, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="relative w-40 md:w-44 lg:w-48 aspect-[2/3] object-cover rounded-xl shadow-2xl"
+                className="relative w-28 md:w-32 lg:w-36 aspect-[2/3] object-cover rounded-xl shadow-2xl"
               />
             </div>
 
             {/* Contenido derecho */}
-            <div className="flex-1 flex flex-col justify-center md:pl-4">
-              <h2 className="text-black text-2xl md:text-3xl font-semibold drop-shadow-sm">
+            <div className="flex-1 flex flex-col justify-center md:pl-2">
+              <h2 className="text-stone-900 text-2xl md:text-3xl font-semibold tracking-tight">
                 {info.title}
               </h2>
-              <p className="text-black/80 text-sm md:text-base mt-1">
+              <p className="text-stone-700 text-sm md:text-base mt-1">
                 {info.authors?.join(", ") || "Unknown Author"}
               </p>
 
               {/* Descripción  */}
-              <div className="mt-3 text-black/80">
+              <div className="mt-3 text-stone-900">
                 <DescriptionRanked description={info.description} />
               </div>
 
               {/* Botón Detalles + acciones pequeñas tipo icono */}
-              <div className="mt-5 flex items-center gap-3">
+              <div className="mt-4 flex items-center gap-2">
                 <div className="flex items-center gap-2">
                   <IconButton
                     active={isSaved}
@@ -140,26 +129,30 @@ export default function BookDetail({ book }) {
               </div>
 
               {/* Meta compacta bajo el botón, opcional */}
-              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-black/80">
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-stone-700">
                 {info.pageCount && (
                   <span>
-                    Pages: <b className="text-black">{info.pageCount}</b>
+                    Pages: <b className="text-stone-900">{info.pageCount}</b>
                   </span>
                 )}
                 {info.categories?.[0] && (
                   <span>
-                    Category: <b className="text-black">{info.categories[0]}</b>
+                    Category:{" "}
+                    <b className="text-stone-900">{info.categories[0]}</b>
                   </span>
                 )}
                 {info.language && (
                   <span>
                     Language:{" "}
-                    <b className="text-black">{info.language.toUpperCase()}</b>
+                    <b className="text-stone-900">
+                      {info.language.toUpperCase()}
+                    </b>
                   </span>
                 )}
                 {info.publisher && (
                   <span>
-                    Editorial: <b className="text-black">{info.publisher}</b>
+                    Editorial:{" "}
+                    <b className="text-stone-900">{info.publisher}</b>
                   </span>
                 )}
               </div>
@@ -168,20 +161,7 @@ export default function BookDetail({ book }) {
         </div>
       </motion.div>
 
-      {/* Modal de Reseña */}
-      <ReviewModal
-        book={book}
-        isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
-        onSubmit={handleReviewSubmit}
-      />
-
-      {/* Modal de Selección de Colección */}
-      <CollectionSelectorModal
-        book={book}
-        isOpen={isCollectionModalOpen}
-        onClose={() => setIsCollectionModalOpen(false)}
-      />
+      {/* Modales movidos al componente padre */}
     </div>
   );
 }

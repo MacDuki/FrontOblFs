@@ -30,7 +30,7 @@ export default function CategorySection({ category, books, index }) {
           ease: "easeIn",
         },
       }}
-      className="bg-transparent backdrop-blur-sm rounded-4xl p-6 "
+      className="bg-transparent backdrop-blur-sm rounded-4xl p-6 mb-12"
     >
       <div className="flex justify-between items-center mb-4 border-b pb-2">
         <motion.h2

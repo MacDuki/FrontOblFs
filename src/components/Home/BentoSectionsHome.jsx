@@ -5,11 +5,12 @@ import { GiTrophiesShelf } from "react-icons/gi";
 import { HiOutlineCollection } from "react-icons/hi";
 import { MdOutlineFormatQuote, MdOutlinePets } from "react-icons/md";
 import { TfiStatsUp } from "react-icons/tfi";
-// Eliminamos navegación directa a ruta DiscoverBooks ahora embebida
+import { useNavigate } from "react-router-dom";
 
 import Stepper, { Step } from "./Stepper";
 
 function BentoSectionsHome() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
 
   return (
@@ -115,9 +116,10 @@ function BentoSectionsHome() {
           </div>
         </div>
 
-        {/* Search Books (placeholder sin navegación de ruta) */}
+        {/* Search Books */}
         <div
-          className="flex flex-col cursor-default justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-300 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-500/30 backdrop-blur-md bg-white/5"
+          className="flex flex-col cursor-pointer justify-between relative min-h-[180px] w-full p-5 rounded-2xl border border-white/10 text-white overflow-hidden transition-all duration-300 ease-out delay-300 hover:scale-[1.05] hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/20 hover:border-cyan-500/30 backdrop-blur-md bg-white/5"
+          onClick={() => navigate("/discover-books")}
         >
           <div className="flex justify-between items-start">
             <span className="text-base opacity-90">Search Books</span>

@@ -10,7 +10,7 @@ export default function BooksGrid({ books }) {
   };
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-6">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-5 md:gap-6">
       {books.map((book) => (
         <BookCard
           key={book.id}

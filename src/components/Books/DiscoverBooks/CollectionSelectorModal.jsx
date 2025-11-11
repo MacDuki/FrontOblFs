@@ -136,7 +136,7 @@ export default function CollectionSelectorModal({ book, isOpen, onClose }) {
               </div>
 
               {/* Content */}
-              <div className="p-6">
+              <div className="p-6 overflow-x-hidden">
                 {loadingCollections ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400"></div>
@@ -151,7 +151,7 @@ export default function CollectionSelectorModal({ book, isOpen, onClose }) {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+                  <div className="flex flex-col space-y-2 items-center max-h-[40vh] overflow-y-auto overflow-x-hidden">
                     {collections.map((collection) => {
                       const itemCount = getItemCount(collection._id);
                       const isSelected =
@@ -160,16 +160,19 @@ export default function CollectionSelectorModal({ book, isOpen, onClose }) {
                       return (
                         <motion.button
                           key={collection._id}
-                          whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
+                          whileHover={{
+                            boxShadow: "0 8px 24px rgba(16,185,129,.18)",
+                            filter: "saturate(1.05)",
+                          }}
                           onClick={() =>
                             setSelectedCollectionId(collection._id)
                           }
-                          className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                          className={`w-1/2 flex items-center justify-between p-4 rounded-xl border transition-all ${
                             isSelected
                               ? "border-emerald-400/60 bg-white/10"
-                              : "border-white/10 hover:bg-white/5 bg-white/5"
-                          }`}
+                              : "border-white/10 hover:bg-white/10 hover:border-emerald-400/60 hover:shadow-[0_8px_24px_rgba(16,185,129,.15)] hover:ring-1 hover:ring-emerald-400/30"
+                          } `}
                         >
                           <div className="flex items-center gap-3">
                             <div

@@ -76,43 +76,35 @@ export default function BookCard({ book, onClick }) {
     }
   };
   return (
-    <div className="flex flex-col items-start hover:scale-105 transition-all duration-300">
+    <div className="group flex flex-col items-start transition-transform duration-200 hover:scale-[1.02]">
       <OptionsMinimizedBook
         key={book.id}
         options={bookOptions}
         onOptionClick={(option) => handleOptionClick(option, book)}
       >
         <div
-          className="rounded-3xl 
-  shadow-2xl overflow-hidden cursor-pointer h-52 
-  w-34 relative bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${getCoverImage(info)})`,
-          }}
+          className="relative h-52 w-34 cursor-pointer overflow-hidden rounded-2xl border border-stone-200/70 shadow-md bg-stone-100/40"
           onClick={onClick}
-        ></div>
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.03]"
+            style={{ backgroundImage: `url(${getCoverImage(info)})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/10" />
+        </div>
       </OptionsMinimizedBook>
-      <div className="space-y-2 flex flex-col items-start ">
-        <label
-          className="px-2 py-1 m-0 text-md font-semibold inline-block 
-  text-left truncate w-[166px] overflow-hidden whitespace-nowrap"
-        >
+      <div className="space-y-1.5 flex flex-col items-start mt-2">
+        <p className="px-1 m-0 text-[15px] font-semibold tracking-tight text-white-900 truncate w-[166px]">
           {info.title}
-        </label>
+        </p>
 
-        <label
-          className="px-2 m-0
-      text-xs inline-block text-left"
-        >
+        <p className="px-1 m-0 text-xs text-stone-600">
           {info.authors?.join(", ") || "Unknown Author"}
-        </label>
+        </p>
         {info.publishedDate && (
-          <label
-            className=" px-2 py-1
-        text-xs inline-block text-left"
-          >
+          <p className="px-1 text-[11px] text-stone-500">
             {new Date(info.publishedDate).getFullYear()}
-          </label>
+          </p>
         )}
       </div>
     </div>

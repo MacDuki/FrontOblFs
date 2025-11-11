@@ -20,35 +20,33 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6  ">
       {/* Search Input */}
-      <div className="flex justify-center">
+      <div className="flex justify-center ">
         <input
           type="text"
           value={searchQuery}
           onChange={handleSearchChange}
           placeholder="Search for a book or an author..."
-          className="w-3/5 px-5 py-4 rounded-4xl border-2 border-black/70 bg-white/5 text-black/60 text-xl transition-all duration-300 ease-in-out placeholder:text-black/60"
+          className="w-full md:w-3/5 px-5 py-3.5 rounded-2xl border border-stone-300/60 bg-white/70 backdrop-blur-xl text-stone-800 text-[15px] transition-all duration-300 ease-in-out placeholder:text-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400/20 focus:border-amber-400/60"
         />
       </div>
 
       {/* Category Tags */}
-      <div className="flex flex-wrap justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-2.5">
         {categories.map((category) => {
           const isVisible = visibleCategories.includes(category.name);
           return (
             <button
               key={category.name}
               onClick={() => handleCategoryToggle(category.name)}
-              className={` cursor-pointer
-                px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ease-in-out
-                border transform hover:scale-105 active:scale-95 backdrop-blur-sm
+              className={`cursor-pointer px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200
+                border backdrop-blur-xl shadow-sm active:scale-95
                 ${
                   isVisible
-                    ? "border-black/40 text-black shadow-lg shadow-black/20 backdrop-blur-md"
-                    : "border-black/20 text-black/70 hover:border-black/30 hover:text-black hover:shadow-md hover:shadow-black/10 hover:backdrop-blur-md"
-                }
-              `}
+                    ? "bg-white/80 text-stone-900 border-stone-300/70 hover:bg-white"
+                    : "bg-white/50 text-stone-600 border-stone-300/50 hover:bg-white/70 hover:text-stone-800"
+                }`}
             >
               {category.name}
             </button>
