@@ -1,24 +1,38 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CiUser } from "react-icons/ci";
 import { useUser } from "../../hooks/useUser";
 import { Loader } from "../ui/Loader";
 import { ProfileAvatar } from "./Profile/ProfileAvatar";
 import { ProfileHeader } from "./Profile/ProfileHeader";
 import { ProfileStats } from "./Profile/ProfileStats";
+import PlanUpgradeModal from "./PlanUpgradeModal";
 
-/* ---- main card ---- */
 export default function UserHome() {
   const {
     username,
     currentLevel,
     totalPoints,
     levelName,
+    plan,
     isLoading: isLoadingUser,
+    fetchUserData,
   } = useUser();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContent, setShowContent] = useState(true);
+  const [showPlanModal, setShowPlanModal] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('openPlanModal') === 'true') {
+      setShowPlanModal(true);
+      navigate('/home', { replace: true });
+    }
+  }, [location.search, navigate]);
 
   // Formatear totalPoints para mostrar (ej: 2600 -> "2.6K")
   const formatPoints = (points) => {
@@ -54,6 +68,13 @@ export default function UserHome() {
       setShowContent(false);
 
       setIsCollapsed(true);
+    }
+  };
+
+  const handlePlanChanged = (newPlan) => {
+    console.log("✅ Plan cambiado a:", newPlan);
+    if (fetchUserData) {
+      fetchUserData(true);
     }
   };
 
@@ -94,7 +115,10 @@ export default function UserHome() {
           ) : showContent ? (
             <div className="animate-slide-up-fade-in">
               <div className="animate-delay-75">
-                <ProfileHeader onHide={toggleCollapse} />
+                <ProfileHeader 
+                  onHide={toggleCollapse} 
+                  onUpgradePlan={() => setShowPlanModal(true)}
+                />
               </div>
               <div className="animate-delay-150">
                 <ProfileAvatar name={displayName} level={displayLevel} />
@@ -109,7 +133,10 @@ export default function UserHome() {
             </div>
           ) : (
             <div className="animate-fade-out ">
-              <ProfileHeader onHide={toggleCollapse} />
+              <ProfileHeader 
+                onHide={toggleCollapse}
+                onUpgradePlan={() => setShowPlanModal(true)}
+              />
               <ProfileAvatar name={displayName} level={displayLevel} />
               <ProfileStats
                 streakDays={displayStreakDays}
@@ -120,6 +147,13 @@ export default function UserHome() {
           )}
         </div>
       )}
+
+      <PlanUpgradeModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        currentPlan={plan}
+        onPlanChanged={handlePlanChanged}
+      />
 
       <style jsx>{`
         @keyframes slide-up-fade-in {

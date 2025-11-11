@@ -41,9 +41,25 @@ export const createReview = createAsyncThunk(
       return review;
     } catch (err) {
       console.error("❌ [Reviews API] createReview error:", err);
-      return rejectWithValue(
-        err.response?.data?.message || "Error al crear reseña"
-      );
+      console.error("❌ Response status:", err.response?.status);
+      console.error("❌ Response data:", err.response?.data);
+      
+      const errorMessage = err.response?.data?.message || 
+                          err.response?.data?.error ||
+                          "Error al crear reseña";
+      
+      const errorPayload = {
+        message: errorMessage,
+        status: err.response?.status,
+        data: err.response?.data
+      };
+      
+      if (err.response?.status === 403) {
+        console.warn("⚠️ 403 Forbidden - Plan limit reached");
+        errorPayload.message = errorMessage || "Has alcanzado el límite de tu plan";
+      }
+      
+      return rejectWithValue(errorPayload);
     }
   }
 );
@@ -161,7 +177,12 @@ const reviewsSlice = createSlice({
       })
       .addCase(fetchAllReviews.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        const errorPayload = action.payload;
+        if (typeof errorPayload === 'object' && errorPayload?.message) {
+          state.error = errorPayload.message;
+        } else {
+          state.error = errorPayload || action.error.message;
+        }
       })
       .addCase(fetchMyReviews.pending, (state) => {
         state.loading = true;
@@ -182,7 +203,12 @@ const reviewsSlice = createSlice({
       })
       .addCase(fetchMyReviews.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message;
+        const errorPayload = action.payload;
+        if (typeof errorPayload === 'object' && errorPayload?.message) {
+          state.error = errorPayload.message;
+        } else {
+          state.error = errorPayload || action.error.message;
+        }
       })
       .addCase(createReview.fulfilled, (state, action) => {
         const real = action.payload;
@@ -209,7 +235,9 @@ const reviewsSlice = createSlice({
         }
       })
       .addCase(createReview.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
+        // NO establecer el error en el state para createReview
+        // porque el error se maneja localmente en el ReviewModal
+        // Esto evita que aparezca "[object Object]" en la lista de reviews
       })
       .addCase(deleteReview.fulfilled, (state, action) => {
         const reviewId = action.payload;
@@ -218,7 +246,12 @@ const reviewsSlice = createSlice({
         state.myReviewsIds = state.myReviewsIds.filter(id => id !== reviewId);
       })
       .addCase(deleteReview.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
+        const errorPayload = action.payload;
+        if (typeof errorPayload === 'object' && errorPayload?.message) {
+          state.error = errorPayload.message;
+        } else {
+          state.error = errorPayload || action.error.message;
+        }
       })
       .addCase(updateReview.fulfilled, (state, action) => {
         const updated = action.payload;
@@ -233,7 +266,12 @@ const reviewsSlice = createSlice({
         }
       })
       .addCase(updateReview.rejected, (state, action) => {
-        state.error = action.payload || action.error.message;
+        const errorPayload = action.payload;
+        if (typeof errorPayload === 'object' && errorPayload?.message) {
+          state.error = errorPayload.message;
+        } else {
+          state.error = errorPayload || action.error.message;
+        }
       });
   },
 });
