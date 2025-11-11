@@ -1,5 +1,5 @@
 import Collections from "../library/Collections/Collections.jsx";
-function SectionsHome() {
+function MyCollections() {
   return (
     <div
       className={`
@@ -15,4 +15,4 @@ function SectionsHome() {
   );
 }
 
-export { SectionsHome };
+export { MyCollections };

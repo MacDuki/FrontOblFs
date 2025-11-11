@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { SYNC_CONFIG, shouldMakeCall } from "../config/syncConfig";
 import {
   clearSearch,
   fetchBooks,
@@ -25,8 +27,82 @@ export const useBooks = () => {
 
   // Funciones para buscar libros
   const searchForBooks = (query) => dispatch(searchBooks(query));
-  const loadCategories = () => dispatch(loadAllCategories());
   const fetchBooksData = (query) => dispatch(fetchBooks(query));
+
+  // Carga inicial de categorías controlada por SYNC_CONFIG
+  useEffect(() => {
+    if (SYNC_CONFIG.books.syncOnMount && !initialized) {
+      if (shouldMakeCall("books-initial")) {
+        if (SYNC_CONFIG.global.enableSyncLogs) {
+          console.log("🔄 [Books] Sync inicial categorías");
+        }
+        dispatch(loadAllCategories());
+      }
+    }
+  }, [dispatch, initialized]);
+
+  // Revalidación por foco / visibilidad según config
+  useEffect(() => {
+    if (
+      !SYNC_CONFIG.books.refetchOnWindowFocus &&
+      !SYNC_CONFIG.books.refetchOnVisibility
+    )
+      return;
+
+    const onFocus = () => {
+      if (
+        SYNC_CONFIG.books.refetchOnWindowFocus &&
+        shouldMakeCall("books-focus")
+      ) {
+        if (SYNC_CONFIG.global.enableSyncLogs) {
+          console.log("🔄 [Books] Refetch por foco");
+        }
+        dispatch(loadAllCategories());
+      }
+    };
+    const onVisibility = () => {
+      if (
+        SYNC_CONFIG.books.refetchOnVisibility &&
+        document.visibilityState === "visible" &&
+        shouldMakeCall("books-visibility")
+      ) {
+        if (SYNC_CONFIG.global.enableSyncLogs) {
+          console.log("🔄 [Books] Refetch por visibilidad");
+        }
+        dispatch(loadAllCategories());
+      }
+    };
+    if (SYNC_CONFIG.books.refetchOnWindowFocus)
+      window.addEventListener("focus", onFocus);
+    if (SYNC_CONFIG.books.refetchOnVisibility)
+      document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      if (SYNC_CONFIG.books.refetchOnWindowFocus)
+        window.removeEventListener("focus", onFocus);
+      if (SYNC_CONFIG.books.refetchOnVisibility)
+        document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [dispatch]);
+
+  // Polling opcional
+  useEffect(() => {
+    const pollMs = SYNC_CONFIG.books.pollMs;
+    if (!pollMs || pollMs <= 0) {
+      if (SYNC_CONFIG.global.enableSyncLogs) {
+        console.log("⏸️ [Books] Polling deshabilitado");
+      }
+      return;
+    }
+    if (SYNC_CONFIG.global.enableSyncLogs) {
+      console.log(`🔄 [Books] Polling habilitado cada ${pollMs}ms`);
+    }
+    const id = setInterval(() => {
+      if (shouldMakeCall("books-poll")) {
+        dispatch(loadAllCategories());
+      }
+    }, pollMs);
+    return () => clearInterval(id);
+  }, [dispatch]);
 
   // Funciones para favoritos
   const loadFavorites = () => console.log("fetchFavoriteBooks");
@@ -76,7 +152,6 @@ export const useBooks = () => {
 
     // Funciones de búsqueda
     searchForBooks,
-    loadCategories,
     fetchBooksData,
 
     // Funciones de favoritos

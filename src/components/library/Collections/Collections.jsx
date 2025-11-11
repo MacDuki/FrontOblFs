@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { BsCollection } from "react-icons/bs";
+import { CiTrash } from "react-icons/ci";
+import { FaBookOpen } from "react-icons/fa";
+import { IoAdd, IoRefreshCircleOutline } from "react-icons/io5";
 import useCollections from "../../../hooks/useCollections";
 import useLibraryItems from "../../../hooks/useLibraryItem";
 import { Loader } from "../../ui/Loader";
 import AddPagesModal from "../AddPagesModal";
 import LibraryItemCard from "../LibraryItemCard";
+
 export default function CollectionsView() {
   const {
     collections,
@@ -107,7 +112,11 @@ export default function CollectionsView() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-white">📚 Mis Colecciones</h1>
+      <div className="flex items-center gap-5 mb-6">
+        <h1 className="text-3xl font-bold text-white">Mis Colecciones</h1>
+
+        <BsCollection size={24} />
+      </div>
 
       <form
         onSubmit={handleAdd}
@@ -125,7 +134,7 @@ export default function CollectionsView() {
           className="px-6 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 transition-colors font-semibold disabled:bg-white/10 disabled:cursor-not-allowed disabled:text-white/40"
           disabled={!newName.trim()}
         >
-          ➕ Añadir
+          <IoAdd size={20} />
         </button>
         <button
           type="button"
@@ -135,7 +144,7 @@ export default function CollectionsView() {
           }}
           className="px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white hover:bg-white/10 transition-colors font-medium"
         >
-          🔄 Refrescar
+          <IoRefreshCircleOutline size={20} />
         </button>
       </form>
 
@@ -193,14 +202,15 @@ export default function CollectionsView() {
                     onClick={() => remove(c._id)}
                     className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-500 transition-colors font-semibold"
                   >
-                    Eliminar
+                    <CiTrash size={20} />
                   </button>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm text-white/70 pb-2 border-b border-white/10">
                     <span className="font-medium">
-                      📚 {itemsForCollection.length}{" "}
+                      <FaBookOpen size={16} className="inline-block mr-1" />
+                      {itemsForCollection.length}{" "}
                       {itemsForCollection.length === 1 ? "libro" : "libros"}
                     </span>
                   </div>

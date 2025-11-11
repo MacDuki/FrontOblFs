@@ -33,7 +33,7 @@ export const SYNC_CONFIG = {
     pollMs: 0,
     refetchOnWindowFocus: false,
     refetchOnVisibility: false,
-    syncOnMount: false, // Los libros se cargan bajo demanda
+    syncOnMount: true, // Cargar categorías al montar cuando está integrado al Home
   },
 
   // ========== PET ==========

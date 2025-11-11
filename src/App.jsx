@@ -1,7 +1,6 @@
 import { Provider } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth/Auth.jsx";
-import DiscoverBooks from "./components/Books/DiscoverBooks/DiscoverBooks.jsx";
 import Home from "./components/Home/Home.jsx";
 import MyReviewsPage from "./components/Home/MyReviewsPage.jsx";
 import { NotFound } from "./components/NotFound/NotFound.jsx";
@@ -33,14 +32,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/discover-books"
-          element={
-            <ProtectedRoute>
-              <DiscoverBooks />
-            </ProtectedRoute>
-          }
-        />
+        {/* DiscoverBooks ya no es página separada; se integra en Home (DesktopLayout) */}
         <Route
           path="/my-reviews"
           element={

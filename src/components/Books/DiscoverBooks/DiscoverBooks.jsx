@@ -1,9 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
-import { IoIosArrowBack } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { Loader } from "../../ui/Loader.jsx";
 
@@ -11,28 +9,17 @@ import BookDetail from "./BookDetail";
 import CategorySection from "./CategorySection";
 import DiscoverBooksHeader from "./DiscoverBooksHeader";
 import EmptyState from "./EmptyState";
-
-export default function DiscoverBooks() {
-  const navigate = useNavigate();
+export default function DiscoverBooks({ embedded = false }) {
   const {
     categoryBooks,
     searchQuery,
     selectedBook,
     loading,
-    initialized,
     visibleCategories,
-    loadCategories,
     searchForBooks,
     clearSearchResults,
     selectBook,
   } = useBooks();
-
-  // Cargar categorías solo si no han sido inicializadas
-  useEffect(() => {
-    if (!initialized) {
-      loadCategories();
-    }
-  }, [initialized, loadCategories]);
 
   // Manejar búsquedas con debounce
   useEffect(() => {
@@ -67,25 +54,31 @@ export default function DiscoverBooks() {
     };
   }, [selectedBook, selectBook]);
 
+  const containerClasses = embedded
+    ? "select-none h-full text-white font-poppins overflow-hidden"
+    : "select-none h-screen bg-gray-100 text-black font-poppins overflow-auto";
+
+  const innerWidthClasses = embedded
+    ? "mx-auto p-4 md:p-6 w-full"
+    : "mx-auto p-4 md:p-8 w-2/3";
+
   return (
-    <section className=" select-none h-screen bg-gray-100 text-black font-poppins overflow-auto">
-      <button
-        className="cursor-pointer absolute top-5 left-5 text-center rounded-full bg-gray-200 transition-all hover:scale-110"
-        onClick={() => navigate("/")}
-      >
-        <IoIosArrowBack size={24} className="transition-all hover:scale-110" />
-      </button>
-      <div className=" mx-auto p-4 md:p-8 w-2/3">
-        <DiscoverBooksHeader />
+    <section className={containerClasses}>
+      <div className={innerWidthClasses}>
+        <DiscoverBooksHeader isDark={embedded} />
 
         {/* Contenido con scroll independiente */}
-        <div className="space-y-10 pb-8 ">
+        <div
+          className={`space-y-10 pb-8 ${
+            embedded ? "max-h-[460px] overflow-y-auto pr-2" : ""
+          }`}
+        >
           {loading && (
             <Loader
               size={64}
               icon={<IoBookSharp />}
               className="my-20 "
-              isBlack={true}
+              isBlack={!embedded}
             />
           )}
 

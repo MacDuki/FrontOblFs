@@ -1,11 +1,8 @@
 import { CiSearch } from "react-icons/ci";
-import { FaBookOpenReader } from "react-icons/fa6";
+import { FaBookOpenReader, FaStar } from "react-icons/fa6";
 import { GiTrophiesShelf } from "react-icons/gi";
-import { FaStar } from "react-icons/fa6";
-import { HiOutlineCollection } from "react-icons/hi";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
-import { MdOutlinePets } from "react-icons/md";
 import { TfiStatsUp } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -20,26 +17,38 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
   };
 
   const navItems = [
-    { icon: FaBookOpenReader, label: "Start Reading", color: "pink" },
-    { 
-      icon: FaStar, 
-      label: "My Reviews", 
-      color: "pink", 
+    {
+      icon: FaBookOpenReader,
+      label: "Start Reading",
+      color: "pink",
+      key: "sections",
+    },
+    {
+      icon: FaStar,
+      label: "My Reviews",
+      color: "pink",
+      key: "reviews",
       onClick: () => {
         setTab("reviews");
         onTogglePanel(); // Mostrar el panel
-      }
+      },
     },
-    { icon: TfiStatsUp, label: "Stats", color: "blue" },
-    { icon: GiTrophiesShelf, label: "Trophies", color: "yellow" },
-    { icon: MdOutlinePets, label: "Pets", color: "green" },
-
-    { icon: HiOutlineCollection, label: "My Books", color: "indigo" },
+    { icon: TfiStatsUp, label: "Stats", color: "blue", key: "stats" },
+    {
+      icon: GiTrophiesShelf,
+      label: "Trophies",
+      color: "yellow",
+      key: "trophies",
+    },
     {
       icon: CiSearch,
       label: "Search Books",
       color: "cyan",
-      onClick: () => navigate("/discover-books"),
+      key: "discover",
+      onClick: () => {
+        setTab("discover");
+        onTogglePanel(); // Abrir panel principal con DiscoverBooks
+      },
     },
   ];
 
@@ -93,6 +102,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
                 backdrop-blur-md bg-white/5 ${
                   item.label == "Search Books" ? "cursor-pointer" : ""
                 }`}
+              aria-current={currentTab === item.key ? "page" : undefined}
               style={{
                 animationDelay: `${index * 100}ms`,
                 animation: isVisible

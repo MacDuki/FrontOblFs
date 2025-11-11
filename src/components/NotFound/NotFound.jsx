@@ -70,7 +70,7 @@ const NotFound = () => {
             </button>
 
             <button
-              onClick={() => navigate("/discover-books")}
+              onClick={() => navigate("/home")}
               className="px-8 py-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-pink-500/30 flex items-center justify-center gap-2"
             >
               {/* Icono Search (SVG inline) */}
@@ -90,7 +90,7 @@ const NotFound = () => {
                 />
                 <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" />
               </svg>
-              Search for Books
+              Go to Home (Search Books tab)
             </button>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import ReviewsList from "../ReviewsList";
+import DiscoverBooks from "../../Books/DiscoverBooks/DiscoverBooks.jsx";
+import { MyCollections } from "../MyCollections.jsx";
 import { PetHome } from "../Pet/PetHome";
-import { SectionsHome } from "../SectionsHome";
+import ReviewsList from "../ReviewsList";
 import UserHome from "../UserHome";
 import VerticalNavbar from "../VerticalNavbar.jsx";
 
@@ -19,16 +20,24 @@ function DesktopLayout({ tab, setTab }) {
       case "reviews":
         return (
           <div className="h-full max-h-[600px] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 flex flex-col overflow-hidden">
-            <h2 className="text-2xl font-bold text-white mb-4 flex-shrink-0">My Reviews</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 flex-shrink-0">
+              My Reviews
+            </h2>
             <div className="flex-1 overflow-hidden">
               <ReviewsList />
             </div>
           </div>
         );
+      case "discover":
+        // Embedded DiscoverBooks (no full-screen wrapper)
+        return (
+          <div className="h-full max-h-[600px] rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+            <DiscoverBooks embedded />
+          </div>
+        );
       case "sections":
-        return <SectionsHome />;
       default:
-        return <SectionsHome />;
+        return <MyCollections />;
     }
   };
 
@@ -62,9 +71,8 @@ function DesktopLayout({ tab, setTab }) {
         {renderMainContent()}
       </section>
 
-      {/* Vertical navbar - appears when main panel is hidden */}
-      <VerticalNavbar 
-        isVisible={!isPanelVisible} 
+      <VerticalNavbar
+        isVisible={!isPanelVisible}
         onTogglePanel={togglePanel}
         currentTab={tab}
         setTab={setTab}

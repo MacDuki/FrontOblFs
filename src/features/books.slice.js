@@ -143,6 +143,7 @@ const booksSlice = createSlice({
     loading: false,
     initialized: false,
     error: null,
+    lastSyncAt: 0,
   },
   reducers: {
     clearSearch: (state) => {
@@ -190,6 +191,9 @@ const booksSlice = createSlice({
       } else {
         state.visibleCategories.push(categoryName);
       }
+    },
+    markBooksSynced: (state) => {
+      state.lastSyncAt = Date.now();
     },
   },
   extraReducers: (builder) => {
@@ -242,5 +246,6 @@ export const {
   addToSavedLocal,
   removeFromSavedLocal,
   toggleCategoryVisibility,
+  markBooksSynced,
 } = booksSlice.actions;
 export default booksSlice.reducer;

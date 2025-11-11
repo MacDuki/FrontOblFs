@@ -1,7 +1,7 @@
+import { SectionsHome } from "../Home/MyCollections";
 import { PetHome } from "../Home/Pet/PetHome";
-import { SectionsHome } from "../Home/SectionsHome";
-import UserHome from "../Home/UserHome";
 import ReviewsList from "../Home/ReviewsList";
+import UserHome from "../Home/UserHome";
 import TabButton from "./TabButton";
 
 function MobileNavigation({ tab, setTab }) {
