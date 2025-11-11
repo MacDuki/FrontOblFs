@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import DiscoverBooks from "../../Books/DiscoverBooks/DiscoverBooks.jsx";
+import Stats from "../../Stats/Stats.jsx";
 import { MyCollections } from "../MyCollections.jsx";
 import { PetHome } from "../Pet/PetHome";
 import ReviewsList from "../ReviewsList";
@@ -26,6 +27,12 @@ function DesktopLayout({ tab, setTab }) {
             <div className="flex-1 overflow-hidden">
               <ReviewsList />
             </div>
+          </div>
+        );
+      case "stats":
+        return (
+          <div className="h-full max-h-[600px] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 flex flex-col overflow-hidden">
+            <Stats />
           </div>
         );
       case "discover":

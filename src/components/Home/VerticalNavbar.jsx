@@ -33,7 +33,16 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
         onTogglePanel(); // Mostrar el panel
       },
     },
-    { icon: TfiStatsUp, label: "Stats", color: "blue", key: "stats" },
+    {
+      icon: TfiStatsUp,
+      label: "Stats",
+      color: "blue",
+      key: "stats",
+      onClick: () => {
+        setTab("stats");
+        onTogglePanel(); // Mostrar el panel
+      },
+    },
     {
       icon: GiTrophiesShelf,
       label: "Trophies",

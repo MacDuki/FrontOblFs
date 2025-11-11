@@ -168,7 +168,7 @@ export default function CollectionSelectorModal({ book, isOpen, onClose }) {
                           onClick={() =>
                             setSelectedCollectionId(collection._id)
                           }
-                          className={`w-1/2 flex items-center justify-between p-4 rounded-xl border transition-all ${
+                          className={`w-3/4 flex items-center justify-between p-4 rounded-xl border transition-all ${
                             isSelected
                               ? "border-emerald-400/60 bg-white/10"
                               : "border-white/10 hover:bg-white/10 hover:border-emerald-400/60 hover:shadow-[0_8px_24px_rgba(16,185,129,.15)] hover:ring-1 hover:ring-emerald-400/30"

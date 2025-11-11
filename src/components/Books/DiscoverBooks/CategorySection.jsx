@@ -11,7 +11,6 @@ export default function CategorySection({
   return (
     <motion.div
       key={category}
-      layout
       initial={{
         opacity: 0,
         y: 20,

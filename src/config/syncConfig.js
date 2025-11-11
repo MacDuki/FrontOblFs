@@ -52,6 +52,14 @@ export const SYNC_CONFIG = {
     syncOnMount: true, // Sincronizar perfil y nivel al montar
   },
 
+  // ========== POINTS ==========
+  points: {
+    pollMs: 0, // Polling deshabilitado por defecto
+    refetchOnWindowFocus: false,
+    refetchOnVisibility: false,
+    syncOnMount: true, // Sincronizar resumen de puntos al montar
+  },
+
   // ========== CONFIGURACIÓN GLOBAL ==========
   global: {
     // Tiempo mínimo entre llamadas a la misma API (throttling)
