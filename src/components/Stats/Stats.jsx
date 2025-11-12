@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectAllCollections } from "../../features/collections.slice";
 import { selectAllLibraryItems } from "../../features/libraryItem.slice";
@@ -14,6 +15,7 @@ import PointsOverview from "./PointsOverview";
 import PointsTimelineChart from "./PointsTimelineChart";
 
 function Stats() {
+  const { t, i18n } = useTranslation();
   // Obtener datos del store usando los selectores correctos
   const libraryItems = useSelector(selectAllLibraryItems);
   const myReviews = useSelector(selectMyReviews);
@@ -232,15 +234,14 @@ function Stats() {
           <PointsAchievements summary={summary} pointsByDate={pointsByDate} />
         </div>
 
-        {/* Date Range Info */}
         {dateRange.from && dateRange.to && (
           <div className="mt-4 p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-white/60 text-xs text-center">
-              Mostrando datos desde{" "}
+              {t("stats.showingData")}{" "}
               <span className="text-white/80 font-medium">
                 {formatYMDToDMY(dateRange.from)}
               </span>{" "}
-              hasta{" "}
+              {t("stats.to")}{" "}
               <span className="text-white/80 font-medium">
                 {formatYMDToDMY(dateRange.to)}
               </span>

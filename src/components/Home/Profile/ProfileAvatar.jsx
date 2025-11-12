@@ -1,17 +1,25 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 
 // ✅ OPTIMIZADO: React.memo evita re-renders cuando las props no cambian
-export const ProfileAvatar = memo(({ name, level }) => (
-  <div className="flex flex-col items-center gap-2 px-6">
-    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-300 to-fuchsia-400 p-[3px]">
-      <div className="w-full h-full rounded-full bg-slate-900 grid place-items-center">
-        {/* avatar placeholder */}
-        <div className="w-14 h-14 rounded-full bg-white/10 cursor-pointer transition hover:scale-105" />
+export const ProfileAvatar = memo(function ProfileAvatar({ name, level }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col items-center gap-2 px-6">
+      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-300 to-fuchsia-400 p-[3px]">
+        <div className="w-full h-full rounded-full bg-slate-900 grid place-items-center">
+          {/* avatar placeholder */}
+          <div className="w-14 h-14 rounded-full bg-white/10 cursor-pointer transition hover:scale-105" />
+        </div>
       </div>
+
+      <h2 className="text-lg font-semibold">{name}</h2>
+      <p className="text-[11px] tracking-widest text-white/60">
+        {t("profile.level").toUpperCase()} {level}
+      </p>
     </div>
-    <h2 className="text-lg font-semibold">{name}</h2>
-    <p className="text-[11px] tracking-widest text-white/60">LEVEL {level}</p>
-  </div>
-));
+  );
+});
 
 ProfileAvatar.displayName = "ProfileAvatar";

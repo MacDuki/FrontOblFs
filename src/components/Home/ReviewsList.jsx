@@ -1,5 +1,6 @@
 import { Calendar, Edit2, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearError,
@@ -17,6 +18,7 @@ import useLibraryItems from "../../hooks/useLibraryItem";
 import EditReviewModal from "./EditReviewModal";
 
 function ReviewsList() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const reviews = useSelector(selectMyReviews);
   const loading = useSelector(selectReviewsLoading);
@@ -25,10 +27,7 @@ function ReviewsList() {
   const booksState = useSelector((state) => state.books);
   const { items: libraryItems } = useLibraryItems();
 
-  // ✅ SYNC AUTOMÁTICO: fetchMyReviews ahora se maneja automáticamente por el middleware
-  // cuando se crea/elimina/actualiza una review. No necesitamos llamarlo manualmente aquí.
   useEffect(() => {
-    // Solo cargamos reviews si nunca se han cargado (primera vez)
     if (!lastSyncAt && myReviewsIds.length === 0 && !loading) {
       console.log("📝 [ReviewsList] Carga inicial de reviews");
       dispatch(fetchMyReviews());
@@ -74,10 +73,8 @@ function ReviewsList() {
     return reviews.filter((review) => {
       if (!review.createdAt) return true;
       const reviewDate = new Date(review.createdAt);
-
       if (filterDateFrom && reviewDate < filterDateFrom) return false;
       if (filterDateTo && reviewDate > filterDateTo) return false;
-
       return true;
     });
   }, [reviews, dateFilter, customDateFrom, customDateTo]);
@@ -90,9 +87,7 @@ function ReviewsList() {
     }
   };
 
-  const handleEdit = (review) => {
-    setEditingReview(review);
-  };
+  const handleEdit = (review) => setEditingReview(review);
 
   const handleSaveEdit = async (id, score, comment) => {
     const validComment =
@@ -122,16 +117,13 @@ function ReviewsList() {
       const libraryItem = libraryItems.find(
         (item) => item.originalBookId === review.originalBookId
       );
-      if (libraryItem?.coverUrl) {
-        return libraryItem.coverUrl;
-      }
+      if (libraryItem?.coverUrl) return libraryItem.coverUrl;
     }
 
     const book = findBook(review);
     if (book) {
       const info = book.volumeInfo;
       const img = info?.imageLinks;
-
       if (img) {
         return (
           img.extraLarge ||
@@ -143,13 +135,11 @@ function ReviewsList() {
         );
       }
     }
-
     return null;
   };
 
   const findBook = (review) => {
     const { categoryBooks } = booksState;
-
     for (const category in categoryBooks) {
       const books = categoryBooks[category];
       if (Array.isArray(books)) {
@@ -157,7 +147,6 @@ function ReviewsList() {
           const book = books.find((b) => b.id === review.originalBookId);
           if (book) return book;
         }
-
         const bookTitle = review.bookTitle || review.title;
         if (bookTitle) {
           const book = books.find(
@@ -171,11 +160,13 @@ function ReviewsList() {
     return null;
   };
 
-  if (loading) return <div className="p-4 text-white">Loading reviews...</div>;
+  if (loading)
+    return <div className="p-4 text-white">{t("common.loading")}</div>;
+
   if (error)
     return (
       <div className="p-4 text-red-400">
-        <div className="font-semibold">Error loading reviews</div>
+        <div className="font-semibold">{t("common.error")}</div>
         <div className="text-sm mt-1">{String(error)}</div>
       </div>
     );
@@ -184,22 +175,22 @@ function ReviewsList() {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <div className="text-6xl mb-4">📚</div>
-        <p className="text-lg text-gray-300 font-medium">No reviews yet</p>
-        <p className="text-sm text-gray-500 mt-2">
-          Start reading and share your thoughts!
+        <p className="text-lg text-gray-300 font-medium">
+          {t("reviews.noReviews")}
         </p>
+        <p className="text-sm text-gray-500 mt-2">{t("reviews.writeFirst")}</p>
       </div>
     );
 
   return (
     <div className="space-y-4">
-      {/* Date Filter */}
       <div className="p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
         <div className="flex items-center gap-3 mb-3">
           <Calendar size={18} className="text-amber-400" />
           <span className="text-sm font-medium text-gray-300">
-            Filtrar por:
+            {t("reviews.filterBy")}
           </span>
+
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => {
@@ -212,7 +203,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Última semana
+              {t("reviews.lastWeek")}
             </button>
             <button
               onClick={() => {
@@ -225,7 +216,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Último mes
+              {t("reviews.lastMonth")}
             </button>
             <button
               onClick={() => {
@@ -238,7 +229,7 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Personalizado
+              {t("reviews.custom")}
             </button>
             <button
               onClick={() => {
@@ -253,22 +244,22 @@ function ReviewsList() {
                   : "bg-white/10 text-gray-400 hover:bg-white/20 hover:text-gray-300"
               }`}
             >
-              Todo
+              {t("reviews.all")}
             </button>
           </div>
+
           {dateFilter !== "all" && (
             <span className="ml-auto text-xs text-gray-500">
-              {filteredReviews.length} de {reviews.length} reviews
+              {filteredReviews.length} {t("reviews.of")} {reviews.length}
             </span>
           )}
         </div>
 
-        {/* Custom Date Range Inputs */}
         {showCustomDates && (
           <div className="flex items-center gap-3 pt-3 border-t border-white/10 animate-fade-in">
             <div className="flex items-center gap-2 flex-1">
               <label className="text-xs text-gray-400 whitespace-nowrap">
-                Desde:
+                {t("reviews.from")}:
               </label>
               <input
                 type="date"
@@ -280,7 +271,7 @@ function ReviewsList() {
             </div>
             <div className="flex items-center gap-2 flex-1">
               <label className="text-xs text-gray-400 whitespace-nowrap">
-                Hasta:
+                {t("reviews.to")}:
               </label>
               <input
                 type="date"
@@ -295,14 +286,15 @@ function ReviewsList() {
         )}
       </div>
 
-      {/* Reviews List */}
       {filteredReviews.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 text-center">
           <div className="text-4xl mb-3">📅</div>
           <p className="text-base text-gray-300 font-medium">
-            There are no reviews in this period of time.
+            {t("reviews.noReviewsInPeriod")}
           </p>
-          <p className="text-sm text-gray-500 mt-1">Try another date range</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {t("reviews.tryAnotherRange")}
+          </p>
         </div>
       ) : (
         <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -326,14 +318,14 @@ function ReviewsList() {
                     <button
                       onClick={() => handleEdit(review)}
                       className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 hover:scale-110 transition-all"
-                      title="Editar review"
+                      title={t("reviews.edit")}
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(review._id || review.id)}
                       className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:scale-110 transition-all"
-                      title="Eliminar review"
+                      title={t("reviews.delete")}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -349,7 +341,7 @@ function ReviewsList() {
                             libraryItem?.titulo ||
                             review.bookTitle ||
                             review.title ||
-                            "Book cover"
+                            t("reviews.bookCover")
                           }
                           className="w-20 h-28 object-cover rounded-lg shadow-lg border border-white/20"
                           onError={(e) => {
@@ -372,12 +364,12 @@ function ReviewsList() {
                           libraryItem?.titulo ||
                           review.bookTitle ||
                           review.title ||
-                          "Unknown Book"}
+                          t("reviews.unknownBook")}
                       </h3>
 
                       {(info?.authors || libraryItem?.authors) && (
                         <p className="text-xs text-gray-400 mb-2">
-                          by{" "}
+                          {t("reviews.by")}{" "}
                           {Array.isArray(info?.authors)
                             ? info.authors.join(", ")
                             : Array.isArray(libraryItem?.authors)
@@ -415,17 +407,14 @@ function ReviewsList() {
                       {review.createdAt && (
                         <p className="text-xs text-gray-500 mt-2">
                           {new Date(review.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
+                            undefined,
+                            { year: "numeric", month: "short", day: "numeric" }
                           )}
                         </p>
                       )}
                     </div>
                   </div>
+
                   <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-orange-500/0 to-amber-500/0 group-hover:from-amber-500/5 group-hover:via-orange-500/5 group-hover:to-amber-500/5 transition-all duration-500 pointer-events-none" />
                 </div>
               );
@@ -456,7 +445,6 @@ function ReviewsList() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(245, 158, 11, 0.7);
         }
-
         @keyframes fade-in {
           from {
             opacity: 0;
@@ -467,11 +455,9 @@ function ReviewsList() {
             transform: translateY(0);
           }
         }
-
         .animate-fade-in {
           animation: fade-in 0.3s ease-out;
         }
-
         input[type="date"]::-webkit-calendar-picker-indicator {
           filter: invert(1);
           cursor: pointer;

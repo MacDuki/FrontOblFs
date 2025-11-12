@@ -1,8 +1,10 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { FaCalendarAlt, FaChartLine, FaTrophy } from "react-icons/fa";
 import { GiProgression } from "react-icons/gi";
 
 function PointsOverview({ summary, pointsByDate }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const total = summary?.total || 0; // Total histórico de páginas
 

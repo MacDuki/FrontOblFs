@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NotFound = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -32,12 +34,10 @@ const NotFound = () => {
             404
           </h1>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Whoops! Page Lost in the Bookiverse
+            {t('notFound.title')}
           </h2>
           <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
-            The page you&apos;re looking for seems to have been misplaced
-            between chapters. Maybe it&apos;s hiding in the fantasy section or
-            got borrowed by another reader.
+            {t('notFound.subtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -66,7 +66,7 @@ const NotFound = () => {
                   d="M9 21V9h6v12"
                 />
               </svg>
-              Return to Home
+              {t('notFound.returnHome')}
             </button>
 
             <button
@@ -90,7 +90,7 @@ const NotFound = () => {
                 />
                 <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" />
               </svg>
-              Go to Home (Search Books tab)
+              {t('notFound.goToHome')}
             </button>
           </div>
         </div>

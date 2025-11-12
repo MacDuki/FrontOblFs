@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { CiLogin } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 import readingImg from "../../assets/imgs/undraw_reading-time.svg";
 import { useAuth } from "../../hooks/useAuth.js";
 import MechanicalText from "../Effects/MechanicalText.effect.jsx";
 import "../styles/login.css";
 function LoginScreen({ onBack }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -19,15 +21,14 @@ function LoginScreen({ onBack }) {
       ...prev,
       [name]: value,
     }));
-    // Solo limpiar error si el usuario ha cambiado significativamente los datos
-    // No limpiar inmediatamente para que pueda leer el mensaje
+
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.password) return;
 
-    // Limpiar error anterior antes de intentar login
+   
     if (error) clearError();
 
     await login({ ...formData, rememberMe });
@@ -45,7 +46,7 @@ function LoginScreen({ onBack }) {
         <div className=" min-w-[236px] w-full flex flex-col items-center justify-center text-nowrap">
           <img src={readingImg} alt="Reading" className="w-auto h-30" />
 
-          <MechanicalText text="We are glad to see you again!" />
+          <MechanicalText text={t('auth.welcomeBack')} />
         </div>
       </div>
 
@@ -56,7 +57,7 @@ function LoginScreen({ onBack }) {
             type="button"
             onClick={clearError}
             className="ml-2 text-red-300 hover:text-red-100 transition-colors"
-            title="Dismiss error"
+            title={t('auth.dismissError')}
           >
             ✕
           </button>
@@ -130,12 +131,12 @@ function LoginScreen({ onBack }) {
               htmlFor="cbx"
               className="text-nowrap cursor-pointer ml-2 text-sm text-gray-100 transition hover:scale-105"
             >
-              Remember me
+              {t('auth.rememberMe')}
             </label>
           </div>
 
           <a href="#" className="text-sm mt-2  transition  hover:scale-105">
-            Forgot your password?
+            {t('auth.forgotPassword')}
           </a>
         </div>
         {/* BUTTON */}
@@ -162,7 +163,7 @@ function LoginScreen({ onBack }) {
                  
                 "
           >
-            {isLoading ? "Logging in..." : "Log in"}
+            {isLoading ? t('common.loading') : t('auth.login')}
             {!isLoading && <CiLogin className="ml-2" size={20} />}
           </button>
         </div>

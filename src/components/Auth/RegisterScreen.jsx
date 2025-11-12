@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { IoIosArrowBack } from "react-icons/io";
 import { useAuth } from "../../hooks/useAuth.js";
 function RegisterScreen({ onBack }) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -25,17 +27,15 @@ function RegisterScreen({ onBack }) {
 
     // Validar que las contraseñas coincidan
     if (formData.password !== formData.repeat_password) {
-      alert("Las contraseñas no coinciden");
+      alert(t("auth.passwordsMismatch"));
       return;
     }
 
     if (!formData.username || !formData.email || !formData.password) return;
 
-    // Limpiar error anterior antes de intentar registro
     if (error) clearError();
 
     try {
-      // Registrar usuario
       const registerResult = await register({
         username: formData.username,
         email: formData.email,
@@ -43,12 +43,11 @@ function RegisterScreen({ onBack }) {
         repeat_password: formData.repeat_password,
       });
 
-      // Si el registro fue exitoso, hacer login automático
       if (registerResult.type.endsWith("/fulfilled")) {
         await login({
           username: formData.username,
           password: formData.password,
-          rememberMe: true, // Por defecto recordar al usuario después del registro
+          rememberMe: true,
         });
       }
     } catch (error) {
@@ -61,7 +60,7 @@ function RegisterScreen({ onBack }) {
       <IoIosArrowBack className="cursor-pointer text-3xl" onClick={onBack} />
       <hr className="border-gray-700 mb-4" />
       <div className="text-center text-lg font-semibold mb-3">
-        Create an account
+        {t("auth.createAccount")}
       </div>
 
       {error && (
@@ -71,7 +70,7 @@ function RegisterScreen({ onBack }) {
             type="button"
             onClick={clearError}
             className="ml-2 text-red-300 hover:text-red-100 transition-colors"
-            title="Dismiss error"
+            title={t("auth.dismissError")}
           >
             ✕
           </button>
@@ -82,7 +81,7 @@ function RegisterScreen({ onBack }) {
         <input
           name="username"
           type="text"
-          placeholder="Username"
+          placeholder={t("auth.username")}
           value={formData.username}
           onChange={handleChange}
           required
@@ -91,7 +90,7 @@ function RegisterScreen({ onBack }) {
         <input
           name="email"
           type="email"
-          placeholder="Email"
+          placeholder={t("auth.email")}
           value={formData.email}
           onChange={handleChange}
           required
@@ -100,7 +99,7 @@ function RegisterScreen({ onBack }) {
         <input
           name="password"
           type="password"
-          placeholder="Password"
+          placeholder={t("auth.password")}
           value={formData.password}
           onChange={handleChange}
           required
@@ -109,7 +108,7 @@ function RegisterScreen({ onBack }) {
         <input
           name="repeat_password"
           type="password"
-          placeholder="Confirm password"
+          placeholder={t("auth.repeatPassword")}
           value={formData.repeat_password}
           onChange={handleChange}
           required
@@ -127,7 +126,7 @@ function RegisterScreen({ onBack }) {
           }
           className="group relative w-full flex justify-center py-3 px-4 border border-pink-200 text-sm font-medium rounded-xl text-white bg-transparent hover:bg-apple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apple-500 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Creating account..." : "Create account"}
+          {isLoading ? t("common.loading") : t("auth.createAccount")}
         </button>
       </form>
     </section>

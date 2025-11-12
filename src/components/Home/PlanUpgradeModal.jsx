@@ -2,9 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Crown, Zap, Check } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import api from "../../api/api";
 
 export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanChanged }) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [error, setError] = useState(null);
@@ -25,9 +27,9 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
       hoverColor: "hover:from-blue-600 hover:to-blue-700",
       bgGlow: "shadow-blue-500/25",
       features: [
-        "10 reseñas por mes",
-        "Acceso básico",
-        "Soporte estándar"
+        t('planModal.plusFeatures.reviews'),
+        t('planModal.plusFeatures.access'),
+        t('planModal.plusFeatures.support')
       ]
     },
     {
@@ -38,10 +40,10 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
       hoverColor: "hover:from-amber-600 hover:to-orange-600",
       bgGlow: "shadow-amber-500/25",
       features: [
-        "Reseñas ilimitadas",
-        "Acceso completo",
-        "Soporte prioritario",
-        "Funciones exclusivas"
+        t('planModal.premiumFeatures.reviews'),
+        t('planModal.premiumFeatures.access'),
+        t('planModal.premiumFeatures.support'),
+        t('planModal.premiumFeatures.exclusive')
       ]
     }
   ];
@@ -57,7 +59,7 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
       const { data } = await api.patch("/user", { plan: planId });
       
       
-      setSuccess(`¡Plan ${planId === "plus" ? "Plus" : "Premium"} activado correctamente!`);
+      setSuccess(t('planModal.success'));
       
       if (onPlanChanged) {
         onPlanChanged(planId);
@@ -121,13 +123,13 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
                     <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
-                      Change Plan
+                      {t('planModal.title')}
                     </h2>
                   </div>
                 </div>
                 {normalizedCurrentPlan && (
                   <p className="text-stone-600 text-sm mt-2 font-medium">
-                    Current Plan: <span className="font-bold capitalize">{normalizedCurrentPlan}</span>
+                    {t('planModal.currentPlan')} <span className="font-bold capitalize">{normalizedCurrentPlan}</span>
                   </p>
                 )}
               </div>
@@ -193,7 +195,7 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
                         {isCurrent && (
                           <div className="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
                             <Check className="w-3 h-3" />
-                            Actual
+                            {t('planModal.current')}
                           </div>
                         )}
                         
@@ -219,7 +221,7 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
                               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                               className="w-4 h-4 border-2 border-stone-300 border-t-stone-600 rounded-full"
                             />
-                            Activating...
+                            {t('planModal.activating')}
                           </div>
                         )}
                       </motion.button>
@@ -228,7 +230,7 @@ export default function PlanUpgradeModal({ isOpen, onClose, currentPlan, onPlanC
                 </div>
 
                 <p className="text-xs text-center text-stone-500 mt-4">
-                    This is a demo. In production, a real payment system would be implemented here.
+                    {t('planModal.demoNote')}
                 </p>
               </div>
             </motion.div>
