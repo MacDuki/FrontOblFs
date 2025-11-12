@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
-import banner from "../../assets/imgs/banner03.png";
 import { useAuth } from "../../hooks/useAuth.js";
-import RevealBannerButton from "../Effects/RevealBannerButton.effect.jsx";
 function RegisterScreen({ onBack }) {
   const [formData, setFormData] = useState({
     username: "",
@@ -132,11 +130,6 @@ function RegisterScreen({ onBack }) {
           {isLoading ? "Creating account..." : "Create account"}
         </button>
       </form>
-
-      {/* Opcional: Mantener el botón visual pero sin funcionalidad */}
-      <div className="mt-4">
-        <RevealBannerButton banner={banner} label="Welcome!" />
-      </div>
     </section>
   );
 }

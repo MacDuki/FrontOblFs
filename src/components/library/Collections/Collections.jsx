@@ -150,7 +150,7 @@ export default function CollectionsView() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto custom-scrollbar">
       <div className="flex items-center gap-5 mb-6">
         <h1 className="text-3xl font-bold text-white">Mis Colecciones</h1>
 

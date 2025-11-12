@@ -1,13 +1,13 @@
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { motion as Motion } from "framer-motion";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CiUser } from "react-icons/ci";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import { Loader } from "../ui/Loader";
+import PlanUpgradeModal from "./PlanUpgradeModal";
 import { ProfileAvatar } from "./Profile/ProfileAvatar";
 import { ProfileHeader } from "./Profile/ProfileHeader";
 import { ProfileStats } from "./Profile/ProfileStats";
-import PlanUpgradeModal from "./PlanUpgradeModal";
 
 export default function UserHome() {
   const {
@@ -22,128 +22,122 @@ export default function UserHome() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showContent, setShowContent] = useState(true);
   const [showPlanModal, setShowPlanModal] = useState(false);
+
+  // ✅ OPTIMIZACIÓN: Solo mostrar loader en la carga inicial, no en sincronizaciones
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.get('openPlanModal') === 'true') {
+    if (params.get("openPlanModal") === "true") {
       setShowPlanModal(true);
-      navigate('/home', { replace: true });
+      navigate("/home", { replace: true });
     }
   }, [location.search, navigate]);
 
+  // ✅ Detectar cuando ya cargó por primera vez
+  useEffect(() => {
+    if (!hasLoadedOnce && username && !isLoadingUser) {
+      setHasLoadedOnce(true);
+    }
+  }, [username, isLoadingUser, hasLoadedOnce]);
+
   // Formatear totalPoints para mostrar (ej: 2600 -> "2.6K")
-  const formatPoints = (points) => {
+  const formatPoints = useCallback((points) => {
     if (points >= 1000) {
       return `${(points / 1000).toFixed(1)}K`;
     }
     return points.toString();
-  };
+  }, []);
 
-  // Datos para mostrar
-  const displayName = username || "Usuario";
-  const displayLevel = currentLevel || 1;
-  const displayStreakDays = 0; // TODO: Implementar streak cuando esté disponible en el backend
-  const displayBadge = levelName || "Principiante";
-  const displayCoins = formatPoints(totalPoints || 0);
+  // ✅ OPTIMIZACIÓN: Memorizamos los datos para evitar re-renders innecesarios
+  // Solo se recalculan cuando cambian los valores reales
+  const displayData = useMemo(
+    () => ({
+      name: username || "Usuario",
+      level: currentLevel || 1,
+      streakDays: 0, // TODO: Implementar streak cuando esté disponible en el backend
+      badge: levelName || "Principiante",
+      coins: formatPoints(totalPoints || 0),
+    }),
+    [username, currentLevel, levelName, totalPoints, formatPoints]
+  );
 
-  const toggleCollapse = () => {
-    if (isCollapsed) {
-      setIsCollapsed(false);
-      setIsLoading(true);
-      setShowContent(false);
+  // ✅ OPTIMIZACIÓN: Memorizamos la función para evitar re-creaciones
+  const toggleCollapse = useCallback(() => {
+    setIsCollapsed((prev) => !prev);
+  }, []);
 
-      setTimeout(() => {
-        setIsLoading(true);
-      }, 100);
-
-      setTimeout(() => {
-        setIsLoading(false);
-        setShowContent(true);
-      }, 900);
-    } else {
-      setIsLoading(false);
-      setShowContent(false);
-
-      setIsCollapsed(true);
-    }
-  };
-
-  const handlePlanChanged = (newPlan) => {
-    console.log("✅ Plan cambiado a:", newPlan);
-    if (fetchUserData) {
-      fetchUserData(true);
-    }
-  };
+  // ✅ OPTIMIZACIÓN: Memorizamos el handler
+  const handlePlanChanged = useCallback(
+    (newPlan) => {
+      console.log("✅ Plan cambiado a:", newPlan);
+      if (fetchUserData) {
+        fetchUserData(true);
+      }
+    },
+    [fetchUserData]
+  );
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, height: isCollapsed ? 0 : "300px" }}
       animate={{ opacity: 1, height: isCollapsed ? 75 : "300px" }}
       transition={{
-        duration: 0.9,
+        duration: 0.6,
         type: "spring",
+        stiffness: 150,
+        damping: 20,
       }}
       className={`
         w-[360px] h-[300px] rounded-3xl border border-white/10 
         text-white shadow-[0_20px_80px_rgba(0,0,0,.6)] 
-        backdrop-blur-sm transition-all duration-900 ease-out overflow-hidden 
-      relative
+        backdrop-blur-sm transition-all duration-600 ease-out overflow-hidden 
+        relative
       `}
     >
       {isCollapsed ? (
         <div
-          className="h-full w-full flex items-center justify-center cursor-pointer "
+          className="h-full w-full flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors"
           onClick={toggleCollapse}
         >
-          <div className="text-white  text-sm font-medium flex flex-row items-center justify-center space-x-2 ">
-            <p>{displayName}</p>
+          <div className="text-white text-sm font-medium flex flex-row items-center justify-center space-x-2">
+            <p>{displayData.name}</p>
             <CiUser size={18} />
           </div>
         </div>
       ) : (
-        <div className="relative ">
-          {isLoading || isLoadingUser ? (
+        <div className="relative h-full">
+          {/* ✅ OPTIMIZACIÓN: Solo mostrar loader en carga inicial, no en sincronizaciones */}
+          {isLoadingUser && !hasLoadedOnce ? (
             <Loader
               icon={<CiUser size={20} />}
               className="h-[300px]"
               size={48}
               iconSize={20}
             />
-          ) : showContent ? (
-            <div className="animate-slide-up-fade-in">
-              <div className="animate-delay-75">
-                <ProfileHeader 
-                  onHide={toggleCollapse} 
-                  onUpgradePlan={() => setShowPlanModal(true)}
-                />
-              </div>
-              <div className="animate-delay-150">
-                <ProfileAvatar name={displayName} level={displayLevel} />
-              </div>
-              <div className="animate-delay-225">
-                <ProfileStats
-                  streakDays={displayStreakDays}
-                  currentBadge={displayBadge}
-                  totalCoins={displayCoins}
-                />
-              </div>
-            </div>
           ) : (
-            <div className="animate-fade-out ">
-              <ProfileHeader 
+            <Motion.div
+              key={`${displayData.name}-${displayData.level}-${displayData.coins}`}
+              initial={false}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="h-full"
+            >
+              <ProfileHeader
                 onHide={toggleCollapse}
                 onUpgradePlan={() => setShowPlanModal(true)}
               />
-              <ProfileAvatar name={displayName} level={displayLevel} />
-              <ProfileStats
-                streakDays={displayStreakDays}
-                currentBadge={displayBadge}
-                totalCoins={displayCoins}
+              <ProfileAvatar
+                name={displayData.name}
+                level={displayData.level}
               />
-            </div>
+              <ProfileStats
+                streakDays={displayData.streakDays}
+                currentBadge={displayData.badge}
+                totalCoins={displayData.coins}
+              />
+            </Motion.div>
           )}
         </div>
       )}
@@ -154,65 +148,6 @@ export default function UserHome() {
         currentPlan={plan}
         onPlanChanged={handlePlanChanged}
       />
-
-      <style jsx>{`
-        @keyframes slide-up-fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes fade-out {
-          from {
-            opacity: 1;
-          }
-          to {
-            opacity: 0;
-          }
-        }
-
-        .animate-slide-up-fade-in {
-          animation: slide-up-fade-in 0.6s ease-out;
-        }
-
-        .animate-fade-out {
-          animation: fade-out 0.2s ease-out;
-        }
-
-        .animate-delay-75 {
-          animation-delay: 75ms;
-        }
-
-        .animate-delay-150 {
-          animation-delay: 150ms;
-        }
-
-        .animate-delay-225 {
-          animation-delay: 225ms;
-        }
-
-        .animate-delay-300 {
-          animation-delay: 300ms;
-        }
-
-        .animate-delay-375 {
-          animation-delay: 375ms;
-        }
-      `}</style>
-    </motion.div>
+    </Motion.div>
   );
 }

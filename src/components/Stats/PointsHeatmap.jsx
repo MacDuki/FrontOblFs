@@ -22,10 +22,21 @@ function PointsHeatmap({ pointsByDate }) {
       });
     }
 
-    // Agrupar puntos por fecha
+    // Agrupar puntos por fecha (normalizado a día local YYYY-MM-DD para evitar desfases por TZ)
+    const toLocalYMD = (d) => {
+      const dt = new Date(d);
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, "0");
+      const day = String(dt.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
     const pointsByDay = pointsByDate.reduce((acc, point) => {
-      const date = new Date(point.date).toISOString().split("T")[0];
-      acc[date] = (acc[date] || 0) + point.quantity;
+      const key =
+        typeof point.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(point.date)
+          ? point.date
+          : toLocalYMD(point.date);
+      acc[key] = (acc[key] || 0) + (point.quantity || 0);
       return acc;
     }, {});
 
@@ -88,7 +99,9 @@ function PointsHeatmap({ pointsByDate }) {
   return (
     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold">Activity Heatmap</h3>
+        <h3 className="text-white font-semibold">
+          Heatmap de actividad (páginas)
+        </h3>
         <div className="flex items-center gap-2">
           <span className="text-xs text-white/50">Menos</span>
           <div className="flex gap-1">
@@ -131,7 +144,7 @@ function PointsHeatmap({ pointsByDate }) {
                   {day.dayNumber} {day.month}
                 </div>
                 <div className="text-white/70">
-                  {day.points > 0 ? `${day.points} puntos` : "Sin actividad"}
+                  {day.points > 0 ? `${day.points} págs` : "Sin actividad"}
                 </div>
               </div>
             </div>

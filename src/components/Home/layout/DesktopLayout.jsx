@@ -38,7 +38,7 @@ function DesktopLayout({ tab, setTab }) {
       case "discover":
         // Embedded DiscoverBooks (no full-screen wrapper)
         return (
-          <div className="h-full max-h-[600px] rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+          <div className=" h-[600px] max-h-[600px] rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden">
             <DiscoverBooks embedded />
           </div>
         );

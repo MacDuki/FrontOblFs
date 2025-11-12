@@ -36,7 +36,13 @@ export const usePoints = () => {
         return Promise.resolve();
       }
 
-      if (!force && !shouldMakeCall("points/summary")) {
+      // Si force=true, siempre hacer la llamada
+      if (force) {
+        console.log("🔄 [usePoints] Force fetching points summary");
+        return dispatch(getPointsSummary());
+      }
+
+      if (!shouldMakeCall("points/summary")) {
         console.log("⏸️ [usePoints] Throttling summary fetch");
         return Promise.resolve();
       }
@@ -66,7 +72,16 @@ export const usePoints = () => {
       }
 
       const cacheKey = `points/byDate/${from}/${to}`;
-      if (!force && !shouldMakeCall(cacheKey)) {
+
+      // Si force=true, siempre hacer la llamada
+      if (force) {
+        console.log(
+          `🔄 [usePoints] Force fetching points by date: ${from} to ${to}`
+        );
+        return dispatch(getPointsByDate({ from, to }));
+      }
+
+      if (!shouldMakeCall(cacheKey)) {
         console.log("⏸️ [usePoints] Throttling points by date fetch");
         return Promise.resolve();
       }
@@ -132,7 +147,9 @@ export const usePoints = () => {
 
   /**
    * Polling en segundo plano (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /*
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.points?.pollMs) return;
 
@@ -145,10 +162,13 @@ export const usePoints = () => {
 
     return () => clearInterval(interval);
   }, [isAuthenticated, fetchPointsSummary]);
+  */
 
   /**
    * Refetch al volver a la ventana (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /*
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.points?.refetchOnWindowFocus) return;
 
@@ -164,10 +184,13 @@ export const usePoints = () => {
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, [isAuthenticated, fetchPointsSummary]);
+  */
 
   /**
    * Refetch al volver a visibilidad (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /*
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.points?.refetchOnVisibility) return;
 
@@ -184,6 +207,7 @@ export const usePoints = () => {
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [isAuthenticated, fetchPointsSummary]);
+  */
 
   /**
    * Limpiar datos cuando el usuario cierra sesión

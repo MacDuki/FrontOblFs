@@ -30,8 +30,20 @@ function PointsAchievements({ summary, pointsByDate }) {
     today.setHours(0, 0, 0, 0);
 
     // Agrupar por día
+    const toLocalYMD = (d) => {
+      const dt = new Date(d);
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, "0");
+      const day = String(dt.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    };
+
     const datesWithPoints = new Set(
-      sortedPoints.map((p) => new Date(p.date).toISOString().split("T")[0])
+      sortedPoints.map((p) =>
+        typeof p.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(p.date)
+          ? p.date
+          : toLocalYMD(p.date)
+      )
     );
 
     // Calcular racha actual
@@ -50,7 +62,10 @@ function PointsAchievements({ summary, pointsByDate }) {
     // Calcular racha más larga
     let lastDate = null;
     sortedPoints.forEach((point) => {
-      const currentDate = new Date(point.date).toISOString().split("T")[0];
+      const currentDate =
+        typeof point.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(point.date)
+          ? point.date
+          : toLocalYMD(point.date);
 
       if (!lastDate) {
         tempStreak = 1;
@@ -74,8 +89,11 @@ function PointsAchievements({ summary, pointsByDate }) {
 
     // Mejor día
     const pointsByDay = sortedPoints.reduce((acc, point) => {
-      const date = new Date(point.date).toLocaleDateString();
-      acc[date] = (acc[date] || 0) + point.quantity;
+      const key =
+        typeof point.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(point.date)
+          ? point.date
+          : toLocalYMD(point.date);
+      acc[key] = (acc[key] || 0) + (point.quantity || 0);
       return acc;
     }, {});
 
@@ -198,7 +216,7 @@ function PointsAchievements({ summary, pointsByDate }) {
         <div className="text-center">
           <div className="text-white/40 text-4xl mb-2">🏆</div>
           <p className="text-white/60 text-sm">
-            Completa actividades para desbloquear logros
+            Suma páginas para desbloquear logros
           </p>
         </div>
       </div>
@@ -208,7 +226,7 @@ function PointsAchievements({ summary, pointsByDate }) {
   return (
     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold">Achievements</h3>
+        <h3 className="text-white font-semibold">Logros (páginas)</h3>
         <span className="text-xs text-white/60">
           {unlockedCount}/{achievements.length} desbloqueados
         </span>

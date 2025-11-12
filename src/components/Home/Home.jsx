@@ -9,11 +9,14 @@ function Home() {
   const [tab, setTab] = useState("home"); // 'home' | 'sections' | 'reviews'
   const dispatch = useDispatch();
 
-  // Pre-carga silenciosa en segundo plano al iniciar el Home
+  // ✅ SYNC AUTOMÁTICO: La mascota se actualiza automáticamente cuando hay cambios
+  // Solo necesitamos cargar una vez al iniciar
   useEffect(() => {
+    console.log("🏠 [Home] Carga inicial de datos");
     dispatch(fetchAllPets({ background: true }));
     dispatch(fetchSelectedPet({ background: true }));
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Sin dependencias - solo ejecuta una vez al montar
 
   return (
     <>

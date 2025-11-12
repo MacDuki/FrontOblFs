@@ -33,23 +33,43 @@ function PointsTimelineChart({ pointsByDate }) {
       };
     }
 
-    // Ordenar por fecha
-    const sortedPoints = [...pointsByDate].sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
-    );
+    // Helpers seguros para YYYY-MM-DD sin desfase
+    const isYMD = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+    const parseYMDToLocalDate = (ymd) => {
+      if (!isYMD(ymd)) return new Date(ymd);
+      const [y, m, d] = ymd.split("-").map((n) => parseInt(n, 10));
+      return new Date(y, m - 1, d);
+    };
+    const formatDM = (ymd) => {
+      if (!isYMD(ymd)) return ymd;
+      const [, m, d] = ymd.split("-");
+      return `${d}/${m}`;
+    };
 
-    // Agrupar puntos por día
+    // Ordenar por fecha usando YYYY-MM-DD en local
+    const sortedPoints = [...pointsByDate].sort((a, b) => {
+      if (isYMD(a.date) && isYMD(b.date)) return a.date.localeCompare(b.date);
+      return parseYMDToLocalDate(a.date) - parseYMDToLocalDate(b.date);
+    });
+
+    // Agrupar páginas por día usando la clave YYYY-MM-DD
     const pointsByDay = sortedPoints.reduce((acc, point) => {
-      const date = new Date(point.date).toLocaleDateString("es-ES", {
-        month: "short",
-        day: "numeric",
-      });
-      acc[date] = (acc[date] || 0) + point.quantity;
+      const key = isYMD(point.date)
+        ? point.date
+        : (() => {
+            const dt = parseYMDToLocalDate(point.date);
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, "0");
+            const d = String(dt.getDate()).padStart(2, "0");
+            return `${y}-${m}-${d}`;
+          })();
+      acc[key] = (acc[key] || 0) + (point.quantity || 0);
       return acc;
     }, {});
 
-    const labels = Object.keys(pointsByDay);
-    const data = Object.values(pointsByDay);
+    const labelsYMD = Object.keys(pointsByDay);
+    const labels = labelsYMD.map((k) => formatDM(k));
+    const data = labelsYMD.map((k) => pointsByDay[k]);
 
     // Calcular puntos acumulados
     const cumulativeData = data.reduce((acc, value, index) => {
@@ -61,7 +81,7 @@ function PointsTimelineChart({ pointsByDate }) {
       labels,
       datasets: [
         {
-          label: "Puntos Diarios",
+          label: "Páginas diarias",
           data,
           borderColor: "rgb(59, 130, 246)",
           backgroundColor: "rgba(59, 130, 246, 0.1)",
@@ -75,7 +95,7 @@ function PointsTimelineChart({ pointsByDate }) {
           pointHoverRadius: 6,
         },
         {
-          label: "Puntos Acumulados",
+          label: "Páginas acumuladas",
           data: cumulativeData,
           borderColor: "rgb(168, 85, 247)",
           backgroundColor: "rgba(168, 85, 247, 0.1)",
@@ -120,7 +140,7 @@ function PointsTimelineChart({ pointsByDate }) {
         displayColors: true,
         callbacks: {
           label: function (context) {
-            return `${context.dataset.label}: ${context.parsed.y} puntos`;
+            return `${context.dataset.label}: ${context.parsed.y} págs`;
           },
         },
       },
@@ -150,7 +170,7 @@ function PointsTimelineChart({ pointsByDate }) {
             size: 11,
           },
           callback: function (value) {
-            return value + " pts";
+            return value + " págs";
           },
         },
       },

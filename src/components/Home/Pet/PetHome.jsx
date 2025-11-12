@@ -11,6 +11,11 @@ import { PetHeaderHome } from "./PetHeaderHome";
 import PetSelectorModal from "./PetSelectorModal";
 import PetStatusPanel from "./PetStatusPanel";
 import { PetViewer } from "./PetViewer";
+
+// ✅ SINGLETON: Solo una instancia del intervalo global
+let globalRecalcInterval = null;
+let activeInstances = 0;
+
 function PetHome({
   petType = "cat",
   autoActions = true,
@@ -37,26 +42,48 @@ function PetHome({
 
   const [selectedId, setSelectedId] = useState("");
 
+  // ✅ OPTIMIZACIÓN: Solo cargar una vez al inicio
   useEffect(() => {
-    // Cargar la mascota seleccionada al montar el componente
-    loadSelectedPet();
-  }, [loadSelectedPet]);
+    // Solo cargar si no hay mascota seleccionada aún
+    if (!selectedPet) {
+      loadSelectedPet();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo al montar, no dependencias
 
   useEffect(() => {
     // Sincronizar el selector con la mascota seleccionada cuando cambie
     if (selectedPet?._id) setSelectedId(selectedPet._id);
   }, [selectedPet]);
 
-  // Auto-actualización periódica de hambre/felicidad (recalc) sin recargar
+  // ✅ SINGLETON: Auto-actualización periódica con una sola instancia global
   useEffect(() => {
-    if (!autoActions) return;
-    if (!selectedPet?._id) return;
-    const intervalMs = 10000; // cada 10s por defecto
-    const id = setInterval(() => {
-      recalc();
-    }, intervalMs);
-    return () => clearInterval(id);
-  }, [autoActions, selectedPet?._id, recalc]);
+    activeInstances++;
+
+    // Solo la primera instancia crea el intervalo
+    if (
+      autoActions &&
+      selectedPet?._id &&
+      activeInstances === 1 &&
+      !globalRecalcInterval
+    ) {
+      const intervalMs = 40000; // cada 80s
+      globalRecalcInterval = setInterval(() => {
+        if (!loading) {
+          recalc();
+        }
+      }, intervalMs);
+    }
+
+    return () => {
+      activeInstances--;
+      // Solo limpiar cuando no hay más instancias activas
+      if (activeInstances === 0 && globalRecalcInterval) {
+        clearInterval(globalRecalcInterval);
+        globalRecalcInterval = null;
+      }
+    };
+  }, [autoActions, selectedPet?._id, recalc, loading]);
 
   const toggleCollapse = () => {
     if (isCollapsed) {

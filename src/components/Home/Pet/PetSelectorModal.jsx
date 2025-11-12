@@ -28,12 +28,18 @@ export default function PetSelectorModal({
   const [focusedId, setFocusedId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Warm and revalidate in background when modal opens
+  // ✅ SYNC OPTIMIZADO: Solo recargamos cuando el modal se abre
+  // No necesitamos recargar en cada apertura si ya tenemos datos recientes
   useEffect(() => {
     if (!isOpen) return;
-    dispatch(fetchAllPets({ background: true }));
-    dispatch(fetchSelectedPet({ background: true }));
-  }, [isOpen, dispatch]);
+    // Solo refetch si no tenemos pets o si hace más de 30 segundos
+    const needsRefetch = !pets || pets.length === 0;
+    if (needsRefetch) {
+      console.log("🐾 [PetSelectorModal] Recargando lista de mascotas");
+      dispatch(fetchAllPets({ background: true }));
+      dispatch(fetchSelectedPet({ background: true }));
+    }
+  }, [isOpen, dispatch, pets]);
 
   // Keep focus on selected or first pet
   useEffect(() => {

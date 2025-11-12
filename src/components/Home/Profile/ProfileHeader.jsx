@@ -1,7 +1,9 @@
-import { BiHide } from "react-icons/bi";
 import { Crown } from "lucide-react";
+import { memo } from "react";
+import { BiHide } from "react-icons/bi";
 
-export const ProfileHeader = ({ onHide, onUpgradePlan }) => (
+// ✅ OPTIMIZADO: React.memo evita re-renders cuando las props no cambian
+export const ProfileHeader = memo(({ onHide, onUpgradePlan }) => (
   <div className="flex items-center justify-between px-5 py-2">
     <div
       className="group flex items-center gap-2 text-white/80 cursor-pointer transition hover:text-white hover:scale-105"
@@ -12,7 +14,7 @@ export const ProfileHeader = ({ onHide, onUpgradePlan }) => (
         Hide
       </span>
     </div>
-    <div 
+    <div
       className="group flex items-center gap-2 text-amber-400/90 cursor-pointer transition hover:text-amber-300 hover:scale-105"
       onClick={onUpgradePlan}
     >
@@ -22,4 +24,6 @@ export const ProfileHeader = ({ onHide, onUpgradePlan }) => (
       <Crown size={20} />
     </div>
   </div>
-);
+));
+
+ProfileHeader.displayName = "ProfileHeader";

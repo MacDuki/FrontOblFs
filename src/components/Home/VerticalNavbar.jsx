@@ -1,6 +1,5 @@
 import { CiSearch } from "react-icons/ci";
 import { FaBookOpenReader, FaStar } from "react-icons/fa6";
-import { GiTrophiesShelf } from "react-icons/gi";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
 import { TfiStatsUp } from "react-icons/tfi";
@@ -42,12 +41,6 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
         setTab("stats");
         onTogglePanel(); // Mostrar el panel
       },
-    },
-    {
-      icon: GiTrophiesShelf,
-      label: "Trophies",
-      color: "yellow",
-      key: "trophies",
     },
     {
       icon: CiSearch,

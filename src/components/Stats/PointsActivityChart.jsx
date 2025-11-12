@@ -39,13 +39,21 @@ function PointsActivityChart({ pointsByDate }) {
     const pointsByDayOfWeek = Array(7).fill(0);
     const countByDayOfWeek = Array(7).fill(0);
 
+    // Parse seguro de YYYY-MM-DD a fecha local
+    const isYMD = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+    const parseYMDToLocalDate = (ymd) => {
+      if (!isYMD(ymd)) return new Date(ymd);
+      const [y, m, d] = ymd.split("-").map((n) => parseInt(n, 10));
+      return new Date(y, m - 1, d);
+    };
+
     sortedPoints.forEach((point) => {
-      const dayOfWeek = new Date(point.date).getDay();
+      const dayOfWeek = parseYMDToLocalDate(point.date).getDay();
       pointsByDayOfWeek[dayOfWeek] += point.quantity;
       countByDayOfWeek[dayOfWeek] += 1;
     });
 
-    // Calcular promedio por día de la semana
+    // Calcular promedio de páginas por día de la semana
     const avgPointsByDay = pointsByDayOfWeek.map((total, index) => {
       return countByDayOfWeek[index] > 0
         ? Math.round(total / countByDayOfWeek[index])
@@ -56,7 +64,7 @@ function PointsActivityChart({ pointsByDate }) {
       labels: dayNames,
       datasets: [
         {
-          label: "Promedio de Puntos",
+          label: "Promedio de páginas",
           data: avgPointsByDay,
           backgroundColor: [
             "rgba(239, 68, 68, 0.8)", // Domingo - rojo
@@ -112,7 +120,7 @@ function PointsActivityChart({ pointsByDate }) {
         displayColors: true,
         callbacks: {
           label: function (context) {
-            return `Promedio: ${context.parsed.y} puntos`;
+            return `Promedio: ${context.parsed.y} págs`;
           },
         },
       },
@@ -143,7 +151,7 @@ function PointsActivityChart({ pointsByDate }) {
             size: 11,
           },
           callback: function (value) {
-            return value + " pts";
+            return value + " págs";
           },
         },
       },
@@ -169,7 +177,9 @@ function PointsActivityChart({ pointsByDate }) {
   return (
     <div className="p-4 rounded-xl bg-white/5 border border-white/10 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold">Actividad Semanal</h3>
+        <h3 className="text-white font-semibold">
+          Actividad semanal (páginas)
+        </h3>
         <span className="text-xs text-white/50">Promedio por día</span>
       </div>
       <div className="flex-1 min-h-[250px]">

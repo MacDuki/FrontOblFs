@@ -7,6 +7,7 @@ import petReducer from "../features/pet.slice";
 import pointsReducer from "../features/points.slice";
 import reviewsReducer from "../features/reviews.slice";
 import userReducer from "../features/user.slice";
+import { syncMiddleware } from "./syncMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -19,4 +20,6 @@ export const store = configureStore({
     user: userReducer,
     points: pointsReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(syncMiddleware),
 });

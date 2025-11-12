@@ -116,7 +116,9 @@ export const useUser = () => {
 
   /**
    * Polling en segundo plano (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /* 
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.user?.pollMs) return;
 
@@ -129,10 +131,13 @@ export const useUser = () => {
 
     return () => clearInterval(interval);
   }, [isAuthenticated, fetchUserData]);
+  */
 
   /**
    * Refetch al volver a la ventana (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /*
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.user?.refetchOnWindowFocus) return;
 
@@ -146,10 +151,13 @@ export const useUser = () => {
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, [isAuthenticated, fetchUserData]);
+  */
 
   /**
    * Refetch al volver a visibilidad (si está habilitado)
+   * ⚠️ DESHABILITADO: El middleware de sincronización automática ahora se encarga de esto
    */
+  /*
   useEffect(() => {
     if (!isAuthenticated || !SYNC_CONFIG.user?.refetchOnVisibility) return;
 
@@ -166,6 +174,7 @@ export const useUser = () => {
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [isAuthenticated, fetchUserData]);
+  */
 
   /**
    * Limpiar datos cuando el usuario cierra sesión

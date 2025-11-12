@@ -38,9 +38,9 @@ export const SYNC_CONFIG = {
 
   // ========== PET ==========
   pet: {
-    pollMs: 0,
+    pollMs: 20000,
     refetchOnWindowFocus: false,
-    refetchOnVisibility: false,
+    refetchOnVisibility: true,
     syncOnMount: true,
   },
 
@@ -67,6 +67,12 @@ export const SYNC_CONFIG = {
 
     // Habilitar logs de sincronización en consola
     enableSyncLogs: true,
+
+    // Sincronización automática habilitada (middleware)
+    autoSyncEnabled: true,
+
+    // Delay antes de ejecutar sincronización automática (ms)
+    autoSyncDelay: 100,
   },
 };
 

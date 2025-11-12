@@ -104,7 +104,54 @@ const pointsSlice = createSlice({
       })
       .addCase(getPointsByDate.fulfilled, (state, action) => {
         state.isLoadingPointsByDate = false;
-        state.pointsByDate = action.payload;
+        // Normalizar payload para garantizar shape consistente { date: YYYY-MM-DD, quantity: number }
+        const toLocalYMD = (d) => {
+          try {
+            const dt = new Date(d);
+            if (isNaN(dt.getTime())) return null;
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, "0");
+            const day = String(dt.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+          } catch {
+            return null;
+          }
+        };
+
+        const normalize = (item) => {
+          // Detectar posibles nombres de campos
+          const rawDate =
+            item?.date ??
+            item?.createdAt ??
+            item?.day ??
+            item?.timestamp ??
+            null;
+          const rawQty =
+            item?.quantity ?? item?.points ?? item?.value ?? item?.qty ?? 0;
+
+          // Si la fecha ya viene como YYYY-MM-DD usarla; si no, convertir a local YYYY-MM-DD
+          let dateStr = null;
+          if (
+            typeof rawDate === "string" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+          ) {
+            dateStr = rawDate;
+          } else if (rawDate) {
+            dateStr = toLocalYMD(rawDate);
+          }
+
+          return {
+            date:
+              dateStr ||
+              (typeof rawDate === "string"
+                ? rawDate
+                : new Date().toISOString().split("T")[0]),
+            quantity: Number(rawQty) || 0,
+          };
+        };
+
+        const payload = Array.isArray(action.payload) ? action.payload : [];
+        state.pointsByDate = payload.map(normalize);
         state.pointsByDateError = null;
         state.lastPointsByDateUpdate = new Date().toISOString();
       })
