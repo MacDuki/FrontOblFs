@@ -2,7 +2,6 @@ import { Provider } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import Auth from "./components/Auth/Auth.jsx";
 import Home from "./components/Home/Home.jsx";
-import MyReviewsPage from "./components/Home/MyReviewsPage.jsx";
 import { NotFound } from "./components/NotFound/NotFound.jsx";
 import {
   ProtectedRoute,
@@ -28,15 +27,6 @@ function App() {
           element={
             <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/my-reviews"
-          element={
-            <ProtectedRoute>
-              <MyReviewsPage />
             </ProtectedRoute>
           }
         />
