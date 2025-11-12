@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
-
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MdPets } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 import backGround from "../../../assets/imgs/bg1.png";
 import usePet from "../../../hooks/usePet";
 import { Loader } from "../../ui/Loader.jsx";
@@ -12,15 +11,12 @@ import PetSelectorModal from "./PetSelectorModal";
 import PetStatusPanel from "./PetStatusPanel";
 import { PetViewer } from "./PetViewer";
 
-// ✅ SINGLETON: Solo una instancia del intervalo global
-let globalRecalcInterval = null;
-let activeInstances = 0;
-
 function PetHome({
   petType = "cat",
   autoActions = true,
   onPetActionComplete = () => {},
 }) {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContent, setShowContent] = useState(true);
@@ -42,48 +38,26 @@ function PetHome({
 
   const [selectedId, setSelectedId] = useState("");
 
-  // ✅ OPTIMIZACIÓN: Solo cargar una vez al inicio
   useEffect(() => {
-    // Solo cargar si no hay mascota seleccionada aún
-    if (!selectedPet) {
-      loadSelectedPet();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Solo al montar, no dependencias
+    // Cargar la mascota seleccionada al montar el componente
+    loadSelectedPet();
+  }, [loadSelectedPet]);
 
   useEffect(() => {
     // Sincronizar el selector con la mascota seleccionada cuando cambie
     if (selectedPet?._id) setSelectedId(selectedPet._id);
   }, [selectedPet]);
 
-  // ✅ SINGLETON: Auto-actualización periódica con una sola instancia global
+  // Auto-actualización periódica de hambre/felicidad (recalc) sin recargar
   useEffect(() => {
-    activeInstances++;
-
-    // Solo la primera instancia crea el intervalo
-    if (
-      autoActions &&
-      selectedPet?._id &&
-      activeInstances === 1 &&
-      !globalRecalcInterval
-    ) {
-      const intervalMs = 40000; // cada 80s
-      globalRecalcInterval = setInterval(() => {
-        if (!loading) {
-          recalc();
-        }
-      }, intervalMs);
-    }
-
-    return () => {
-      activeInstances--;
-      // Solo limpiar cuando no hay más instancias activas
-      if (activeInstances === 0 && globalRecalcInterval) {
-        clearInterval(globalRecalcInterval);
-        globalRecalcInterval = null;
-      }
-    };
-  }, [autoActions, selectedPet?._id, recalc, loading]);
+    if (!autoActions) return;
+    if (!selectedPet?._id) return;
+    const intervalMs = 10000; // cada 10s por defecto
+    const id = setInterval(() => {
+      recalc();
+    }, intervalMs);
+    return () => clearInterval(id);
+  }, [autoActions, selectedPet?._id, recalc]);
 
   const toggleCollapse = () => {
     if (isCollapsed) {
@@ -127,7 +101,7 @@ function PetHome({
           onClick={toggleCollapse}
         >
           <div className="text-white text-sm font-medium flex flex-row items-center justify-center space-x-2">
-            <p>My Pet</p>
+            <p>{t('pet.myPet')}</p>
             <MdPets size={18} />
           </div>
         </div>
@@ -143,17 +117,14 @@ function PetHome({
           ) : (
             showContent && (
               <div className="animate-slide-up-fade-in flex flex-col h-[300px] w-full relative">
-                {/* Header con botón de colapso */}
                 <PetHeaderHome
                   onCollapse={toggleCollapse}
-                  title="My Pet"
+                  title={t('pet.myPet')}
                   className="animate-delay-75"
                   onOpenModal={() => setIsModalOpen(true)}
                 />
 
-                {/* Contenido principal centrado */}
                 <div className="animate-delay-150 flex-1 flex flex-col items-center justify-center px-5">
-                  {/* Panel de estado centrado arriba */}
                   <div className="animate-delay-225 ">
                     <PetStatusPanel
                       hunger={hunger ?? 0}
@@ -161,7 +132,6 @@ function PetHome({
                     />
                   </div>
 
-                  {/* Mascota centrada con título */}
                   <div className="animate-delay-300 flex-1 flex flex-col items-center justify-center w-full">
                     <PetBackground backgroundImage={backGround}>
                       <PetViewer
@@ -180,7 +150,6 @@ function PetHome({
         </div>
       )}
 
-      {/* Modal para gestionar/seleccionar mascota */}
       <PetSelectorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

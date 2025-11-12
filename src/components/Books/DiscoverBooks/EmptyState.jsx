@@ -1,11 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function EmptyState({ categoryBooks }) {
+  const { t } = useTranslation();
   const msg =
     Object.keys(categoryBooks).length === 0
-      ? "No books found."
-      : "No categories selected. Use the tags above to show categories.";
+      ? t('books.noBooks')
+      : t('books.noCategoriesSelected');
 
   return (
     <motion.div

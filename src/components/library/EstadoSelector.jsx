@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FiBook, FiBookOpen, FiCheckCircle } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import useLibraryItems from "../../hooks/useLibraryItem";
 
 /**
@@ -16,6 +17,7 @@ export default function EstadoSelector({
   onChange,
   className = "",
 }) {
+  const { t } = useTranslation();
   const { changeEstado, ESTADOS_LIBRO } = useLibraryItems({
     pollMs: 0,
     refetchOnWindowFocus: false,
@@ -26,17 +28,17 @@ export default function EstadoSelector({
 
   const estadoConfig = {
     NONE: {
-      label: "Sin empezar",
+      label: t('library.notStarted'),
       icon: <FiBook className="w-4 h-4" />,
       badgeClasses: "bg-gray-500 text-white border-gray-400/30",
     },
     LEYENDO: {
-      label: "Leyendo",
+      label: t('library.reading'),
       icon: <FiBookOpen className="w-4 h-4" />,
       badgeClasses: "bg-blue-500/20 text-white border-blue-400/30",
     },
     TERMINADO: {
-      label: "Terminado",
+      label: t('library.completed'),
       icon: <FiCheckCircle className="w-4 h-4" />,
       badgeClasses: "bg-emerald-500/20 text-white border-emerald-400/30",
     },
@@ -86,7 +88,7 @@ export default function EstadoSelector({
           setOpen((v) => !v);
         }}
         className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 backdrop-blur-sm border shadow-sm ${currentEstado.badgeClasses} cursor-pointer`}
-        title="Cambiar estado"
+        title={t('library.status')}
         aria-haspopup="true"
         aria-expanded={open}
       >
@@ -98,7 +100,7 @@ export default function EstadoSelector({
         <div
           className="absolute right-0 mt-2 min-w-full w-max max-w-sm rounded-xl border border-white/15 bg-black/70 backdrop-blur-xl shadow-xl p-2 z-30"
           role="menu"
-          aria-label="Seleccionar estado"
+          aria-label={t('library.status')}
           onClick={(e) => e.stopPropagation()}
         >
           {[

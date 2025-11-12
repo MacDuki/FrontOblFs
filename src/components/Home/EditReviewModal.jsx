@@ -2,8 +2,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Star } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 
 export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -31,20 +33,20 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
     setError("");
     
     if (rating === 0) {
-      setError("Debes seleccionar una calificación");
+      setError(t('reviewModal.selectRating'));
       return;
     }
 
     // Validar que se haya hecho algún cambio
     const currentText = reviewText.trim();
     if (rating === initialRating && currentText === initialText.trim()) {
-      setError("No has realizado ningún cambio en la reseña");
+      setError(t('reviewModal.noChanges'));
       return;
     }
 
     // Validar longitud del comentario si no está vacío
     if (currentText.length > 0 && currentText.length < 10) {
-      setError("El comentario debe tener al menos 10 caracteres o dejarlo vacío");
+      setError(t('reviewModal.commentLength'));
       return;
     }
 
@@ -97,7 +99,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                 <button
                   onClick={handleClose}
                   className="absolute right-4 top-5 p-2 rounded-lg hover:bg-stone-900/5 transition-all group active:scale-95 z-10"
-                  aria-label="Cerrar"
+                  aria-label={t('common.close')}
                 >
                   <X className="w-5 h-5 text-stone-600 group-hover:text-stone-900 transition-colors" />
                 </button>
@@ -105,7 +107,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
                     <h2 className="text-xl font-bold text-stone-900 tracking-tight">
-                      Edit Review
+                      {t('reviewModal.title')}
                     </h2>
                   </div>
                 </div>
@@ -117,7 +119,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
               <form onSubmit={handleSubmit} className="px-8 py-7 space-y-6 relative">
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-stone-200/50">
                   <label className="block text-sm font-semibold text-stone-900 mb-4 tracking-wide uppercase text-xs">
-                    Your Rating
+                    {t('reviewModal.rating')}
                   </label>
                   <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -158,8 +160,8 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                     htmlFor="review-text"
                     className="block text-sm font-semibold text-stone-900 mb-3 tracking-wide uppercase text-xs"
                   >
-                    Your Thoughts
-                    <span className="text-stone-500 font-normal normal-case ml-2 text-xs">(optional)</span>
+                    {t('reviewModal.comment')}
+                    <span className="text-stone-500 font-normal normal-case ml-2 text-xs">({t('reviewModal.optional')})</span>
                   </label>
                   <div className="bg-white/60 backdrop-blur-sm rounded-xl border border-stone-200/50 focus-within:border-amber-400/50 focus-within:ring-2 focus-within:ring-amber-400/20 transition-all">
                     <textarea
@@ -218,7 +220,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-5 py-3 border border-stone-300 rounded-xl text-stone-700 font-semibold hover:bg-stone-100/80 hover:border-stone-400 transition-all backdrop-blur-sm"
                   >
-                    Cancel
+                    {t('reviewModal.cancel')}
                   </motion.button>
                   <motion.button
                     type="submit"
@@ -234,10 +236,10 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                           className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                         />
-                        Saving...
+                        {t('reviewModal.updating')}
                       </span>
                     ) : (
-                      "Save Changes"
+                      t('reviewModal.update')
                     )}
                   </motion.button>
                 </div>

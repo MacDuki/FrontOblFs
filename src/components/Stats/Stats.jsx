@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { selectAllCollections } from "../../features/collections.slice";
 import { selectAllLibraryItems } from "../../features/libraryItem.slice";
 import {
@@ -14,6 +15,7 @@ import PointsOverview from "./PointsOverview";
 import PointsTimelineChart from "./PointsTimelineChart";
 
 function Stats() {
+  const { t, i18n } = useTranslation();
   // Obtener datos del store usando los selectores correctos
   const libraryItems = useSelector(selectAllLibraryItems);
   const myReviews = useSelector(selectMyReviews);
@@ -144,21 +146,55 @@ function Stats() {
 
   return (
     <div className="h-full flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+      {/* Header */}
+      <div className="flex-shrink-0">
+        <h2 className="text-2xl font-bold text-white mb-2">{t('stats.title')}</h2>
+        <p className="text-white/60 text-sm">
+          {t('stats.subtitle')}
+        </p>
+      </div>
+
+      {/* Additional Stats */}
+      <div className="grid grid-cols-1 gap-4 flex-shrink-0">
+        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="flex items-center justify-between">
+            <span className="text-white/70 text-sm">{t('stats.currentlyReading')}</span>
+            <span className="text-white font-bold text-xl">
+              {stats.readingBooks}
+            </span>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="flex items-center justify-between">
+            <span className="text-white/70 text-sm">{t('stats.collections')}</span>
+            <span className="text-white font-bold text-xl">
+              {stats.totalCollections}
+            </span>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="flex items-center justify-between">
+            <span className="text-white/70 text-sm">{t('stats.pagesRead')}</span>
+            <span className="text-white font-bold text-xl">
+              {stats.totalPagesRead?.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Points Section */}
       <div className="flex-shrink-0 mt-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-white">
-              Actividad de lectura (páginas)
-            </h2>
+            <h2 className="text-xl font-bold text-white">{t('stats.pointsAnalytics')}</h2>
             <p className="text-white/60 text-xs mt-1">
-              Analiza tus páginas leídas a lo largo del tiempo
+              {t('stats.trackPoints')}
             </p>
           </div>
           {isLoadingPoints && (
             <div className="flex items-center gap-2 text-white/50 text-xs">
               <div className="w-4 h-4 border-2 border-white/30 border-t-white/70 rounded-full animate-spin" />
-              Cargando...
+              {t('stats.loading')}
             </div>
           )}
         </div>
@@ -167,7 +203,7 @@ function Stats() {
         <div className="mb-4 p-3 rounded-lg bg-white/5 border border-white/10 flex flex-col md:flex-row gap-3 md:items-end">
           <div className="flex items-center gap-2">
             <div className="flex flex-col">
-              <label className="text-xs text-white/60 mb-1">Desde</label>
+              <label className="text-xs text-white/60 mb-1">{t('stats.from')}</label>
               <input
                 type="date"
                 value={dateRange.from}
@@ -178,7 +214,7 @@ function Stats() {
               />
             </div>
             <div className="flex flex-col ">
-              <label className="text-xs text-white/60 mb-1">Hasta</label>
+              <label className="text-xs text-white/60 mb-1">{t('stats.until')}</label>
               <input
                 type="date"
                 value={dateRange.to}
@@ -192,22 +228,22 @@ function Stats() {
               onClick={() => applyRange(dateRange.from, dateRange.to, true)}
               className="mt-5 h-8 px-3 rounded bg-emerald-600 text-white text-sm hover:bg-emerald-500"
             >
-              Aplicar
+              {t('stats.apply')}
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-white/60">Rápidos:</span>
+            <span className="text-xs text-white/60">{t('stats.quick')}</span>
             <button
               onClick={() => setPresetDays(7)}
               className="h-8 px-3 rounded bg-white/10 text-white text-sm border border-white/10 hover:bg-white/15"
             >
-              Última semana
+              {t('stats.lastWeek')}
             </button>
             <button
               onClick={() => setPresetDays(30)}
               className="h-8 px-3 rounded bg-white/10 text-white text-sm border border-white/10 hover:bg-white/15"
             >
-              Último mes
+              {t('stats.lastMonth')}
             </button>
           </div>
         </div>
@@ -232,15 +268,14 @@ function Stats() {
           <PointsAchievements summary={summary} pointsByDate={pointsByDate} />
         </div>
 
-        {/* Date Range Info */}
         {dateRange.from && dateRange.to && (
           <div className="mt-4 p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-white/60 text-xs text-center">
-              Mostrando datos desde{" "}
+              {t('stats.showingData')}{" "}
               <span className="text-white/80 font-medium">
                 {formatYMDToDMY(dateRange.from)}
               </span>{" "}
-              hasta{" "}
+              {t('stats.to')}{" "}
               <span className="text-white/80 font-medium">
                 {formatYMDToDMY(dateRange.to)}
               </span>

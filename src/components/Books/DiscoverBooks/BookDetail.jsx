@@ -4,10 +4,12 @@ import { CiBookmark } from "react-icons/ci";
 
 import { CiStar } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 import { useBooks } from "../../../hooks/useBooks.js";
 import { rankDescription } from "../../Utils/textRanking.js";
 
 export default function BookDetail({ book, onOpenReview, onOpenCollection }) {
+  const { t } = useTranslation();
   const { selectBook, isBookSaved } = useBooks();
 
   const getCoverImage = (info) => {
@@ -73,8 +75,8 @@ export default function BookDetail({ book, onOpenReview, onOpenCollection }) {
             <button
               onClick={handleClose}
               className="cursor-pointer relative left-4 top-1/2 -translate-y-1/2 grid place-items-center w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow border border-stone-200/60 transition"
-              aria-label="Volver"
-              title="Volver"
+              aria-label={t('books.back')}
+              title={t('books.back')}
             >
               <IoIosArrowBack className="w-5 h-5 text-gray-700" />
             </button>

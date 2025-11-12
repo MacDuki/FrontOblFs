@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   createOptimistic,
   createReview,
@@ -15,6 +16,7 @@ import ReviewHeader from "./ReviewModal/ReviewHeader";
 import ReviewTextArea from "./ReviewModal/ReviewTextArea";
 
 export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
@@ -28,7 +30,6 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
 
   const { items } = useLibraryItems();
 
-  // Create (or reuse) a portal root for modals
   useEffect(() => {
     let el = document.getElementById("app-modal-root");
     if (!el) {
@@ -39,7 +40,6 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     setPortalEl(el);
   }, []);
 
-  // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
       const originalOverflow = document.body.style.overflow;
@@ -72,16 +72,14 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     e.preventDefault();
 
     if (rating === 0) {
-      alert("Please select a rating before saving.");
+      alert(t('reviewModal.ratingRequired'));
       return;
     }
 
     // Verificar que el libro esté agregado como library item
     const libraryItem = items.find((it) => it.originalBookId === book.id);
     if (!libraryItem) {
-      setError(
-        "Debes agregar este libro a tu biblioteca antes de crear una reseña."
-      );
+      setError(t('reviewModal.addToLibraryFirst'));
       return;
     }
 
@@ -97,7 +95,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     if (reviewText && reviewText.trim() !== "") {
       reviewPayload.comment = reviewText.trim();
     } else {
-      reviewPayload.comment = "Sin comentario";
+      reviewPayload.comment = t('reviewModal.noComment');
     }
 
     try {
@@ -113,7 +111,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
         comment:
           reviewText && reviewText.trim() !== ""
             ? reviewText.trim()
-            : "Sin comentario",
+            : t('reviewModal.noComment'),
         createdAt: new Date().toISOString(),
         // Datos temporales para mostrar mientras se carga
         user: {
@@ -129,7 +127,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
           createReview({ ...reviewPayload, __tempKey: tempKey })
         ).unwrap();
 
-        setSuccess("Reseña publicada correctamente");
+        setSuccess(t('reviewModal.success'));
         if (onSubmit) onSubmit(resultAction);
 
         setTimeout(() => {
@@ -154,12 +152,11 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
         data: err?.response?.data || err?.data,
       });
 
-      let errorMessage = "Error al crear la reseña";
+      let errorMessage = t('reviewModal.error');
       const statusCode = err?.response?.status || err?.status;
 
       if (statusCode === 403) {
-        errorMessage =
-          "Has alcanzado el límite de reseñas de tu plan. Redirigiendo a cambiar plan...";
+        errorMessage = t('reviewModal.limitReached');
         setError(errorMessage);
         setRedirecting(true);
 
@@ -183,8 +180,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
           errorMessage.toLowerCase().includes("máximo") ||
           errorMessage.toLowerCase().includes("maximo")
         ) {
-          errorMessage =
-            "Has alcanzado el límite de reseñas de tu plan. Redirigiendo a cambiar plan...";
+          errorMessage = t('reviewModal.limitReached');
           setError(errorMessage);
           setRedirecting(true);
 
@@ -320,7 +316,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                 {/*Rating*/}
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-stone-200/50">
                   <label className="block text-xs font-semibold text-stone-900 mb-4 tracking-wide uppercase">
-                    Your Rating
+                    {t('reviewModal.rating')}
                   </label>
                   <RatingStars value={rating} onChange={setRating} />
                 </div>
@@ -328,7 +324,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                 <ReviewTextArea
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
-                  placeholder="Share what you loved, what surprised you, or what you learned..."
+                  placeholder={t('reviewModal.thoughtsPlaceholder')}
                 />
                 {/*Buttons*/}
                 <div className="flex gap-3 pt-4">
@@ -339,7 +335,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                     whileTap={{ scale: 0.98 }}
                     className="flex-1 px-5 py-3 border border-stone-300 rounded-xl text-stone-700 font-semibold hover:bg-stone-100/80 hover:border-stone-400 transition-all backdrop-blur-sm"
                   >
-                    Cancel
+                    {t('reviewModal.cancel')}
                   </Motion.button>
                   <Motion.button
                     type="submit"
@@ -359,10 +355,10 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                           }}
                           className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                         />
-                        Saving...
+                        {t('reviewModal.saving')}
                       </span>
                     ) : (
-                      "Publish Review"
+                      t('reviewModal.publish')
                     )}
                   </Motion.button>
                 </div>

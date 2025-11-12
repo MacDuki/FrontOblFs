@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 /**
  * AddPagesModal
@@ -19,6 +20,7 @@ export default function AddPagesModal({
   onClose,
   onConfirm,
 }) {
+  const { t } = useTranslation();
   const [quickPages, setQuickPages] = useState(10);
   const [customPages, setCustomPages] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -86,13 +88,13 @@ export default function AddPagesModal({
 
         <div className="space-y-3">
           <div>
-            <h4 className="font-semibold text-sm">Agregar páginas</h4>
+            <h4 className="font-semibold text-sm">{t('addPagesModal.title')}</h4>
             <p className="text-xs text-white/70">
-              Progreso actual: {progreso} / {pageCount}
+              {t('addPagesModal.currentProgress')}: {progreso} / {pageCount}
             </p>
             {remaining <= 0 && (
               <p className="mt-1 text-xs text-emerald-300/80">
-                ¡Ya alcanzaste el total de páginas!
+                {t('addPagesModal.maxReached')}
               </p>
             )}
           </div>
@@ -124,7 +126,7 @@ export default function AddPagesModal({
               type="number"
               min={1}
               step={1}
-              placeholder="Personalizado"
+              placeholder={t('addPagesModal.custom')}
               value={customPages}
               onChange={(e) => {
                 const v = e.target.value;
@@ -134,7 +136,7 @@ export default function AddPagesModal({
               disabled={submitting || remaining <= 0}
               className="w-32 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50"
             />
-            <span className="text-xs text-white/60">páginas</span>
+            <span className="text-xs text-white/60">{t('books.pages')}</span>
           </div>
 
           {/* Acciones */}
@@ -144,14 +146,14 @@ export default function AddPagesModal({
               disabled={submitting}
               className="px-3 py-2 rounded-lg text-sm border border-white/10 text-white/80 hover:bg-white/10 disabled:opacity-60"
             >
-              Cancelar
+              {t('addPagesModal.cancel')}
             </button>
             <button
               onClick={handleConfirm}
               disabled={submitting || remaining <= 0}
               className="px-3 py-2 rounded-lg text-sm bg-emerald-500/80 hover:bg-emerald-500 text-black font-semibold disabled:opacity-60"
             >
-              {submitting ? "Agregando..." : "Agregar"}
+              {submitting ? t('addPagesModal.saving') : t('addPagesModal.save')}
             </button>
           </div>
         </div>

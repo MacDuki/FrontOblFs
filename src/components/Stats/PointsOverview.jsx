@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { FaCalendarAlt, FaChartLine, FaTrophy } from "react-icons/fa";
 import { GiProgression } from "react-icons/gi";
+import { useTranslation } from "react-i18next";
 
 function PointsOverview({ summary, pointsByDate }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const total = summary?.total || 0; // Total histórico de páginas
 
@@ -86,7 +88,7 @@ function PointsOverview({ summary, pointsByDate }) {
   }, [summary, pointsByDate]);
 
   return (
-    <div className="flex flex-col  gap-3">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-around">
         {/* Total Páginas */}
         <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 backdrop-blur-sm">
@@ -99,7 +101,7 @@ function PointsOverview({ summary, pointsByDate }) {
                 {stats.total.toLocaleString()}
               </span>
               <span className="text-white/70 text-xs font-medium mt-1">
-                Páginas totales
+                {t('stats.totalPoints')}
               </span>
             </div>
           </div>
@@ -116,7 +118,7 @@ function PointsOverview({ summary, pointsByDate }) {
                 {stats.bestDay}
               </span>
               <span className="text-white/70 text-xs font-medium mt-1">
-                Mejor día (páginas)
+                {t('stats.bestDay')}
               </span>
             </div>
           </div>
@@ -153,7 +155,7 @@ function PointsOverview({ summary, pointsByDate }) {
                 {stats.trend}%
               </span>
               <span className="text-white/70 text-xs font-medium mt-1">
-                Tendencia 7d (páginas)
+                {t('stats.trend7d')}
               </span>
             </div>
           </div>
@@ -165,7 +167,7 @@ function PointsOverview({ summary, pointsByDate }) {
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-white font-semibold text-sm">
-                Últimos 7 días
+                {t('stats.last7Days')}
               </h4>
               <FaCalendarAlt className="text-lg text-green-400" />
             </div>

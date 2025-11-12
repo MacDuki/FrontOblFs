@@ -1,6 +1,28 @@
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
 import { useMemo } from "react";
+import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
+
+// Registrar componentes de Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function ReadingChart({ libraryItems }) {
+  const { t } = useTranslation();
   const chartData = useMemo(() => {
     if (!libraryItems || libraryItems.length === 0) {
       return {
@@ -30,14 +52,14 @@ function ReadingChart({ libraryItems }) {
 
   return (
     <div className="p-4 rounded-xl bg-white/5 border border-white/10 h-full flex flex-col">
-      <h3 className="text-white font-semibold mb-4">Reading Distribution</h3>
+      <h3 className="text-white font-semibold mb-4">{t('stats.readingDistribution')}</h3>
 
       {/* Progress Bars */}
       <div className="flex-1 flex flex-col justify-center gap-6">
         {/* Reading */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-white/70 text-sm">Currently Reading</span>
+            <span className="text-white/70 text-sm">{t('stats.currentlyReading')}</span>
             <span className="text-white font-semibold">
               {chartData.reading} ({readingPercent}%)
             </span>
@@ -53,7 +75,7 @@ function ReadingChart({ libraryItems }) {
         {/* Completed */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-white/70 text-sm">Completed</span>
+            <span className="text-white/70 text-sm">{t('stats.completed')}</span>
             <span className="text-white font-semibold">
               {chartData.completed} ({completedPercent}%)
             </span>
@@ -69,7 +91,7 @@ function ReadingChart({ libraryItems }) {
         {/* To Read */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-white/70 text-sm">To Read</span>
+            <span className="text-white/70 text-sm">{t('stats.toRead')}</span>
             <span className="text-white font-semibold">
               {chartData.toRead} ({toReadPercent}%)
             </span>

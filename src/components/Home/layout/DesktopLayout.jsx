@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useTranslation } from "react-i18next";
 import DiscoverBooks from "../../Books/DiscoverBooks/DiscoverBooks.jsx";
 import Stats from "../../Stats/Stats.jsx";
 import { MyCollections } from "../MyCollections.jsx";
@@ -9,20 +10,19 @@ import UserHome from "../UserHome";
 import VerticalNavbar from "../VerticalNavbar.jsx";
 
 function DesktopLayout({ tab, setTab }) {
+  const { t } = useTranslation();
   const [isPanelVisible, setIsPanelVisible] = useState(true);
 
   const togglePanel = () => {
     setIsPanelVisible(!isPanelVisible);
   };
-
-  // Renderizar contenido según el tab activo
-  const renderMainContent = () => {
+ const renderMainContent = () => {
     switch (tab) {
       case "reviews":
         return (
           <div className="h-full max-h-[600px] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 flex flex-col overflow-hidden">
             <h2 className="text-2xl font-bold text-white mb-4 flex-shrink-0">
-              My Reviews
+              {t('nav.myReviews')}
             </h2>
             <div className="flex-1 overflow-hidden">
               <ReviewsList />
