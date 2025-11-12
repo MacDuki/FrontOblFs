@@ -111,6 +111,23 @@ export default {
     noMoreAchievements: "No more achievements available"
   },
 
+  // Upload Modal
+  uploadModal: {
+    title: "Upload profile picture",
+    subtitle: "JPG, PNG or WEBP · Max 2MB",
+    selectImage: "Select an image",
+    dragAndDrop: "or drag and drop here",
+    uploading: "Uploading image...",
+    uploadSuccess: "Image uploaded successfully!",
+    savingChanges: "Saving changes...",
+    cancel: "Cancel",
+    uploadImage: "Upload image",
+    uploadingAction: "Uploading...",
+    required: "Image is required",
+    invalidType: "Only JPG, PNG or WEBP allowed",
+    maxSize: "Image cannot exceed 2MB"
+  },
+
   // Plan Modal
   planModal: {
     title: "Change Your Plan",

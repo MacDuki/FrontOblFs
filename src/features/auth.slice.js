@@ -80,6 +80,9 @@ const authSlice = createSlice({
       // Limpiar ambos storages
       localStorage.removeItem("token");
       sessionStorage.removeItem("token");
+      
+      // Limpiar foto de perfil
+      localStorage.removeItem("profilePicture");
 
       // IMPORTANTE: Este reducer también será escuchado por otros slices
       // para resetear su estado cuando el usuario cierre sesión

@@ -111,6 +111,23 @@ export default {
     noMoreAchievements: "No hay más logros disponibles"
   },
 
+  // Modal de subida de imagen
+  uploadModal: {
+    title: "Subir foto de perfil",
+    subtitle: "JPG, PNG o WEBP · Máx 2MB",
+    selectImage: "Selecciona una imagen",
+    dragAndDrop: "o arrastra y suelta aquí",
+    uploading: "Subiendo imagen...",
+    uploadSuccess: "¡Imagen subida exitosamente!",
+    savingChanges: "Guardando cambios...",
+    cancel: "Cancelar",
+    uploadImage: "Subir imagen",
+    uploadingAction: "Subiendo...",
+    required: "La imagen es obligatoria",
+    invalidType: "Solo se permiten JPG, PNG o WEBP",
+    maxSize: "La imagen no puede superar los 2MB"
+  },
+
   // Modal de Plan
   planModal: {
     title: "Cambiar Tu Plan",
