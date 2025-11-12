@@ -116,7 +116,7 @@ function Stats() {
     const totalReviews = reviews?.length || 0;
     const totalCollections = collections?.length || 0;
 
-    // Calcular promedio de calificación
+
     const avgRating =
       reviews?.length > 0
         ? (
@@ -125,7 +125,7 @@ function Stats() {
           ).toFixed(1)
         : 0;
 
-    // Calcular total de páginas leídas
+    
     const totalPagesRead = libraryItems?.reduce((sum, item) => {
       if (item.estado === "TERMINADO") {
         return sum + (item.book?.pageCount || 0);

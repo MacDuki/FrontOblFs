@@ -6,6 +6,7 @@ import { IoLogOut } from "react-icons/io5";
 import { TfiStatsUp } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.js";
+import UsageIndicator from "../Usage/UsageIndicator.jsx";
 
 function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
   const navigate = useNavigate();
@@ -129,6 +130,12 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
             </button>
           );
         })}
+
+        {/* Separator line */}
+        <div className="h-px bg-white/10 mx-2"></div>
+
+        {/* Usage Indicator */}
+        <UsageIndicator />
 
         {/* Separator line */}
         <div className="h-px bg-white/10 mx-2"></div>

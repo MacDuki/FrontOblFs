@@ -243,6 +243,17 @@ export default {
     hide: "Hide"
   },
 
+  // Usage Indicator
+  usage: {
+    reviewsCreated: "Reviews Created",
+    reviewUsage: "Review Usage",
+    created: "Created",
+    usage: "Usage",
+    nearLimit: "Near limit!",
+    totalReviews: "Total reviews",
+    unlimitedPlan: "Unlimited plan"
+  },
+
   // Common
   common: {
     loading: "Loading...",
