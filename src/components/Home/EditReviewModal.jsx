@@ -1,50 +1,56 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Star } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 
 export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
   const { t } = useTranslation();
-  const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [initialRating, setInitialRating] = useState(0);
   const [initialText, setInitialText] = useState("");
 
+  const { register, handleSubmit, watch, setValue, reset } = useForm({
+    defaultValues: {
+      rating: 0,
+      reviewText: "",
+    }
+  });
+
+  const rating = watch("rating");
+  const reviewText = watch("reviewText");
+
   useEffect(() => {
     if (review) {
       const initialScore = review.score ?? review.rating ?? 0;
       const initialComment = review.comment || "";
-      setRating(initialScore);
-      setReviewText(initialComment);
+      setValue("rating", initialScore);
+      setValue("reviewText", initialComment);
       setInitialRating(initialScore);
       setInitialText(initialComment);
       setError("");
     }
-  }, [review]);
+  }, [review, setValue]);
 
   if (!review) return null;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmitForm = async (data) => {
     setError("");
     
-    if (rating === 0) {
+    if (data.rating === 0) {
       setError(t('reviewModal.selectRating'));
       return;
     }
 
-    // Validar que se haya hecho algún cambio
-    const currentText = reviewText.trim();
-    if (rating === initialRating && currentText === initialText.trim()) {
+    const currentText = data.reviewText.trim();
+    if (data.rating === initialRating && currentText === initialText.trim()) {
       setError(t('reviewModal.noChanges'));
       return;
     }
 
-    // Validar longitud del comentario si no está vacío
     if (currentText.length > 0 && currentText.length < 10) {
       setError(t('reviewModal.commentLength'));
       return;
@@ -54,7 +60,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
 
     try {
       const finalComment = currentText.length > 0 ? currentText : "Sin comentario";
-      await onSave(review._id || review.id, rating, finalComment);
+      await onSave(review._id || review.id, data.rating, finalComment);
       handleClose();
     } catch (err) {
       console.error("Error updating review:", err);
@@ -65,9 +71,8 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
   };
 
   const handleClose = () => {
-    setRating(0);
+    reset();
     setHoveredRating(0);
-    setReviewText("");
     setError("");
     setInitialRating(0);
     setInitialText("");
@@ -116,7 +121,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="px-8 py-7 space-y-6 relative">
+              <form onSubmit={handleSubmit(onSubmitForm)} className="px-8 py-7 space-y-6 relative">
                 <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-stone-200/50">
                   <label className="block text-sm font-semibold text-stone-900 mb-4 tracking-wide uppercase text-xs">
                     {t('reviewModal.rating')}
@@ -126,7 +131,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                       <motion.button
                         key={star}
                         type="button"
-                        onClick={() => setRating(star)}
+                        onClick={() => setValue("rating", star)}
                         onMouseEnter={() => setHoveredRating(star)}
                         onMouseLeave={() => setHoveredRating(0)}
                         whileHover={{ scale: 1.15, rotate: 5 }}
@@ -167,7 +172,7 @@ export default function EditReviewModal({ review, isOpen, onClose, onSave }) {
                     <textarea
                       id="review-text"
                       value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
+                      onChange={(e) => setValue("reviewText", e.target.value)}
                       placeholder="Share what you loved, what surprised you, or what you learned..."
                       rows={5}
                       className="w-full px-5 py-4 bg-transparent border-none focus:outline-none resize-none transition text-stone-800 placeholder:text-stone-400 text-[15px] leading-relaxed"

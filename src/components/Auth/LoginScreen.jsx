@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { CiLogin } from "react-icons/ci";
 import { IoIosArrowBack } from "react-icons/io";
 import { useTranslation } from "react-i18next";
@@ -6,32 +6,23 @@ import readingImg from "../../assets/imgs/undraw_reading-time.svg";
 import { useAuth } from "../../hooks/useAuth.js";
 import MechanicalText from "../Effects/MechanicalText.effect.jsx";
 import "../styles/login.css";
+
 function LoginScreen({ onBack }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      username: "",
+      password: "",
+      rememberMe: false,
+    }
   });
-  const [rememberMe, setRememberMe] = useState(false);
+  
   const { login, isLoading, error, clearError } = useAuth();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.username || !formData.password) return;
-
-   
+  const onSubmit = async (data) => {
     if (error) clearError();
-
-    await login({ ...formData, rememberMe });
+    await login(data);
   };
 
   return (
@@ -64,16 +55,13 @@ function LoginScreen({ onBack }) {
         </div>
       )}
 
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
         {/* INPUTS */}
         <div className="rounded-xl  space-y-4">
           <div className="form-control">
             <input
               type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
+              {...register("username", { required: true })}
             />
             <label>
               <span style={{ transitionDelay: "0ms" }}>U</span>
@@ -90,10 +78,7 @@ function LoginScreen({ onBack }) {
             <div className="form-control">
               <input
                 type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
+                {...register("password", { required: true })}
               />
               <label>
                 <span style={{ transitionDelay: "0ms" }}>P</span>
@@ -115,8 +100,7 @@ function LoginScreen({ onBack }) {
               <input
                 type="checkbox"
                 id="cbx"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
+                {...register("rememberMe")}
                 style={{ display: "none" }}
               />
               <label htmlFor="cbx" className="check">
@@ -143,7 +127,7 @@ function LoginScreen({ onBack }) {
         <div>
           <button
             type="submit"
-            disabled={isLoading || !formData.username || !formData.password}
+            disabled={isLoading || !isValid}
             className="
                 cursor-pointer
                  w-full flex justify-center 

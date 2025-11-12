@@ -1,58 +1,42 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { IoIosArrowBack } from "react-icons/io";
 import { useTranslation } from "react-i18next";
 import banner from "../../assets/imgs/banner03.png";
 import { useAuth } from "../../hooks/useAuth.js";
 import RevealBannerButton from "../Effects/RevealBannerButton.effect.jsx";
+
 function RegisterScreen({ onBack }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    repeat_password: "",
-  });
-  const { register, login, isLoading, error, clearError } = useAuth();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Solo limpiar error si el usuario ha cambiado significativamente los datos
-    // No limpiar inmediatamente para que pueda leer el mensaje
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validar que las contraseñas coincidan
-    if (formData.password !== formData.repeat_password) {
-      alert(t('auth.passwordsMismatch'));
-      return;
+  const { register: registerUser, login, isLoading, error, clearError } = useAuth();
+  
+  const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      repeat_password: "",
     }
+  });
 
-    if (!formData.username || !formData.email || !formData.password) return;
+  const password = watch("password");
 
-    
+  const onSubmit = async (data) => {
     if (error) clearError();
 
     try {
-     
-      const registerResult = await register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        repeat_password: formData.repeat_password,
+      const registerResult = await registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        repeat_password: data.repeat_password,
       });
 
-     
       if (registerResult.type.endsWith("/fulfilled")) {
         await login({
-          username: formData.username,
-          password: formData.password,
-          rememberMe: true, 
+          username: data.username,
+          password: data.password,
+          rememberMe: true,
         });
       }
     } catch (error) {
@@ -82,53 +66,54 @@ function RegisterScreen({ onBack }) {
         </div>
       )}
 
-      <form className="space-y-3" onSubmit={handleSubmit}>
+      <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
         <input
-          name="username"
           type="text"
           placeholder={t('auth.username')}
-          value={formData.username}
-          onChange={handleChange}
-          required
+          {...register("username", { 
+            required: t('auth.usernameRequired'),
+            minLength: { value: 3, message: t('auth.usernameMinLength') }
+          })}
           className="input-field w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-100 rounded-xl focus:outline-none focus:ring-apple-500 focus:border-apple-500 sm:text-sm"
         />
+        {errors.username && <span className="text-red-400 text-xs">{errors.username.message}</span>}
+        
         <input
-          name="email"
           type="email"
           placeholder={t('auth.email')}
-          value={formData.email}
-          onChange={handleChange}
-          required
+          {...register("email", { 
+            required: t('auth.emailRequired'),
+            pattern: { value: /^\S+@\S+$/i, message: t('auth.emailInvalid') }
+          })}
           className="input-field w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-100 rounded-xl focus:outline-none focus:ring-apple-500 focus:border-apple-500 sm:text-sm"
         />
+        {errors.email && <span className="text-red-400 text-xs">{errors.email.message}</span>}
+        
         <input
-          name="password"
           type="password"
           placeholder={t('auth.password')}
-          value={formData.password}
-          onChange={handleChange}
-          required
+          {...register("password", { 
+            required: t('auth.passwordRequired'),
+            minLength: { value: 6, message: t('auth.passwordMinLength') }
+          })}
           className="input-field w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-100 rounded-xl focus:outline-none focus:ring-apple-500 focus:border-apple-500 sm:text-sm"
         />
+        {errors.password && <span className="text-red-400 text-xs">{errors.password.message}</span>}
+        
         <input
-          name="repeat_password"
           type="password"
           placeholder={t('auth.repeatPassword')}
-          value={formData.repeat_password}
-          onChange={handleChange}
-          required
+          {...register("repeat_password", { 
+            required: t('auth.repeatPasswordRequired'),
+            validate: value => value === password || t('auth.passwordsMismatch')
+          })}
           className="input-field w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-100 rounded-xl focus:outline-none focus:ring-apple-500 focus:border-apple-500 sm:text-sm"
         />
+        {errors.repeat_password && <span className="text-red-400 text-xs">{errors.repeat_password.message}</span>}
 
         <button
           type="submit"
-          disabled={
-            isLoading ||
-            !formData.username ||
-            !formData.email ||
-            !formData.password ||
-            !formData.repeat_password
-          }
+          disabled={isLoading || !isValid}
           className="group relative w-full flex justify-center py-3 px-4 border border-pink-200 text-sm font-medium rounded-xl text-white bg-transparent hover:bg-apple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-apple-500 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? t('common.loading') : t('auth.createAccount')}

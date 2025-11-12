@@ -1,6 +1,7 @@
 import { AnimatePresence, motion as Motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +20,17 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [rating, setRating] = useState(0);
+  
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      rating: 0,
+      reviewText: "",
+    }
+  });
 
-  const [reviewText, setReviewText] = useState("");
+  const rating = watch("rating");
+  const reviewText = watch("reviewText");
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -68,15 +77,12 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
 
   const coverImage = getCoverImage(info);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (rating === 0) {
+  const onSubmitForm = async (data) => {
+    if (data.rating === 0) {
       alert(t('reviewModal.ratingRequired'));
       return;
     }
 
-    // Verificar que el libro esté agregado como library item
     const libraryItem = items.find((it) => it.originalBookId === book.id);
     if (!libraryItem) {
       setError(t('reviewModal.addToLibraryFirst'));
@@ -89,17 +95,16 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
     const reviewPayload = {
       originalBookId: book.id,
       bookTitle: info.title,
-      score: Number(rating),
+      score: Number(data.rating),
     };
 
-    if (reviewText && reviewText.trim() !== "") {
-      reviewPayload.comment = reviewText.trim();
+    if (data.reviewText && data.reviewText.trim() !== "") {
+      reviewPayload.comment = data.reviewText.trim();
     } else {
       reviewPayload.comment = t('reviewModal.noComment');
     }
 
     try {
-      // Crear un placeholder temporal con ID único
       const tempId = `temp-${Date.now()}`;
       const tempKey = `k-${Date.now()}`;
       const tempReview = {
@@ -107,19 +112,17 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
         __tempKey: tempKey,
         originalBookId: book.id,
         bookTitle: info.title,
-        score: Number(rating),
+        score: Number(data.rating),
         comment:
-          reviewText && reviewText.trim() !== ""
-            ? reviewText.trim()
+          data.reviewText && data.reviewText.trim() !== ""
+            ? data.reviewText.trim()
             : t('reviewModal.noComment'),
         createdAt: new Date().toISOString(),
-        // Datos temporales para mostrar mientras se carga
         user: {
-          username: "Tu usuario", // Esto se reemplazará con los datos reales
+          username: "Tu usuario",
         },
       };
 
-      // Dispatch optimista: agregar inmediatamente al state
       dispatch(createOptimistic(tempReview));
 
       try {
@@ -200,8 +203,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
   };
 
   const handleClose = () => {
-    setRating(0);
-    setReviewText("");
+    reset();
     setError(null);
     setSuccess(null);
     onClose();
@@ -242,7 +244,7 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
               />
 
               <form
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmitForm)}
                 className="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-5 relative"
               >
                 {error && (
@@ -318,12 +320,12 @@ export default function ReviewModal({ book, isOpen, onClose, onSubmit }) {
                   <label className="block text-xs font-semibold text-stone-900 mb-4 tracking-wide uppercase">
                     {t('reviewModal.rating')}
                   </label>
-                  <RatingStars value={rating} onChange={setRating} />
+                  <RatingStars value={rating} onChange={(val) => setValue("rating", val)} />
                 </div>
                 {/*Your thoughts*/}
                 <ReviewTextArea
                   value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
+                  onChange={(e) => setValue("reviewText", e.target.value)}
                   placeholder={t('reviewModal.thoughtsPlaceholder')}
                 />
                 {/*Buttons*/}
