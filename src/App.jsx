@@ -9,11 +9,11 @@ import {
   PublicRoute,
 } from "./components/Utils/ProtectedRoute.jsx";
 import { store } from "./store/store.js";
+
 function App() {
   return (
     <Provider store={store}>
       <Routes>
-        {/* Ruta pública - SOLO accesible si NO está autenticado */}
         <Route
           path="/"
           element={
@@ -23,7 +23,6 @@ function App() {
           }
         />
 
-        {/* Rutas protegidas - solo accesibles si está autenticado */}
         <Route
           path="/home"
           element={
@@ -32,7 +31,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* DiscoverBooks ya no es página separada; se integra en Home (DesktopLayout) */}
+
         <Route
           path="/my-reviews"
           element={
@@ -42,7 +41,6 @@ function App() {
           }
         />
 
-        {/* Ruta catch-all - maneja páginas no encontradas */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Provider>

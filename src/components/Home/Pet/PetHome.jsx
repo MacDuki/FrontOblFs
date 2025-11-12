@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
-
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MdPets } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 import backGround from "../../../assets/imgs/bg1.png";
 import usePet from "../../../hooks/usePet";
 import { Loader } from "../../ui/Loader.jsx";
@@ -11,11 +10,13 @@ import { PetHeaderHome } from "./PetHeaderHome";
 import PetSelectorModal from "./PetSelectorModal";
 import PetStatusPanel from "./PetStatusPanel";
 import { PetViewer } from "./PetViewer";
+
 function PetHome({
   petType = "cat",
   autoActions = true,
   onPetActionComplete = () => {},
 }) {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showContent, setShowContent] = useState(true);
@@ -100,7 +101,7 @@ function PetHome({
           onClick={toggleCollapse}
         >
           <div className="text-white text-sm font-medium flex flex-row items-center justify-center space-x-2">
-            <p>My Pet</p>
+            <p>{t('pet.myPet')}</p>
             <MdPets size={18} />
           </div>
         </div>
@@ -116,17 +117,14 @@ function PetHome({
           ) : (
             showContent && (
               <div className="animate-slide-up-fade-in flex flex-col h-[300px] w-full relative">
-                {/* Header con botón de colapso */}
                 <PetHeaderHome
                   onCollapse={toggleCollapse}
-                  title="My Pet"
+                  title={t('pet.myPet')}
                   className="animate-delay-75"
                   onOpenModal={() => setIsModalOpen(true)}
                 />
 
-                {/* Contenido principal centrado */}
                 <div className="animate-delay-150 flex-1 flex flex-col items-center justify-center px-5">
-                  {/* Panel de estado centrado arriba */}
                   <div className="animate-delay-225 ">
                     <PetStatusPanel
                       hunger={hunger ?? 0}
@@ -134,7 +132,6 @@ function PetHome({
                     />
                   </div>
 
-                  {/* Mascota centrada con título */}
                   <div className="animate-delay-300 flex-1 flex flex-col items-center justify-center w-full">
                     <PetBackground backgroundImage={backGround}>
                       <PetViewer
@@ -153,7 +150,6 @@ function PetHome({
         </div>
       )}
 
-      {/* Modal para gestionar/seleccionar mascota */}
       <PetSelectorModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

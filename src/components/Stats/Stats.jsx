@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { selectAllCollections } from "../../features/collections.slice";
 import { selectAllLibraryItems } from "../../features/libraryItem.slice";
 import {
@@ -15,6 +16,7 @@ import PointsOverview from "./PointsOverview";
 import PointsTimelineChart from "./PointsTimelineChart";
 
 function Stats() {
+  const { t, i18n } = useTranslation();
   // Obtener datos del store usando los selectores correctos
   const libraryItems = useSelector(selectAllLibraryItems);
   const myReviews = useSelector(selectMyReviews);
@@ -94,19 +96,17 @@ function Stats() {
 
   return (
     <div className="h-full flex flex-col gap-4 overflow-y-auto custom-scrollbar">
-      {/* Header */}
       <div className="flex-shrink-0">
-        <h2 className="text-2xl font-bold text-white mb-2">Reading Stats</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">{t('stats.title')}</h2>
         <p className="text-white/60 text-sm">
-          Track your reading progress and achievements
+          {t('stats.subtitle')}
         </p>
       </div>
 
-      {/* Additional Stats */}
       <div className="grid grid-cols-1 gap-4 flex-shrink-0">
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
           <div className="flex items-center justify-between">
-            <span className="text-white/70 text-sm">Currently Reading</span>
+            <span className="text-white/70 text-sm">{t('stats.currentlyReading')}</span>
             <span className="text-white font-bold text-xl">
               {stats.readingBooks}
             </span>
@@ -114,7 +114,7 @@ function Stats() {
         </div>
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
           <div className="flex items-center justify-between">
-            <span className="text-white/70 text-sm">Collections</span>
+            <span className="text-white/70 text-sm">{t('stats.collections')}</span>
             <span className="text-white font-bold text-xl">
               {stats.totalCollections}
             </span>
@@ -122,7 +122,7 @@ function Stats() {
         </div>
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
           <div className="flex items-center justify-between">
-            <span className="text-white/70 text-sm">Pages Read</span>
+            <span className="text-white/70 text-sm">{t('stats.pagesRead')}</span>
             <span className="text-white font-bold text-xl">
               {stats.totalPagesRead?.toLocaleString()}
             </span>
@@ -130,29 +130,26 @@ function Stats() {
         </div>
       </div>
 
-      {/* Points Section */}
       <div className="flex-shrink-0 mt-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-white">Points Analytics</h2>
+            <h2 className="text-xl font-bold text-white">{t('stats.pointsAnalytics')}</h2>
             <p className="text-white/60 text-xs mt-1">
-              Track your points and activity over time
+              {t('stats.trackPoints')}
             </p>
           </div>
           {isLoadingPoints && (
             <div className="flex items-center gap-2 text-white/50 text-xs">
               <div className="w-4 h-4 border-2 border-white/30 border-t-white/70 rounded-full animate-spin" />
-              Loading...
+              {t('stats.loading')}
             </div>
           )}
         </div>
 
-        {/* Points Overview Cards */}
         <div className="mb-4">
           <PointsOverview summary={summary} pointsByDate={pointsByDate} />
         </div>
 
-        {/* Points Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="min-h-[350px]">
             <PointsTimelineChart pointsByDate={pointsByDate} />
@@ -162,31 +159,28 @@ function Stats() {
           </div>
         </div>
 
-        {/* Activity Heatmap */}
         <div className="mt-4">
           <PointsHeatmap pointsByDate={pointsByDate} />
         </div>
 
-        {/* Achievements */}
         <div className="mt-4">
           <PointsAchievements summary={summary} pointsByDate={pointsByDate} />
         </div>
 
-        {/* Date Range Info */}
         {dateRange.from && dateRange.to && (
           <div className="mt-4 p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-white/60 text-xs text-center">
-              Mostrando datos desde{" "}
+              {t('stats.showingData')}{" "}
               <span className="text-white/80 font-medium">
-                {new Date(dateRange.from).toLocaleDateString("es-ES", {
+                {new Date(dateRange.from).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                 })}
               </span>{" "}
-              hasta{" "}
+              {t('stats.to')}{" "}
               <span className="text-white/80 font-medium">
-                {new Date(dateRange.to).toLocaleDateString("es-ES", {
+                {new Date(dateRange.to).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

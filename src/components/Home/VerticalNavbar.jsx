@@ -5,11 +5,13 @@ import { IoIosArrowBack } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
 import { TfiStatsUp } from "react-icons/tfi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth.js";
 
 function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -19,13 +21,13 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
   const navItems = [
     {
       icon: FaBookOpenReader,
-      label: "Start Reading",
+      label: t('nav.startReading'),
       color: "pink",
       key: "sections",
     },
     {
       icon: FaStar,
-      label: "My Reviews",
+      label: t('nav.myReviews'),
       color: "pink",
       key: "reviews",
       onClick: () => {
@@ -35,7 +37,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
     },
     {
       icon: TfiStatsUp,
-      label: "Stats",
+      label: t('nav.stats'),
       color: "blue",
       key: "stats",
       onClick: () => {
@@ -45,13 +47,13 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
     },
     {
       icon: GiTrophiesShelf,
-      label: "Trophies",
+      label: t('nav.trophies'),
       color: "yellow",
       key: "trophies",
     },
     {
       icon: CiSearch,
-      label: "Search Books",
+      label: t('nav.searchBooks'),
       color: "cyan",
       key: "discover",
       onClick: () => {
@@ -80,7 +82,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
             transition-all duration-300 ease-out hover:scale-110 hover:-translate-y-1 
             hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-500/30 
             backdrop-blur-md bg-white/5 border-b-2 border-b-purple-500/30"
-          title="Show Sections"
+          title={t('common.back')}
         >
           <IoIosArrowBack size={24} />
 
@@ -90,7 +92,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
             bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap
             opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
           >
-            Show Sections
+            {t('common.back')}
           </div>
         </button>
 
@@ -144,7 +146,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
            flex items-center justify-center transition-all duration-300 ease-out hover:scale-110 hover:-translate-y-1 
             hover:shadow-xl hover:shadow-red-500/20 hover:border-red-500/30 
             backdrop-blur-md bg-white/5 cursor-pointer"
-          title="Logout"
+          title={t('nav.logout')}
         >
           <IoLogOut size={24} />
 
@@ -154,7 +156,7 @@ function VerticalNavbar({ isVisible, onTogglePanel, currentTab, setTab }) {
             bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap
             opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
           >
-            Logout
+            {t('nav.logout')}
           </div>
         </button>
       </nav>

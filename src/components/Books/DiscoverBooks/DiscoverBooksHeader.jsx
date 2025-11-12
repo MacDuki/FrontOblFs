@@ -1,8 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import SearchBar from "./SearchBar.jsx";
 
 export default function DiscoverBooksHeader({ isDark = false }) {
+  const { t } = useTranslation();
+  
   return (
     <motion.div
       className={`px-6 md:px-8 py-5 flex flex-col gap-4 rounded-4xl ${
@@ -27,7 +30,7 @@ export default function DiscoverBooksHeader({ isDark = false }) {
               : "text-stone-900"
           }`}
         >
-          Discover Books
+          {t('books.discoverTitle')}
         </h1>
         <motion.div
           initial={{ opacity: 0, y: 18 }}

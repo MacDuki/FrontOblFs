@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { FaCalendarAlt, FaChartLine, FaTrophy } from "react-icons/fa";
 import { GiProgression } from "react-icons/gi";
+import { useTranslation } from "react-i18next";
 
 function PointsOverview({ summary, pointsByDate }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const total = summary?.total || 0;
 
@@ -72,7 +74,7 @@ function PointsOverview({ summary, pointsByDate }) {
               {stats.total.toLocaleString()}
             </span>
             <span className="text-white/70 text-xs font-medium mt-1">
-              Puntos Totales
+              {t('stats.totalPoints')}
             </span>
           </div>
         </div>
@@ -85,7 +87,7 @@ function PointsOverview({ summary, pointsByDate }) {
             <FaCalendarAlt className="text-xl text-green-400" />
             {stats.activeDays > 0 && (
               <span className="text-xs text-green-300 bg-green-500/20 px-2 py-0.5 rounded-full">
-                {stats.activeDays} días
+                {stats.activeDays} {t('stats.days')}
               </span>
             )}
           </div>
@@ -94,7 +96,7 @@ function PointsOverview({ summary, pointsByDate }) {
               {stats.dailyAverage}
             </span>
             <span className="text-white/70 text-xs font-medium mt-1">
-              Promedio Diario
+              {t('stats.dailyAverage')}
             </span>
           </div>
         </div>
@@ -111,7 +113,7 @@ function PointsOverview({ summary, pointsByDate }) {
               {stats.bestDay}
             </span>
             <span className="text-white/70 text-xs font-medium mt-1">
-              Mejor Día
+              {t('stats.bestDay')}
             </span>
           </div>
         </div>
@@ -148,7 +150,7 @@ function PointsOverview({ summary, pointsByDate }) {
               {stats.trend}%
             </span>
             <span className="text-white/70 text-xs font-medium mt-1">
-              Tendencia 7d
+              {t('stats.trend7d')}
             </span>
           </div>
         </div>

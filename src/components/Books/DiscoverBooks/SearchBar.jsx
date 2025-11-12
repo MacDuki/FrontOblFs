@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   categories,
   setSearchQuery,
@@ -6,6 +7,7 @@ import {
 } from "../../../features/books.slice";
 
 export default function SearchBar() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { searchQuery, visibleCategories } = useSelector(
     (state) => state.books
@@ -27,7 +29,7 @@ export default function SearchBar() {
           type="text"
           value={searchQuery}
           onChange={handleSearchChange}
-          placeholder="Search for a book or an author..."
+          placeholder={t('books.searchPlaceholder')}
           className="w-full md:w-3/5 px-5 py-3.5 rounded-2xl border border-stone-300/60 bg-white/70 backdrop-blur-xl text-stone-800 text-[15px] transition-all duration-300 ease-in-out placeholder:text-stone-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400/20 focus:border-amber-400/60"
         />
       </div>
