@@ -64,4 +64,4 @@ export const ProfileAvatar = ({ name, level }) => {
       />
     </>
   );
-};l
+};
