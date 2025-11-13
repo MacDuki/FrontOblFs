@@ -17,12 +17,27 @@ function PetViewer({ className = "" }) {
     );
   }
 
+  // Construir la ruta correcta usando import.meta.url para que funcione en producción
+  const getPetImageUrl = (petId) => {
+    try {
+      return new URL(`../../../assets/pets/${petId}-idle.gif`, import.meta.url)
+        .href;
+    } catch (error) {
+      console.error(`Error loading pet image for ${petId}:`, error);
+      return "";
+    }
+  };
+
   return (
     <div className="relative group">
       <img
-        src={`/src/assets/pets/${id}-idle.gif`}
+        src={getPetImageUrl(id)}
         alt="Pet"
         className={`object-contain transition-all duration-300 ${className}`}
+        onError={(e) => {
+          console.error(`Failed to load pet image: ${id}`);
+          e.target.style.display = "none";
+        }}
       />
     </div>
   );

@@ -54,10 +54,21 @@ export default function PetSelectorModal({
     [pets, focusedId, selectedPet]
   );
 
-  const idleImage = (pet) =>
-    pet?._id
-      ? `/src/assets/pets/${pet._id}-idle.gif`
-      : "/src/assets/pets/placeholder-idle.gif";
+  // Función para obtener la imagen usando import.meta.url para compatibilidad con build
+  const getPetImageUrl = (petId) => {
+    if (!petId) {
+      return "";
+    }
+    try {
+      return new URL(`../../../assets/pets/${petId}-idle.gif`, import.meta.url)
+        .href;
+    } catch (error) {
+      console.error(`Error loading pet image for ${petId}:`, error);
+      return "";
+    }
+  };
+
+  const idleImage = (pet) => getPetImageUrl(pet?._id);
 
   const handleSelect = async (petId) => {
     if (!petId) return;
