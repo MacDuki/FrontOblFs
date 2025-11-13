@@ -1,11 +1,10 @@
-import { BiHide } from "react-icons/bi";
 import { Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "../../LanguageSwitcher";
+import { BiHide } from "react-icons/bi";
 
 export const ProfileHeader = ({ onHide, onUpgradePlan }) => {
   const { t } = useTranslation();
-  
+
   return (
     <div className="flex items-center justify-between px-5 py-2">
       <div
@@ -14,17 +13,16 @@ export const ProfileHeader = ({ onHide, onUpgradePlan }) => {
       >
         <BiHide />
         <span className="text-sm opacity-0 transform translate-x-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-          {t('profile.hide')}
+          {t("profile.hide")}
         </span>
       </div>
       <div className="flex items-center gap-3">
-        <LanguageSwitcher />
-        <div 
+        <div
           className="group flex items-center gap-2 text-amber-400/90 cursor-pointer transition hover:text-amber-300 hover:scale-105"
           onClick={onUpgradePlan}
         >
           <span className="text-sm opacity-0 transform translate-x-[10px] transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
-            {t('profile.changePlan')}
+            {t("profile.changePlan")}
           </span>
           <Crown size={20} />
         </div>

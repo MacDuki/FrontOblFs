@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { MdPets } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { MdPets } from "react-icons/md";
 import backGround from "../../../assets/imgs/bg1.png";
 import usePet from "../../../hooks/usePet";
 import { Loader } from "../../ui/Loader.jsx";
@@ -18,9 +18,9 @@ function PetHome({
 }) {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showContent, setShowContent] = useState(true);
+  const [isAnimatingExpand, setIsAnimatingExpand] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const {
     hunger,
     happiness,
@@ -39,9 +39,18 @@ function PetHome({
   const [selectedId, setSelectedId] = useState("");
 
   useEffect(() => {
+    // Cargar la mascota seleccionada solo en la carga inicial
+    if (!hasLoadedOnce && selectedPet) {
+      setHasLoadedOnce(true);
+    }
+  }, [selectedPet, hasLoadedOnce]);
+
+  useEffect(() => {
     // Cargar la mascota seleccionada al montar el componente
-    loadSelectedPet();
-  }, [loadSelectedPet]);
+    if (!hasLoadedOnce) {
+      loadSelectedPet();
+    }
+  }, [loadSelectedPet, hasLoadedOnce]);
 
   useEffect(() => {
     // Sincronizar el selector con la mascota seleccionada cuando cambie
@@ -62,20 +71,12 @@ function PetHome({
   const toggleCollapse = () => {
     if (isCollapsed) {
       setIsCollapsed(false);
-      setIsLoading(true);
-      setShowContent(false);
+      setIsAnimatingExpand(true);
 
       setTimeout(() => {
-        setIsLoading(true);
-      }, 100);
-
-      setTimeout(() => {
-        setIsLoading(false);
-        setShowContent(true);
+        setIsAnimatingExpand(false);
       }, 900);
     } else {
-      setIsLoading(false);
-      setShowContent(false);
       setIsCollapsed(true);
     }
   };
@@ -101,13 +102,13 @@ function PetHome({
           onClick={toggleCollapse}
         >
           <div className="text-white text-sm font-medium flex flex-row items-center justify-center space-x-2">
-            <p>{t('pet.myPet')}</p>
+            <p>{t("pet.myPet")}</p>
             <MdPets size={18} />
           </div>
         </div>
       ) : (
         <div className="relative">
-          {isLoading || loading ? (
+          {loading && !hasLoadedOnce ? (
             <Loader
               icon={<MdPets size={20} />}
               className="h-[300px]"
@@ -115,37 +116,35 @@ function PetHome({
               iconSize={20}
             />
           ) : (
-            showContent && (
-              <div className="animate-slide-up-fade-in flex flex-col h-[300px] w-full relative">
-                <PetHeaderHome
-                  onCollapse={toggleCollapse}
-                  title={t('pet.myPet')}
-                  className="animate-delay-75"
-                  onOpenModal={() => setIsModalOpen(true)}
-                />
+            <div className="animate-slide-up-fade-in flex flex-col h-[300px] w-full relative">
+              <PetHeaderHome
+                onCollapse={toggleCollapse}
+                title={t("pet.myPet")}
+                className="animate-delay-75"
+                onOpenModal={() => setIsModalOpen(true)}
+              />
 
-                <div className="animate-delay-150 flex-1 flex flex-col items-center justify-center px-5">
-                  <div className="animate-delay-225 ">
-                    <PetStatusPanel
-                      hunger={hunger ?? 0}
-                      happiness={happiness ?? 0}
+              <div className="animate-delay-150 flex-1 flex flex-col items-center justify-center px-5">
+                <div className="animate-delay-225 ">
+                  <PetStatusPanel
+                    hunger={hunger ?? 0}
+                    happiness={happiness ?? 0}
+                  />
+                </div>
+
+                <div className="animate-delay-300 flex-1 flex flex-col items-center justify-center w-full">
+                  <PetBackground backgroundImage={backGround}>
+                    <PetViewer
+                      className={` ${
+                        petType !== "main" ? "h-[120px]" : "h-[150px]"
+                      } w-auto saturate-[1.2] 
+                      drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]
+                      transition-transform duration-300 hover:scale-105`}
                     />
-                  </div>
-
-                  <div className="animate-delay-300 flex-1 flex flex-col items-center justify-center w-full">
-                    <PetBackground backgroundImage={backGround}>
-                      <PetViewer
-                        className={` ${
-                          petType !== "main" ? "h-[120px]" : "h-[150px]"
-                        } w-auto saturate-[1.2] 
-                        drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]
-                        transition-transform duration-300 hover:scale-105`}
-                      />
-                    </PetBackground>
-                  </div>
+                  </PetBackground>
                 </div>
               </div>
-            )
+            </div>
           )}
         </div>
       )}

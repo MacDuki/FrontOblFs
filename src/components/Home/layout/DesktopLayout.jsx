@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useTranslation } from "react-i18next";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import DiscoverBooks from "../../Books/DiscoverBooks/DiscoverBooks.jsx";
+import LanguageSwitcher from "../../LanguageSwitcher";
 import Stats from "../../Stats/Stats.jsx";
 import { MyCollections } from "../MyCollections.jsx";
 import { PetHome } from "../Pet/PetHome";
@@ -16,13 +17,13 @@ function DesktopLayout({ tab, setTab }) {
   const togglePanel = () => {
     setIsPanelVisible(!isPanelVisible);
   };
- const renderMainContent = () => {
+  const renderMainContent = () => {
     switch (tab) {
       case "reviews":
         return (
           <div className="h-full max-h-[600px] bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 flex flex-col overflow-hidden">
             <h2 className="text-2xl font-bold text-white mb-4 flex-shrink-0">
-              {t('nav.myReviews')}
+              {t("nav.myReviews")}
             </h2>
             <div className="flex-1 overflow-hidden">
               <ReviewsList />
@@ -49,7 +50,12 @@ function DesktopLayout({ tab, setTab }) {
   };
 
   return (
-    <main className="hidden lg:flex flex-col h-screen gap-10 overflow-hidden items-center justify-center p-4 lg:flex-row">
+    <main className="hidden lg:flex flex-col h-screen gap-10 overflow-hidden items-center justify-center p-4 lg:flex-row relative">
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <section className="flex-1 gap-4 flex flex-col h-fit max-h-[600px] ">
         <UserHome />
         <PetHome />
