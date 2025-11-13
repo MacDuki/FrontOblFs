@@ -4,6 +4,8 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Upload as UploadIcon, Image as ImageIcon, Check, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { getProfile } from "../features/user.slice";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "axios";
@@ -11,6 +13,7 @@ import api from "../api/api";
 
 const UploadModal = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -82,7 +85,6 @@ const UploadModal = ({ isOpen, onClose }) => {
     formData.append("cloud_name", "dirhxotoy");
 
     try {
-      
       setUploadProgress(20);
       
       const res = await axios.post(
@@ -105,10 +107,11 @@ const UploadModal = ({ isOpen, onClose }) => {
       const imageUrl = res.data.secure_url;
       setUrl(imageUrl);
 
-      
-      localStorage.setItem("profilePicture", imageUrl);
-      
+      await api.patch("/user/profile-picture", {
+        profilePictureUrl: imageUrl
+      });
 
+      dispatch(getProfile());
       window.dispatchEvent(new Event("profilePictureUpdated"));
       
       setTimeout(() => {

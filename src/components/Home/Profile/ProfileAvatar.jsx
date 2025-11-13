@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
+import { useUser } from "../../../hooks/useUser";
 import UploadModal from "../../UploadModal";
 
 export const ProfileAvatar = ({ name, level }) => {
   const { t } = useTranslation();
+  const { profile } = useUser();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
-    const loadAvatar = () => {
-      const savedUrl = localStorage.getItem("profilePicture");
-      setAvatarUrl(savedUrl);
-    };
+    if (profile?.profilePictureUrl) {
+      setAvatarUrl(profile.profilePictureUrl);
+    }
+  }, [profile]);
 
-    loadAvatar();
-
+  useEffect(() => {
     const handleProfileUpdate = () => {
-      loadAvatar();
+      if (profile?.profilePictureUrl) {
+        setAvatarUrl(profile.profilePictureUrl);
+      }
     };
 
     window.addEventListener("profilePictureUpdated", handleProfileUpdate);
@@ -25,7 +28,7 @@ export const ProfileAvatar = ({ name, level }) => {
     return () => {
       window.removeEventListener("profilePictureUpdated", handleProfileUpdate);
     };
-  }, []);
+  }, [profile]);
   
   return (
     <>
