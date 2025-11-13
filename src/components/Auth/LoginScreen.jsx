@@ -42,16 +42,22 @@ function LoginScreen({ onBack }) {
       </div>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-500/20 border border-red-500 rounded-xl text-red-300 text-sm flex justify-between items-center">
-          <span>{error}</span>
-          <button
-            type="button"
-            onClick={clearError}
-            className="ml-2 text-red-300 hover:text-red-100 transition-colors"
-            title={t('auth.dismissError')}
-          >
-            ✕
-          </button>
+        <div className="mt-4 p-4 bg-red-500/10 border-2 border-red-400 rounded-xl text-red-100 text-sm shadow-lg backdrop-blur-sm">
+          <div className="flex items-start gap-3">
+            <span className="text-red-400 text-xl flex-shrink-0">⚠️</span>
+            <div className="flex-1">
+              <p className="font-semibold mb-1">Error de autenticación</p>
+              <p className="text-red-200">{error}</p>
+            </div>
+            <button
+              type="button"
+              onClick={clearError}
+              className="ml-2 p-1 text-red-300 hover:text-red-100 hover:bg-red-500/20 rounded-lg transition-all flex-shrink-0"
+              title={t('auth.dismissError')}
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
 

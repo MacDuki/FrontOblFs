@@ -1,5 +1,4 @@
 export default {
-  // Navigation
   nav: {
     home: "Home",
     discover: "Discover",
@@ -190,7 +189,15 @@ export default {
     createAccount: "Create an account",
     welcomeBack: "We are glad to see you again!",
     passwordsMismatch: "Passwords do not match",
-    dismissError: "Dismiss error"
+    dismissError: "Dismiss error",
+    // Validations
+    usernameRequired: "Username is required",
+    usernameMinLength: "Username must be at least 3 characters",
+    emailRequired: "Email is required",
+    emailInvalid: "Email is not valid",
+    passwordRequired: "Password is required",
+    passwordMinLength: "Password must be at least 6 characters",
+    repeatPasswordRequired: "You must repeat the password"
   },
 
   // Library Add Pages Modal

@@ -12,10 +12,19 @@ export default function Card({
       {show && (
         <motion.section
           layout
-          initial={{ opacity: 0, x: 600, scale: 0.7 }}
+          initial={{ opacity: 0, x: 400, scale: 0.85 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: -600, scale: 0.7 }}
-          transition={{ duration: 0.928, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, x: -400, scale: 0.85 }}
+          transition={{ 
+            duration: 0.6, 
+            ease: [0.25, 0.46, 0.45, 0.94],
+            layout: { duration: 0.3 }
+          }}
+          style={{ 
+            willChange: 'transform, opacity',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
+          }}
           className={`pt-4 rounded-3xl p-3
             bg-gradient-to-br from-white/10 via-white/5 to-transparent 
             backdrop-blur-xl border border-white/20 
@@ -31,10 +40,13 @@ export default function Card({
           <motion.div
             key={contentKey}
             layout
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+            style={{ 
+              willChange: 'transform, opacity'
+            }}
           >
             {children}
           </motion.div>

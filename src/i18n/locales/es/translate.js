@@ -1,5 +1,4 @@
 export default {
-  // Navegación
   nav: {
     home: "Inicio",
     discover: "Descubrir",
@@ -190,7 +189,15 @@ export default {
     createAccount: "Crear una cuenta",
     welcomeBack: "¡Nos alegra verte de nuevo!",
     passwordsMismatch: "Las contraseñas no coinciden",
-    dismissError: "Descartar error"
+    dismissError: "Descartar error",
+    // Validaciones
+    usernameRequired: "El nombre de usuario es obligatorio",
+    usernameMinLength: "El nombre de usuario debe tener al menos 3 caracteres",
+    emailRequired: "El correo electrónico es obligatorio",
+    emailInvalid: "El correo electrónico no es válido",
+    passwordRequired: "La contraseña es obligatoria",
+    passwordMinLength: "La contraseña debe tener al menos 6 caracteres",
+    repeatPasswordRequired: "Debes repetir la contraseña"
   },
 
   // Modal de Agregar Páginas

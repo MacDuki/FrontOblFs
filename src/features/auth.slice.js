@@ -1,42 +1,106 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
 
-// Helper para obtener token de localStorage o sessionStorage
 const getStoredToken = () => {
   return localStorage.getItem("token") || sessionStorage.getItem("token");
 };
 
-// Thunk para login
+const parseBackendError = (error) => {
+  const backendMessage = error.response?.data?.message || 
+                        error.response?.data?.error || 
+                        error.message || "";
+  
+  const lowerMessage = backendMessage.toLowerCase();
+  
+  if (lowerMessage.includes("password") && 
+      (lowerMessage.includes("pattern") || 
+       lowerMessage.includes("required pattern") ||
+       lowerMessage.includes("fails to match"))) {
+    return "La contraseña debe contener al menos cinco letras y un número";
+  }
+  
+  if (lowerMessage.includes("email") && 
+      (lowerMessage.includes("already") || 
+       lowerMessage.includes("exists") ||
+       lowerMessage.includes("in use") ||
+       lowerMessage.includes("duplicate"))) {
+    return "Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión.";
+  }
+  
+  if (lowerMessage.includes("username") && 
+      (lowerMessage.includes("already") || 
+       lowerMessage.includes("exists") ||
+       lowerMessage.includes("taken") ||
+       lowerMessage.includes("duplicate"))) {
+    return "Este nombre de usuario ya está en uso. Por favor, elige otro.";
+  }
+  
+  if (lowerMessage.includes("password") && 
+      (lowerMessage.includes("short") || 
+       lowerMessage.includes("min") ||
+       lowerMessage.includes("length"))) {
+    return "La contraseña debe tener al menos 6 caracteres";
+  }
+  
+  if (lowerMessage.includes("email") && 
+      (lowerMessage.includes("invalid") || 
+       lowerMessage.includes("must be") ||
+       lowerMessage.includes("valid"))) {
+    return "Por favor, ingresa un correo electrónico válido";
+  }
+  
+  if (lowerMessage.includes("username") && 
+      (lowerMessage.includes("required") || 
+       lowerMessage.includes("must not be empty"))) {
+    return "El nombre de usuario es obligatorio";
+  }
+  
+  if (lowerMessage.includes("passwords") && 
+      (lowerMessage.includes("match") || 
+       lowerMessage.includes("same"))) {
+    return "Las contraseñas no coinciden";
+  }
+  
+  if (lowerMessage.includes("invalid credentials") || 
+      lowerMessage.includes("incorrect") ||
+      lowerMessage.includes("wrong password")) {
+    return "Usuario o contraseña incorrectos";
+  }
+  
+  if (lowerMessage.includes("user not found") || 
+      lowerMessage.includes("not found")) {
+    return "No se encontró un usuario con ese nombre";
+  }
+  
+  if (backendMessage && !lowerMessage.includes("fails to match") && 
+      !lowerMessage.includes("with value")) {
+    return backendMessage;
+  }
+  
+  return "Ha ocurrido un error. Por favor, verifica los datos e intenta nuevamente.";
+};
+
 export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ username, password, rememberMe = false }, { rejectWithValue }) => {
     try {
       const response = await api.post("/auth/login", { username, password });
       const { token, user } = response.data;
-      console.log("🔐 [Auth API] loginUser response:", {
-        user,
-        token: token ? "***" : null,
-      });
 
-      // Guardar token según la opción "remember me"
       if (rememberMe) {
         localStorage.setItem("token", token);
       } else {
-        // Usar sessionStorage para sesión temporal
         sessionStorage.setItem("token", token);
       }
 
       return { token, user, rememberMe };
     } catch (error) {
-      console.error("❌ [Auth API] loginUser error:", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Error en el login"
-      );
+      const friendlyMessage = parseBackendError(error);
+      return rejectWithValue(friendlyMessage);
     }
   }
 );
 
-// Thunk para register
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (
@@ -50,15 +114,11 @@ export const registerUser = createAsyncThunk(
         password,
         repeat_password,
       });
-      console.log("🔐 [Auth API] registerUser response:", response.data);
 
-      // El registro solo retorna éxito, no hace login automático
       return { success: true };
     } catch (error) {
-      console.error("❌ [Auth API] registerUser error:", error);
-      return rejectWithValue(
-        error.response?.data?.message || "Error en el registro"
-      );
+      const friendlyMessage = parseBackendError(error);
+      return rejectWithValue(friendlyMessage);
     }
   }
 );
@@ -79,9 +139,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("token");
       sessionStorage.removeItem("token");
-
-      // IMPORTANTE: Este reducer también será escuchado por otros slices
-      // para resetear su estado cuando el usuario cierre sesión
     },
     clearError: (state) => {
       state.error = null;
@@ -89,7 +146,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -106,7 +162,6 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.isAuthenticated = false;
       })
-      // Register
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -114,8 +169,6 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state) => {
         state.isLoading = false;
         state.error = null;
-        // No se actualiza el estado de autenticación aquí
-        // El login automático se maneja por separado
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;

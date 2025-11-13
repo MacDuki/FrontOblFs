@@ -1,26 +1,40 @@
+import { motion } from "framer-motion";
+
 function TabButton({ label, icon, active, onClick }) {
   return (
     <li>
-      <button
+      <motion.button
         type="button"
         onClick={onClick}
+        whileTap={{ scale: 0.92 }}
+        transition={{ duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
         className={`w-full h-16 flex flex-col items-center justify-center gap-1 
-          text-xs font-medium transition
+          text-xs font-medium transition-colors duration-200
           ${active ? "text-white" : "text-white/70 hover:text-white"}`}
+        style={{ 
+          willChange: active ? 'auto' : 'transform, opacity',
+          WebkitTapHighlightColor: 'transparent'
+        }}
       >
-        <span
-          className={`text-xl leading-none ${
-            active ? "scale-110" : "scale-100"
-          } transition-transform`}
+        <motion.span
+          animate={{ scale: active ? 1.15 : 1 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="text-xl leading-none"
+          style={{ willChange: 'transform' }}
         >
           {icon}
-        </span>
+        </motion.span>
         <span>{label}</span>
-        <span
-          className={`mt-1 block h-0.5 w-6 rounded-full transition 
-          ${active ? "bg-white/90" : "bg-transparent"}`}
+        <motion.span
+          animate={{ 
+            width: active ? 24 : 0,
+            opacity: active ? 0.9 : 0
+          }}
+          transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mt-1 block h-0.5 rounded-full bg-white"
+          style={{ willChange: 'width, opacity' }}
         />
-      </button>
+      </motion.button>
     </li>
   );
 }
