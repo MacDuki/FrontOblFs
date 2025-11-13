@@ -1,9 +1,3 @@
-/**
- * Configuración centralizada para sincronización y polling de datos
- *
- * IMPORTANTE: Ajustar estos valores con cuidado para evitar exceso de llamadas a la API
- */
-
 export const SYNC_CONFIG = {
   // ========== LIBRARY ITEMS ==========
   libraryItems: {
@@ -76,9 +70,6 @@ export const SYNC_CONFIG = {
   },
 };
 
-/**
- * Helper para verificar si debe hacer una llamada (throttling)
- */
 const lastCallTimes = new Map();
 
 export function shouldMakeCall(
@@ -101,23 +92,6 @@ export function shouldMakeCall(
   return true;
 }
 
-/**
- * Helper para limpiar el historial de throttling
- */
 export function clearThrottleHistory() {
   lastCallTimes.clear();
 }
-
-// ========== NOTAS DE USO ==========
-/*
-Para reactivar sincronización en segundo plano más adelante:
-- libraryItems.pollMs: 60000 (1 minuto)
-- refetchOnWindowFocus: true solo en pantallas críticas
-- refetchOnVisibility: true solo en pantallas críticas
-
-RECOMENDACIONES:
-1. Usar refetch manual cuando el usuario haga una acción
-2. Implementar pull-to-refresh en mobile
-3. Usar optimistic updates para mejor UX
-4. Solo habilitar polling en pantallas donde los datos cambien frecuentemente
-*/

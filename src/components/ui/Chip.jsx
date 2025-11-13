@@ -1,6 +1,5 @@
 import { memo } from "react";
 
-// ✅ OPTIMIZADO: React.memo evita re-renders cuando las props no cambian
 export const Chip = memo(({ icon, label, value }) => (
   <div className="flex flex-col items-center gap-1 rounded-xl border border-white/10 bg-white/5  p-1 shadow-inner ">
     <span className="text-amber-400">{icon}</span>

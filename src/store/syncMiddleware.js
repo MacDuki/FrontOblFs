@@ -110,7 +110,6 @@ async function executeUpdates(updates, dispatch, reason) {
     // Resumen total
     promises.push(dispatch(getPointsSummary()));
 
-    // También refrescar puntos por fecha para que los gráficos/heatmap vean la actividad reciente
     const today = new Date();
     const from = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
     const tomorrow = new Date(today);
@@ -159,9 +158,6 @@ export const syncMiddleware = (store) => (next) => (action) => {
   return result;
 };
 
-/**
- * Helper para forzar sincronización manual desde componentes
- */
 export function triggerManualSync(
   dispatch,
   entities = ["pet", "user", "points", "reviews"]
