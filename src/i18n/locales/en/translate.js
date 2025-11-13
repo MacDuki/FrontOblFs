@@ -81,6 +81,7 @@ export default {
     thoughtsPlaceholder: "Share what you loved, what surprised you, or what you learned...",
     cancel: "Cancel",
     publish: "Publish Review",
+    update: "Update Review",
     saving: "Saving...",
     success: "Review published successfully",
     ratingRequired: "Please select a rating before saving.",

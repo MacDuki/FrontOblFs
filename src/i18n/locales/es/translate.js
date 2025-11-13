@@ -81,6 +81,7 @@ export default {
     thoughtsPlaceholder: "Comparte lo que amaste, lo que te sorprendió o lo que aprendiste...",
     cancel: "Cancelar",
     publish: "Publicar Reseña",
+    update: "Actualizar Reseña",
     saving: "Guardando...",
     success: "Reseña publicada correctamente",
     ratingRequired: "Por favor selecciona una calificación antes de guardar.",
